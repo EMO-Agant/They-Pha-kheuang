@@ -87,7 +87,7 @@ button{font-family:inherit;}
 .topbar{
   position:sticky; top:0; z-index:40;
   display:flex; align-items:center; justify-content:space-between;
-  padding:14px 16px; backdrop-filter:blur(16px);
+  padding:8px 16px; backdrop-filter:blur(16px);
   background:linear-gradient(120deg, var(--bg-card) 0%, var(--bg-dark) 62%, var(--accent) 140%);
   box-shadow:0 8px 22px -12px rgba(156,107,46,.28);
   border-bottom:1px solid var(--line-strong);
@@ -223,7 +223,7 @@ button{font-family:inherit;}
   box-shadow:0 -8px 24px -8px rgba(156,107,46,.22);
 }
 .nav-item{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;font-size:10px;opacity:.62;cursor:pointer;padding:8px 10px;border-radius:14px;transition:.18s;color:var(--text-dark);min-width:52px;min-height:52px;font-weight:600;}
-.nav-item i{font-size:20px;}
+.nav-item i{font-size:30px;}
 .nav-item.active{opacity:1;color:var(--primary);background:linear-gradient(160deg, rgba(212,175,55,.20), rgba(212,175,55,.06));}
 .nav-item.active i{transform:translateY(-1px);}
 .nav-item:active{transform:scale(.9);}
@@ -461,16 +461,6 @@ button{font-family:inherit;}
     </div>
     <div class="promo-marquee">
       <div class="marquee-track" id="marqueeTrack"></div>
-    </div>
-
-    <div class="section">
-      <div class="pill-row">
-        <div class="pill active" data-goto="home" onclick="goPage('home')"><i class="fa-solid fa-house"></i>ໜ້າຫຼັກ</div>
-        <div class="pill" data-goto="rent" onclick="goPage('rent')"><i class="fa-solid fa-box-open"></i>ເຊົ່າ</div>
-        <div class="pill" data-goto="pawn" onclick="goPage('pawn')"><i class="fa-solid fa-gem"></i>ຈຳນຳ</div>
-        <div class="pill" data-goto="auction" onclick="goPage('auction')"><i class="fa-solid fa-gavel"></i>ປະມູນ</div>
-        <div class="pill" data-goto="live" onclick="goPage('live')"><i class="fa-solid fa-video"></i>Live</div>
-      </div>
     </div>
 
     <div class="section">
