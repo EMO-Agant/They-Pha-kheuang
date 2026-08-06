@@ -644,30 +644,36 @@ const API_URL = 'https://script.google.com/macros/s/AKfycbwmg5i5SrZVE5hlpSSm_Lnd
  *************************************************************/
 let SETTINGS = null;
 let ADMIN_TOKEN = localStorage.getItem('admin_token') || null;
-let PRODUCTS = [], AUCTIONS = [], LIVES = [];
+let PRODUCTS = [], AUCTIONS = [], LIVES = [], BANNERS = [], MARQUEE_ITEMS = [];
 let EDIT_CACHE = {}; // ເກັບ object ຊົ່ວຄາວສຳລັບແກ້ໄຂ (ກັນບັນຫາ quote ໃນ onclick)
 
-// ຄ່າ default ຂອງ Banner slides ແລະ ຂໍ້ຄວາມເລື່ອນ (ໃຊ້ຖ້າຍັງບໍ່ໄດ້ຕັ້ງໃນ Admin)
-// ບັນທຶກຜ່ານ saveSettings key: "bannerSlides" / "promoItems" (backend ຮອງຮັບ key ໃໝ່ໆໄດ້ໂດຍອັດຕະໂນມັດ)
-const DEFAULT_BANNER_SLIDES = [
-  { title:'ຍິນດີຕ້ອນຮັບ', subtitle:'ບໍລິການເຊົ່າ-ຈຳນຳ-ປະມູນ ຄົບວົງຈອນ ຫຼູຫຼາ ໄວ້ໃຈໄດ້', imageUrl:'', badge:'ຮ້ານເທ້ ພະເຄື່ອງ' },
-  { title:'ຈຳນຳງ່າຍ ດ່ວນທັນໃຈ', subtitle:'ດອກເບ້ຍຕ່ຳ ຮັບເງິນທັນທີ ພາຍໃນ 15 ນາທີ', imageUrl:'', badge:'ໂປຣໂມຊັນພິເສດ' },
-  { title:'ປະມູນຮ້ອນແຮງ', subtitle:'ພະເຄື່ອງແທ້ ລາຄາຄຸ້ມຄ່າ ປະມູນອອນລາຍ 24 ຊົ່ວໂມງ', imageUrl:'', badge:'ປະມູນອອນລາຍ' }
-];
-const DEFAULT_PROMO_ITEMS = ['🔥 ຈຳນຳດ່ວນພາຍໃນ 15 ນາທີ','💎 ພະເຄື່ອງແທ້ 100%','📦 ຮັບປະກັນຄຸນນະພາບ','🎥 Live ຂາຍທຸກວັນ'];
+function bannerSlides(){ return BANNERS; }
+function promoItems(){ return MARQUEE_ITEMS.map(m => m.text); }
 
-function bannerSlides(){ return (SETTINGS && Array.isArray(SETTINGS.bannerSlides) && SETTINGS.bannerSlides.length) ? SETTINGS.bannerSlides : DEFAULT_BANNER_SLIDES; }
-function promoItems(){ return (SETTINGS && Array.isArray(SETTINGS.promoItems) && SETTINGS.promoItems.length) ? SETTINGS.promoItems : DEFAULT_PROMO_ITEMS; }
+function toLocalInput_(iso) {
+  const d = new Date(iso); if (isNaN(d)) return '';
+  const pad = n => String(n).padStart(2, '0');
+  return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()) + 'T' + pad(d.getHours()) + ':' + pad(d.getMinutes());
+}
+function isActiveNowClient_(item) {
+  if (item.status === 'inactive') return false;
+  const now = new Date();
+  if (item.startDate && new Date(item.startDate) > now) return false;
+  if (item.endDate && new Date(item.endDate) < now) return false;
+  return true;
+}
 
 let sliderIndex = 0, sliderTimer = null;
 function renderBannerSlider(){
   const slides = bannerSlides();
-  document.getElementById('sliderTrack').innerHTML = slides.map(s =>
-    '<div class="slide">' + (s.imageUrl?'<img class="slide-bg" src="'+esc(s.imageUrl)+'">':'') +
+  document.getElementById('sliderTrack').innerHTML = slides.length ? slides.map(s =>
+    '<div class="slide">' + (s.image?'<img class="slide-bg" src="'+esc(s.image)+'">':'') +
     '<div class="slide-overlay"></div><div class="slide-content">' +
-    (s.badge ? '<span class="eyebrow-chip">'+esc(s.badge)+'</span>' : '') +
-    '<h1>'+esc(s.title||'')+'</h1><p>'+esc(s.subtitle||'')+'</p></div></div>'
-  ).join('');
+    '<h1>'+esc(s.title||'')+'</h1><p>'+esc(s.subtitle||'')+'</p>' +
+    (s.buttonText ? '<button class="btn small" style="margin-top:12px;width:auto;" onclick="' +
+      (s.buttonLink ? 'window.open(\''+esc(s.buttonLink)+'\',\'_blank\')' : '') + '">'+esc(s.buttonText)+'</button>' : '') +
+    '</div></div>'
+  ).join('') : '<div class="slide"><div class="slide-content"><h1>ຍິນດີຕ້ອນຮັບ</h1></div></div>';
   document.getElementById('sliderDots').innerHTML = slides.map((_,i)=>
     '<div class="dot'+(i===0?' active':'')+'" onclick="gotoSlide('+i+')"></div>').join('');
   sliderIndex = 0;
@@ -737,7 +743,17 @@ const ARG_MAP = {
   deleteLiveStream: (a) => ({ token: a[0], id: a[1] }),
   updateRentalStatus: (a) => ({ token: a[0], id: a[1], status: a[2] }),
   updatePawnStatus: (a) => ({ token: a[0], id: a[1], status: a[2] }),
-  changeAdminPassword: (a) => ({ token: a[0], oldPassword: a[1], newPassword: a[2] })
+  changeAdminPassword: (a) => ({ token: a[0], oldPassword: a[1], newPassword: a[2] }),
+
+  getBanners: () => ({}),
+  saveBanner: (a) => ({ token: a[0], banner: a[1] }),
+  deleteBanner: (a) => ({ token: a[0], id: a[1] }),
+  reorderBanners: (a) => ({ token: a[0], order: a[1] }),
+
+  getMarqueeItems: () => ({}),
+  saveMarqueeItem: (a) => ({ token: a[0], item: a[1] }),
+  deleteMarqueeItem: (a) => ({ token: a[0], id: a[1] }),
+  reorderMarqueeItems: (a) => ({ token: a[0], order: a[1] })
 };
 
 // ຄົງໂຄງສ້າງການເອີ້ນແບບເດີມ (callServer(fn, args, onSuccess, onError)) ໄວ້
@@ -786,6 +802,8 @@ function loadBootstrap() {
     PRODUCTS = data.products || [];
     AUCTIONS = data.auctions || [];
     LIVES = data.lives || [];
+    BANNERS = data.banners || [];
+    MARQUEE_ITEMS = data.marquee || [];
     applySettingsToUI(SETTINGS);
     renderRentGrid(); renderPawnGrid(); renderHomeRent(); renderHomePawn();
     renderAuctionList(); renderHomeAuction();
@@ -1514,95 +1532,183 @@ function deleteLiveConfirm(id) {
   callServer('deleteLiveStream', [ADMIN_TOKEN, id], (r) => { if (r.success) { showToast('ລຶບແລ້ວ', 'ok'); adminLives(); loadAllData(); } });
 }
 
-/* ---- Banner management (ໃໝ່) ---- */
+/* ---- Banner management (ໃໝ່: CRUD ຈິງ + ກຳນົດເວລາ) ---- */
 function adminBanner() {
-  EDIT_CACHE.banner = JSON.parse(JSON.stringify(bannerSlides()));
-  renderBannerAdminList();
+  callServer('getBanners', [], (list) => {
+    if (!Array.isArray(list)) return showToast((list && list.message) || 'ຜິດພາດ', 'err');
+    EDIT_CACHE.bannerList = list;
+    renderBannerAdminList();
+  });
 }
 function renderBannerAdminList() {
-  const list = EDIT_CACHE.banner || [];
+  const list = EDIT_CACHE.bannerList || [];
   let html = '<h3><i class="fa-solid fa-images"></i> ຈັດການ Banner ໜ້າຫຼັກ</h3>' +
-    '<p class="field .hint" style="font-size:11.5px;color:var(--text-soft);margin:-6px 0 14px;">ເພີ່ມ/ແກ້ໄຂ/ລຶບ ແຜ່ນ Banner ທີ່ຈະສະລັບໝູນວຽນຢູ່ໜ້າຫຼັກ. ຮູບພາບແນະນຳອັດຕາສ່ວນ 16:8</p>' +
-    '<button class="btn small" onclick="addBannerSlide()" style="margin-bottom:14px;"><i class="fa-solid fa-plus"></i> ເພີ່ມ Banner ໃໝ່</button>';
+    '<p style="font-size:11.5px;color:var(--text-soft);margin:-6px 0 14px;">ສາມາດກຳນົດວັນທີ່ເລີ່ມ-ໝົດ ແລະ ເປີດ/ປິດ ໄດ້ຕໍ່ Banner. ຮູບແນະນຳອັດຕາສ່ວນ 16:8</p>' +
+    '<button class="btn small" onclick="editBannerForm()" style="margin-bottom:14px;"><i class="fa-solid fa-plus"></i> ເພີ່ມ Banner ໃໝ່</button>';
   html += list.map((s, idx) =>
-    '<div class="banner-edit-item">' +
-    (s.imageUrl ? '<img class="bthumb" src="' + esc(s.imageUrl) + '">' : '<div class="bthumb" style="display:flex;align-items:center;justify-content:center;font-size:26px;color:#D8B45C;"><i class="fa-solid fa-image"></i></div>') +
-    '<div class="field"><label>ປ້າຍ Eyebrow (ສັ້ນໆ)</label><input data-bk="badge" data-idx="' + idx + '" value="' + esc(s.badge || '') + '"></div>' +
-    '<div class="field"><label>ຫົວຂໍ້</label><input data-bk="title" data-idx="' + idx + '" value="' + esc(s.title || '') + '"></div>' +
-    '<div class="field"><label>ຄຳອະທິບາຍ</label><input data-bk="subtitle" data-idx="' + idx + '" value="' + esc(s.subtitle || '') + '"></div>' +
-    '<div class="field"><label>ຮູບພາບ (URL)</label><input data-bk="imageUrl" data-idx="' + idx + '" value="' + esc(s.imageUrl || '') + '"></div>' +
-    '<div style="display:flex;gap:8px;margin-top:8px;">' +
-    '<button class="icon-btn up" data-act="bup" data-idx="' + idx + '" title="ຍ້າຍຂຶ້ນ"><i class="fa-solid fa-arrow-up"></i></button>' +
-    '<button class="icon-btn down" data-act="bdown" data-idx="' + idx + '" title="ຍ້າຍລົງ"><i class="fa-solid fa-arrow-down"></i></button>' +
-    '<button class="icon-btn" data-act="bdel" data-idx="' + idx + '" style="margin-left:auto;color:#C0392B;" title="ລຶບ"><i class="fa-solid fa-trash"></i></button>' +
-    '</div></div>'
+    '<div class="admin-list-item"><div class="top"><div>' +
+    '<div class="name">' + esc(s.title || '(ບໍ່ມີຫົວຂໍ້)') + '</div>' +
+    '<div class="sub">' + (s.status === 'inactive' ? 'ປິດຢູ່' : 'ເປີດໃຊ້') +
+      (s.startDate ? ' | ເລີ່ມ ' + esc(new Date(s.startDate).toLocaleString('lo-LA')) : '') +
+      (s.endDate ? ' - ໝົດ ' + esc(new Date(s.endDate).toLocaleString('lo-LA')) : '') + '</div></div>' +
+    '<div style="display:flex;gap:6px;">' +
+    '<button class="icon-btn up" data-act="bup" data-idx="' + idx + '"><i class="fa-solid fa-arrow-up"></i></button>' +
+    '<button class="icon-btn down" data-act="bdown" data-idx="' + idx + '"><i class="fa-solid fa-arrow-down"></i></button>' +
+    '<button class="icon-btn" data-act="bedit" data-idx="' + idx + '"><i class="fa-solid fa-pen"></i></button>' +
+    '<button class="icon-btn" data-act="bdel" data-id="' + esc(s.id) + '" style="color:#C0392B;"><i class="fa-solid fa-trash"></i></button>' +
+    '</div></div></div>'
   ).join('') || '<p style="opacity:.65;font-size:13px;">ຍັງບໍ່ມີ Banner, ກົດ "ເພີ່ມ Banner ໃໝ່" ຂ້າງເທິງ</p>';
-  html += '<button class="btn" id="bn_save" style="margin-top:6px;" onclick="saveBannerSlides()"><i class="fa-solid fa-check"></i> ບັນທຶກ Banner ທັງໝົດ</button>' +
-    '<button class="btn secondary" style="margin-top:8px;" onclick="closeAdminModal()">ປິດ</button>';
+  html += '<button class="btn secondary" style="margin-top:10px;" onclick="closeAdminModal()">ປິດ</button>';
   openAdminModal(html);
-  document.querySelectorAll('#adminModalContent [data-bk]').forEach(inp => inp.oninput = () => {
-    EDIT_CACHE.banner[Number(inp.dataset.idx)][inp.dataset.bk] = inp.value;
-  });
+  document.querySelectorAll('#adminModalContent [data-act="bedit"]').forEach(b => b.onclick = () => editBannerForm(EDIT_CACHE.bannerList[Number(b.dataset.idx)]));
+  document.querySelectorAll('#adminModalContent [data-act="bdel"]').forEach(b => b.onclick = () => deleteBannerConfirm(b.dataset.id));
   document.querySelectorAll('#adminModalContent [data-act="bup"]').forEach(b => b.onclick = () => moveBannerSlide(Number(b.dataset.idx), -1));
   document.querySelectorAll('#adminModalContent [data-act="bdown"]').forEach(b => b.onclick = () => moveBannerSlide(Number(b.dataset.idx), 1));
-  document.querySelectorAll('#adminModalContent [data-act="bdel"]').forEach(b => b.onclick = () => { EDIT_CACHE.banner.splice(Number(b.dataset.idx), 1); renderBannerAdminList(); });
 }
-function addBannerSlide() {
-  EDIT_CACHE.banner = EDIT_CACHE.banner || [];
-  EDIT_CACHE.banner.push({ badge: '', title: 'ຫົວຂໍ້ Banner ໃໝ່', subtitle: '', imageUrl: '' });
-  renderBannerAdminList();
+function editBannerForm(s) {
+  s = s || {};
+  openAdminModal(
+    '<h3><i class="fa-solid fa-images"></i> ' + (s.id ? 'ແກ້ໄຂ' : 'ເພີ່ມ') + ' Banner</h3>' +
+    '<div class="field"><label>ຫົວຂໍ້</label><input id="bf_title" value="' + esc(s.title || '') + '"></div>' +
+    '<div class="field"><label>ຄຳອະທິບາຍ</label><input id="bf_subtitle" value="' + esc(s.subtitle || '') + '"></div>' +
+    '<div class="field"><label>ຮູບພາບ (URL)</label><input id="bf_image" value="' + esc(s.image || '') + '" oninput="previewImg(\'bf_image\',\'bf_imgprev\')">' +
+    '<img id="bf_imgprev" class="img-preview" src="' + esc(s.image || '') + '" style="display:' + (s.image ? 'block' : 'none') + ';"></div>' +
+    '<div class="row2">' +
+    '<div class="field"><label>ຂໍ້ຄວາມປຸ່ມ (ບໍ່ບັງຄັບ)</label><input id="bf_btntext" value="' + esc(s.buttonText || '') + '"></div>' +
+    '<div class="field"><label>ລິ້ງປຸ່ມ (ບໍ່ບັງຄັບ)</label><input id="bf_btnlink" value="' + esc(s.buttonLink || '') + '"></div>' +
+    '</div>' +
+    '<div class="row2">' +
+    '<div class="field"><label>ວັນທີ່ເລີ່ມສະແດງ (ບໍ່ບັງຄັບ)</label><input type="datetime-local" id="bf_start" value="' + (s.startDate ? toLocalInput_(s.startDate) : '') + '"></div>' +
+    '<div class="field"><label>ວັນທີ່ໝົດອາຍຸ (ບໍ່ບັງຄັບ)</label><input type="datetime-local" id="bf_end" value="' + (s.endDate ? toLocalInput_(s.endDate) : '') + '"></div>' +
+    '</div>' +
+    '<div class="field"><label>ສະຖານະ</label><select id="bf_status"><option value="active" ' + (s.status !== 'inactive' ? 'selected' : '') + '>ເປີດໃຊ້ (ສະແດງ)</option><option value="inactive" ' + (s.status === 'inactive' ? 'selected' : '') + '>ປິດ (ເຊື່ອງໄວ້)</option></select></div>' +
+    '<button class="btn" id="bf_save"><i class="fa-solid fa-check"></i> ບັນທຶກ Banner ນີ້</button>' +
+    '<button class="btn secondary" style="margin-top:8px;" onclick="adminBanner()">ກັບຄືນ</button>'
+  );
+  document.getElementById('bf_save').onclick = () => saveBannerForm(s.id || '');
+}
+function saveBannerForm(id) {
+  const start = document.getElementById('bf_start').value;
+  const end = document.getElementById('bf_end').value;
+  const banner = {
+    id: id || undefined,
+    title: val('bf_title'), subtitle: val('bf_subtitle'), image: val('bf_image'),
+    buttonText: val('bf_btntext'), buttonLink: val('bf_btnlink'),
+    startDate: start ? new Date(start).toISOString() : '',
+    endDate: end ? new Date(end).toISOString() : '',
+    status: document.getElementById('bf_status').value
+  };
+  if (!banner.title) { showToast('ກະລຸນາປ້ອນຫົວຂໍ້ Banner', 'err'); return; }
+  setBtnLoading('bf_save', true);
+  callServer('saveBanner', [ADMIN_TOKEN, banner], (r) => {
+    setBtnLoading('bf_save', false);
+    if (!r.success) { showToast(r.message || 'ຜິດພາດ', 'err'); return; }
+    showToast('ບັນທຶກ Banner ສຳເລັດ ✅', 'ok');
+    adminBanner();       // ຄ້າງຢູ່ໜ້າ Banner, ໂຫຼດລາຍການໃໝ່ (ບໍ່ໄປໜ້າພາບລວມ)
+    refreshHomeBanner();  // ອັບເດດ banner ໜ້າຫຼັກ ໂດຍບໍ່ຣີເຟຣດໜ້າ
+  });
+}
+function deleteBannerConfirm(id) {
+  if (!confirm('ຢືນຢັນລຶບ Banner ນີ້?')) return;
+  callServer('deleteBanner', [ADMIN_TOKEN, id], (r) => {
+    if (r.success) { showToast('ລຶບແລ້ວ', 'ok'); adminBanner(); refreshHomeBanner(); }
+    else showToast(r.message || 'ລຶບບໍ່ສຳເລັດ', 'err');
+  });
 }
 function moveBannerSlide(idx, dir) {
-  const list = EDIT_CACHE.banner; const to = idx + dir;
-  if (to < 0 || to >= list.length) return;
+  const list = EDIT_CACHE.bannerList; const to = idx + dir;
+  if (!list || to < 0 || to >= list.length) return;
   const tmp = list[idx]; list[idx] = list[to]; list[to] = tmp;
   renderBannerAdminList();
+  callServer('reorderBanners', [ADMIN_TOKEN, list.map(b => b.id)], (r) => { if (r.success) refreshHomeBanner(); });
 }
-function saveBannerSlides() {
-  setBtnLoading('bn_save', true);
-  callServer('saveSettings', [ADMIN_TOKEN, { bannerSlides: EDIT_CACHE.banner || [] }], (r) => {
-    setBtnLoading('bn_save', false);
-    if (!r.success) { showToast(r.message || 'ຜິດພາດ', 'err'); return; }
-    SETTINGS = r.settings; renderBannerSlider();
-    showToast('ບັນທຶກ Banner ສຳເລັດ ✅', 'ok');
-    closeAdminModal();
-  });
+function refreshHomeBanner() {
+  callServer('getBanners', [], (list) => { if (Array.isArray(list)) { BANNERS = list.filter(isActiveNowClient_); renderBannerSlider(); } });
 }
 
-/* ---- Marquee (ຂໍ້ຄວາມເລື່ອນ) management (ໃໝ່) ---- */
+/* ---- Marquee (ຂໍ້ຄວາມເລື່ອນ) management (ໃໝ່: CRUD ຈິງ + ກຳນົດເວລາ) ---- */
 function adminMarquee() {
-  EDIT_CACHE.marquee = JSON.parse(JSON.stringify(promoItems()));
-  renderMarqueeAdminList();
+  callServer('getMarqueeItems', [], (list) => {
+    if (!Array.isArray(list)) return showToast((list && list.message) || 'ຜິດພາດ', 'err');
+    EDIT_CACHE.marqueeList = list;
+    renderMarqueeAdminList();
+  });
 }
 function renderMarqueeAdminList() {
-  const list = EDIT_CACHE.marquee || [];
+  const list = EDIT_CACHE.marqueeList || [];
   let html = '<h3><i class="fa-solid fa-scroll"></i> ຂໍ້ຄວາມເລື່ອນ (Marquee)</h3>' +
-    '<p style="font-size:11.5px;color:var(--text-soft);margin:-6px 0 14px;">ຂໍ້ຄວາມທີ່ຈະແລ່ນວົນຢູ່ແຖບຄຳ ໃຕ້ Banner. ໃສ່ emoji ນຳໜ້າໄດ້ ເຊັ່ນ 🔥 💎</p>' +
-    '<button class="btn small" onclick="addMarqueeItem()" style="margin-bottom:14px;"><i class="fa-solid fa-plus"></i> ເພີ່ມຂໍ້ຄວາມ</button>';
-  html += list.map((t, idx) =>
-    '<div class="marquee-edit-row"><input data-mk="1" data-idx="' + idx + '" value="' + esc(t) + '">' +
-    '<button class="icon-btn" data-act="mdel" data-idx="' + idx + '" style="color:#C0392B;"><i class="fa-solid fa-trash"></i></button></div>'
+    '<p style="font-size:11.5px;color:var(--text-soft);margin:-6px 0 14px;">ໃສ່ emoji ນຳໜ້າໄດ້ ເຊັ່ນ 🔥 💎 ແລະ ກຳນົດວັນທີ່ເລີ່ມ-ໝົດ ໄດ້ (ເໝາະກັບໂປຣໂມຊັນຊົ່ວຄາວ)</p>' +
+    '<button class="btn small" onclick="editMarqueeForm()" style="margin-bottom:14px;"><i class="fa-solid fa-plus"></i> ເພີ່ມຂໍ້ຄວາມ</button>';
+  html += list.map((m, idx) =>
+    '<div class="admin-list-item"><div class="top"><div>' +
+    '<div class="name">' + esc(m.text || '') + '</div>' +
+    '<div class="sub">' + (m.status === 'inactive' ? 'ປິດຢູ່' : 'ເປີດໃຊ້') +
+      (m.startDate ? ' | ເລີ່ມ ' + esc(new Date(m.startDate).toLocaleString('lo-LA')) : '') +
+      (m.endDate ? ' - ໝົດ ' + esc(new Date(m.endDate).toLocaleString('lo-LA')) : '') + '</div></div>' +
+    '<div style="display:flex;gap:6px;">' +
+    '<button class="icon-btn up" data-act="mup" data-idx="' + idx + '"><i class="fa-solid fa-arrow-up"></i></button>' +
+    '<button class="icon-btn down" data-act="mdown" data-idx="' + idx + '"><i class="fa-solid fa-arrow-down"></i></button>' +
+    '<button class="icon-btn" data-act="medit" data-idx="' + idx + '"><i class="fa-solid fa-pen"></i></button>' +
+    '<button class="icon-btn" data-act="mdel" data-id="' + esc(m.id) + '" style="color:#C0392B;"><i class="fa-solid fa-trash"></i></button>' +
+    '</div></div></div>'
   ).join('') || '<p style="opacity:.65;font-size:13px;">ຍັງບໍ່ມີຂໍ້ຄວາມ</p>';
-  html += '<button class="btn" id="mq_save" style="margin-top:10px;" onclick="saveMarqueeItems()"><i class="fa-solid fa-check"></i> ບັນທຶກຂໍ້ຄວາມທັງໝົດ</button>' +
-    '<button class="btn secondary" style="margin-top:8px;" onclick="closeAdminModal()">ປິດ</button>';
+  html += '<button class="btn secondary" style="margin-top:10px;" onclick="closeAdminModal()">ປິດ</button>';
   openAdminModal(html);
-  document.querySelectorAll('#adminModalContent [data-mk]').forEach(inp => inp.oninput = () => { EDIT_CACHE.marquee[Number(inp.dataset.idx)] = inp.value; });
-  document.querySelectorAll('#adminModalContent [data-act="mdel"]').forEach(b => b.onclick = () => { EDIT_CACHE.marquee.splice(Number(b.dataset.idx), 1); renderMarqueeAdminList(); });
+  document.querySelectorAll('#adminModalContent [data-act="medit"]').forEach(b => b.onclick = () => editMarqueeForm(EDIT_CACHE.marqueeList[Number(b.dataset.idx)]));
+  document.querySelectorAll('#adminModalContent [data-act="mdel"]').forEach(b => b.onclick = () => deleteMarqueeConfirm(b.dataset.id));
+  document.querySelectorAll('#adminModalContent [data-act="mup"]').forEach(b => b.onclick = () => moveMarqueeItem(Number(b.dataset.idx), -1));
+  document.querySelectorAll('#adminModalContent [data-act="mdown"]').forEach(b => b.onclick = () => moveMarqueeItem(Number(b.dataset.idx), 1));
 }
-function addMarqueeItem() {
-  EDIT_CACHE.marquee = EDIT_CACHE.marquee || [];
-  EDIT_CACHE.marquee.push('✨ ຂໍ້ຄວາມໃໝ່');
-  renderMarqueeAdminList();
+function editMarqueeForm(m) {
+  m = m || {};
+  openAdminModal(
+    '<h3><i class="fa-solid fa-scroll"></i> ' + (m.id ? 'ແກ້ໄຂ' : 'ເພີ່ມ') + 'ຂໍ້ຄວາມເລື່ອນ</h3>' +
+    '<div class="field"><label>ຂໍ້ຄວາມ</label><input id="mf_text" value="' + esc(m.text || '') + '"></div>' +
+    '<div class="row2">' +
+    '<div class="field"><label>ວັນທີ່ເລີ່ມສະແດງ (ບໍ່ບັງຄັບ)</label><input type="datetime-local" id="mf_start" value="' + (m.startDate ? toLocalInput_(m.startDate) : '') + '"></div>' +
+    '<div class="field"><label>ວັນທີ່ໝົດອາຍຸ (ບໍ່ບັງຄັບ)</label><input type="datetime-local" id="mf_end" value="' + (m.endDate ? toLocalInput_(m.endDate) : '') + '"></div>' +
+    '</div>' +
+    '<div class="field"><label>ສະຖານະ</label><select id="mf_status"><option value="active" ' + (m.status !== 'inactive' ? 'selected' : '') + '>ເປີດໃຊ້</option><option value="inactive" ' + (m.status === 'inactive' ? 'selected' : '') + '>ປິດ</option></select></div>' +
+    '<button class="btn" id="mf_save"><i class="fa-solid fa-check"></i> ບັນທຶກ</button>' +
+    '<button class="btn secondary" style="margin-top:8px;" onclick="adminMarquee()">ກັບຄືນ</button>'
+  );
+  document.getElementById('mf_save').onclick = () => saveMarqueeForm(m.id || '');
 }
-function saveMarqueeItems() {
-  setBtnLoading('mq_save', true);
-  callServer('saveSettings', [ADMIN_TOKEN, { promoItems: (EDIT_CACHE.marquee || []).filter(t => t && t.trim()) }], (r) => {
-    setBtnLoading('mq_save', false);
+function saveMarqueeForm(id) {
+  const start = document.getElementById('mf_start').value;
+  const end = document.getElementById('mf_end').value;
+  const item = {
+    id: id || undefined, text: val('mf_text'),
+    startDate: start ? new Date(start).toISOString() : '',
+    endDate: end ? new Date(end).toISOString() : '',
+    status: document.getElementById('mf_status').value
+  };
+  if (!item.text) { showToast('ກະລຸນາປ້ອນຂໍ້ຄວາມ', 'err'); return; }
+  setBtnLoading('mf_save', true);
+  callServer('saveMarqueeItem', [ADMIN_TOKEN, item], (r) => {
+    setBtnLoading('mf_save', false);
     if (!r.success) { showToast(r.message || 'ຜິດພາດ', 'err'); return; }
-    SETTINGS = r.settings; renderMarquee();
-    showToast('ບັນທຶກຂໍ້ຄວາມສຳເລັດ ✅', 'ok');
-    closeAdminModal();
+    showToast('ບັນທຶກສຳເລັດ ✅', 'ok');
+    adminMarquee();
+    refreshHomeMarquee();
   });
+}
+function deleteMarqueeConfirm(id) {
+  if (!confirm('ຢືນຢັນລຶບຂໍ້ຄວາມນີ້?')) return;
+  callServer('deleteMarqueeItem', [ADMIN_TOKEN, id], (r) => {
+    if (r.success) { showToast('ລຶບແລ້ວ', 'ok'); adminMarquee(); refreshHomeMarquee(); }
+    else showToast(r.message || 'ລຶບບໍ່ສຳເລັດ', 'err');
+  });
+}
+function moveMarqueeItem(idx, dir) {
+  const list = EDIT_CACHE.marqueeList; const to = idx + dir;
+  if (!list || to < 0 || to >= list.length) return;
+  const tmp = list[idx]; list[idx] = list[to]; list[to] = tmp;
+  renderMarqueeAdminList();
+  callServer('reorderMarqueeItems', [ADMIN_TOKEN, list.map(m => m.id)], (r) => { if (r.success) refreshHomeMarquee(); });
+}
+function refreshHomeMarquee() {
+  callServer('getMarqueeItems', [], (list) => { if (Array.isArray(list)) { MARQUEE_ITEMS = list.filter(isActiveNowClient_); renderMarquee(); } });
 }
 
 /* ---- Change password ---- */
