@@ -14,70 +14,72 @@
 <link rel="apple-touch-icon" sizes="152x152" href="icons/icon-152.png">
 <link rel="apple-touch-icon" sizes="167x167" href="icons/icon-167.png">
 <link rel="apple-touch-icon" sizes="180x180" href="icons/icon-180.png">
-<meta name="theme-color" content="#15100C">
+<meta name="theme-color" content="#FBF3E1">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="ເທ້ ພຣະເຄື່ອງ">
 
 <link rel="icon" href="https://i.postimg.cc/dQXgr4bm/They.png">
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Lao:wght@400;500;600;700;800&family=Noto+Serif+Lao:wght@500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Lao:wght@400;500;600;700;800&family=Noto+Serif+Lao:wght@500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 <style>
 /* ============================================================
-   ໂຕນສີ / DESIGN TOKENS — Luxe Ivory & Gold
-   ຂາວພາດເທວ (ivory) x ຄຳໂບຮານ (antique gold) x ດຳວາຍນ໌ (deep charcoal/wine)
+   ໂຕນສີ / DESIGN TOKENS — "Luxe Ivory & Gold" (ຮຸ່ນປັບປຸງ 2026)
+   ຂາວພາດເທວ x ຄຳໂບຮານ x ຄຳສົດໃສ — ບໍ່ໃຊ້ພື້ນຫຼັງມືດ/ດຳ ໃນທຸກໜ້າ
    ============================================================ */
 :root{
-  --primary:#8B1E3F;        /* ວາຍນ໌ເຂັ້ມ / jewel wine */
-  --primary-2:#6E1731;
-  --secondary:#B8935A;      /* ຄຳໂບຮານ / antique bronze-gold */
-  --accent:#E3C285;         /* ຄຳອ່ອນ foil highlight */
-  --bg-dark:#15100C;        /* ດຳວາຍນ໌ ສຳລັບ nav / hero */
-  --bg-dark-2:#241811;
+  --primary:#9C6B2E;        /* ຄຳໂບຮານເຂັ້ມ — ໃຊ້ເປັນສີຫຼັກ/icon/ຕົວອັກສອນເນັ້ນ */
+  --primary-2:#7A5220;      /* ຄຳເຂັ້ມກວ່າ ສຳລັບ gradient ປາຍ */
+  --secondary:#D4AF37;      /* ຄຳສົດໃສ (classic gold) */
+  --accent:#F3DFA0;         /* ຄຳອ່ອນ foil highlight */
+  --rose:#A9455D;           /* ວາຍນ໌ dusty rose — ສີຮອງ ສຳລັບ ribbon/badge */
+  --rose-2:#7D2F42;
+  --bg-dark:#F6E9C9;        /* "ໂຕນເຂັ້ມ" ຂອງລະບົບ = ຄຳອ່ອນ/ຄຣີມ ບໍ່ແມ່ນສີດຳອີກຕໍ່ໄປ */
+  --bg-dark-2:#FBF3E1;
   --bg-card:#FFFFFF;
-  --bg-page:#FAF7F2;        /* ຂາວພາດເທວ */
-  --bg-page-2:#F2ECE1;
-  --text-light:#FCF6EA;
-  --text-dark:#221A14;
-  --text-soft:#8A7A68;
-  --grad-from:#8B1E3F;
-  --grad-to:#B8935A;
+  --bg-page:#FDFAF2;        /* ຂາວພາດເທວ */
+  --bg-page-2:#F8EFDC;
+  --text-light:#4A3618;     /* ໂຕໜັງສືເຂັ້ມ ໃຊ້ເທິງພື້ນຄຳອ່ອນ (ແທນຂາວເທິງດຳ) */
+  --text-dark:#3B2E22;      /* ໜັງສືຫຼັກ ນ້ຳຕານເຂັ້ມນຸ້ມ (ບໍ່ດຳສະໜິດ) */
+  --text-soft:#9C8B6E;
+  --grad-from:#D8B45C;
+  --grad-to:#8B6B2E;
   --font-heading:'Noto Serif Lao','Playfair Display',serif;
   --font-body:'Noto Sans Lao','Inter',sans-serif;
-  --line:rgba(34,26,20,.09);
-  --line-strong:rgba(34,26,20,.16);
-  --shadow-soft:0 14px 34px -18px rgba(34,26,20,.30);
-  --shadow-lift:0 20px 44px -20px rgba(34,26,20,.38);
-  --shadow-gold:0 10px 26px -12px rgba(184,147,90,.55);
+  --line:rgba(156,107,46,.16);
+  --line-strong:rgba(156,107,46,.28);
+  --shadow-soft:0 14px 34px -20px rgba(156,107,46,.24);
+  --shadow-lift:0 22px 48px -20px rgba(156,107,46,.32);
+  --shadow-gold:0 10px 24px -10px rgba(201,162,39,.48);
   --radius-lg:22px;
   --radius-md:16px;
   --radius-sm:11px;
-  --side-w:88px;
+  --side-w:92px;
 }
 *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
 html{scroll-behavior:smooth;}
 body{
   margin:0; font-family:var(--font-body);
   background:
-    radial-gradient(circle at 12% -4%, rgba(184,147,90,.14), transparent 42%),
-    radial-gradient(circle at 104% 8%, rgba(139,30,63,.08), transparent 46%),
+    radial-gradient(circle at 12% -4%, rgba(212,175,55,.18), transparent 42%),
+    radial-gradient(circle at 104% 8%, rgba(169,69,93,.07), transparent 46%),
     var(--bg-page);
   color:var(--text-dark); min-height:100vh; padding-bottom:92px; overflow-x:hidden;
 }
 a{text-decoration:none;color:inherit;}
 ::-webkit-scrollbar{width:6px;height:6px;} ::-webkit-scrollbar-thumb{background:var(--secondary);border-radius:10px;}
 h1,h2,h3{font-family:var(--font-heading);}
-:focus-visible{outline:2px solid var(--accent);outline-offset:2px;}
+:focus-visible{outline:2px solid var(--secondary);outline-offset:2px;}
 button{font-family:inherit;}
 @media (prefers-reduced-motion: reduce){ *{animation-duration:.001ms !important; transition-duration:.001ms !important;} }
 
-/* subtle diamond / gem lattice texture used behind hero + dark surfaces */
+/* gem lattice texture — ຄຳອ່ອນເທິງພື້ນຄຣີມ (ແທນຂາວເທິງດຳ) */
 .gem-texture{
   background-image:
-    radial-gradient(circle at 20% 20%, rgba(252,246,234,.10) 0 1px, transparent 1.6px),
-    radial-gradient(circle at 60% 55%, rgba(252,246,234,.08) 0 1px, transparent 1.6px),
-    radial-gradient(circle at 85% 15%, rgba(252,246,234,.10) 0 1px, transparent 1.6px);
+    radial-gradient(circle at 20% 20%, rgba(156,107,46,.14) 0 1px, transparent 1.6px),
+    radial-gradient(circle at 60% 55%, rgba(156,107,46,.10) 0 1px, transparent 1.6px),
+    radial-gradient(circle at 85% 15%, rgba(156,107,46,.14) 0 1px, transparent 1.6px);
   background-size:64px 64px, 90px 90px, 120px 120px;
 }
 
@@ -86,71 +88,59 @@ button{font-family:inherit;}
   position:sticky; top:0; z-index:40;
   display:flex; align-items:center; justify-content:space-between;
   padding:14px 16px; backdrop-filter:blur(16px);
-  background:linear-gradient(120deg, var(--bg-dark) 0%, #2E1D14 55%, var(--grad-from) 130%);
-  box-shadow:0 8px 24px -10px rgba(0,0,0,.45);
-  border-bottom:1px solid rgba(227,194,133,.18);
+  background:linear-gradient(120deg, var(--bg-card) 0%, var(--bg-dark) 62%, var(--accent) 140%);
+  box-shadow:0 8px 22px -12px rgba(156,107,46,.28);
+  border-bottom:1px solid var(--line-strong);
 }
 .brand{display:flex; align-items:center; gap:11px; min-width:0;}
-.brand img{width:42px;height:42px;border-radius:13px;object-fit:cover;border:2px solid rgba(227,194,133,.55);box-shadow:0 4px 14px rgba(0,0,0,.35);flex:0 0 auto;}
+.brand img{width:44px;height:44px;border-radius:14px;object-fit:cover;border:2px solid rgba(156,107,46,.35);box-shadow:0 4px 14px rgba(156,107,46,.22);flex:0 0 auto;background:#fff;}
 .brand .logo-fallback{
-  width:42px;height:42px;border-radius:13px;display:flex;align-items:center;justify-content:center;
-  background:linear-gradient(135deg, var(--secondary), var(--accent)); font-weight:800; font-size:17px; border:2px solid rgba(255,255,255,.35); color:#241811;flex:0 0 auto;
+  width:44px;height:44px;border-radius:14px;display:flex;align-items:center;justify-content:center;
+  background:linear-gradient(135deg, var(--secondary), var(--primary)); font-weight:800; font-size:17px; border:2px solid #fff; color:#fff;flex:0 0 auto;
+  box-shadow:var(--shadow-gold);
 }
 .brand-text{min-width:0;}
-.brand-text .name{font-weight:800;font-size:16px;line-height:1.15;color:var(--text-light);font-family:var(--font-heading);letter-spacing:.2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.brand-text .tag{font-size:10.5px;opacity:.75;color:var(--accent);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;letter-spacing:.3px;}
+.brand-text .name{font-weight:800;font-size:16px;line-height:1.15;color:var(--text-dark);font-family:var(--font-heading);letter-spacing:.2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.brand-text .tag{font-size:10.5px;opacity:.85;color:var(--primary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;letter-spacing:.3px;font-weight:600;}
 .top-actions{display:flex;gap:10px;align-items:center;flex:0 0 auto;}
 .icon-btn-top{
   width:44px;height:44px;border-radius:14px;display:flex;align-items:center;justify-content:center;
-  background:rgba(227,194,133,.14); border:1px solid rgba(227,194,133,.28); font-size:17px; cursor:pointer; color:var(--accent); position:relative;
+  background:#fff; border:1px solid var(--line-strong); font-size:17px; cursor:pointer; color:var(--primary); position:relative;
+  box-shadow:0 4px 12px -6px rgba(156,107,46,.22);
 }
 .icon-btn-top:active{transform:scale(.92);}
-.admin-dot{position:absolute;top:-2px;right:-2px;width:12px;height:12px;border-radius:50%;background:#3FCE7B;border:2px solid var(--bg-dark);box-shadow:0 0 0 2px rgba(63,206,123,.25);}
+.admin-dot{position:absolute;top:-2px;right:-2px;width:12px;height:12px;border-radius:50%;background:#2FA968;border:2px solid #fff;box-shadow:0 0 0 2px rgba(47,169,104,.25);}
 
-/* ---------- BANNER / HERO ---------- */
-.banner{
-  margin:14px 16px; border-radius:26px; padding:30px 24px 26px;
-  background:
-    radial-gradient(circle at 88% 0%, rgba(227,194,133,.30), transparent 55%),
-    linear-gradient(135deg, var(--bg-dark) 0%, #2C1B12 48%, var(--grad-from) 100%);
-  position:relative; overflow:hidden; box-shadow:var(--shadow-lift);
-  border:1px solid rgba(227,194,133,.22);
-}
-.banner-slider{margin:14px 16px;border-radius:26px;overflow:hidden;position:relative;box-shadow:var(--shadow-lift);border:1px solid var(--line);}
-.slider-track{display:flex;transition:transform .5s ease;}
-.slide{min-width:100%;position:relative;aspect-ratio:16/8;background:linear-gradient(135deg,var(--grad-from),var(--grad-to));display:flex;flex-direction:column;justify-content:center;padding:26px 24px;}
+/* ---------- BANNER / HERO (slider) ---------- */
+.banner-slider{margin:14px 16px;border-radius:26px;overflow:hidden;position:relative;box-shadow:var(--shadow-lift);border:1px solid var(--line-strong);}
+.slider-track{display:flex;transition:transform .5s cubic-bezier(.2,.8,.2,1);}
+.slide{min-width:100%;position:relative;aspect-ratio:16/8;background:linear-gradient(135deg,var(--grad-from),var(--grad-to));display:flex;flex-direction:column;justify-content:center;padding:26px 26px;overflow:hidden;}
+.slide::before{content:'';position:absolute;inset:0;
+  background:repeating-linear-gradient(115deg, rgba(255,255,255,.09) 0 2px, transparent 2px 34px);}
+.slide::after{content:'';position:absolute;right:-18px;bottom:-24px;width:150px;height:150px;border-radius:50%;border:1px solid rgba(255,255,255,.35);}
 .slide img.slide-bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;}
-.slide .slide-overlay{position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.15),rgba(0,0,0,.45));z-index:1;}
-.slide .slide-content{position:relative;z-index:2;color:#fff;}
-.slide h1{margin:0 0 8px;font-size:22px;font-weight:800;}
-.slide p{margin:0;font-size:13px;opacity:.9;}
+.slide .slide-overlay{position:absolute;inset:0;background:linear-gradient(180deg,rgba(59,46,34,.06),rgba(59,46,34,.42));z-index:1;}
+.slide .slide-content{position:relative;z-index:2;color:#fff;max-width:82%;}
+.slide .eyebrow-chip{display:inline-flex;align-items:center;gap:6px;font-size:10px;letter-spacing:1.4px;font-weight:800;text-transform:uppercase;background:rgba(255,255,255,.22);padding:5px 12px;border-radius:999px;margin-bottom:10px;}
+.slide h1{margin:0 0 8px;font-size:23px;font-weight:800;text-shadow:0 2px 14px rgba(59,46,34,.25);}
+.slide p{margin:0;font-size:13px;opacity:.95;line-height:1.55;}
 .slider-dots{position:absolute;bottom:12px;left:0;right:0;display:flex;justify-content:center;gap:6px;z-index:3;}
-.slider-dots .dot{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.5);cursor:pointer;}
+.slider-dots .dot{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.55);cursor:pointer;}
 .slider-dots .dot.active{background:#fff;width:20px;border-radius:5px;}
 
-.promo-marquee{margin:0 16px 14px;background:linear-gradient(100deg,var(--primary),var(--secondary));border-radius:14px;overflow:hidden;padding:10px 0;}
+.promo-marquee{margin:0 16px 14px;background:linear-gradient(100deg,var(--primary),var(--secondary));border-radius:14px;overflow:hidden;padding:10px 0;box-shadow:var(--shadow-gold);}
 .marquee-track{display:flex;white-space:nowrap;animation:marquee-scroll 18s linear infinite;}
 .marquee-track span{color:#fff;font-weight:700;font-size:12.5px;padding:0 26px;display:inline-flex;align-items:center;gap:8px;}
 @keyframes marquee-scroll{0%{transform:translateX(0);}100%{transform:translateX(-50%);}}
 
-.banner::before{content:'';position:absolute;inset:0;
-  background:repeating-linear-gradient(115deg, rgba(227,194,133,.055) 0 2px, transparent 2px 34px);}
-.banner .eyebrow{position:relative;display:inline-flex;align-items:center;gap:6px;font-size:10.5px;letter-spacing:1.4px;font-weight:700;color:var(--accent);text-transform:uppercase;margin-bottom:10px;opacity:.9;}
-.banner .eyebrow::before{content:'';width:16px;height:1px;background:var(--accent);display:inline-block;}
-.banner h1{margin:0 0 8px;font-size:24px;font-weight:800;position:relative;
-  background:linear-gradient(100deg,#FFF6E3,var(--accent) 60%,#FFF6E3);
-  -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;}
-.banner p{margin:0;font-size:13px;line-height:1.6;position:relative;color:rgba(252,246,234,.82);max-width:78%;}
-.banner .deco{position:absolute;right:-6px;bottom:-10px;font-size:98px;opacity:.14;color:var(--accent);transform:rotate(-8deg);}
-.banner .deco-ring{position:absolute;right:20px;top:-30px;width:120px;height:120px;border-radius:50%;border:1px solid rgba(227,194,133,.25);}
-
-/* ---------- FLASH SALE PANEL (ໜ້າປະມູນ) ---------- */
-.flash-panel{margin:0 16px 8px;background:linear-gradient(100deg,#C0263F,#8B1E3F);border-radius:20px;padding:16px 14px;box-shadow:var(--shadow-lift);}
-.flash-head{display:flex;align-items:center;gap:10px;margin-bottom:12px;}
+/* ---------- FLASH SALE PANEL (ໜ້າຫຼັກ ປະມູນ) ---------- */
+.flash-panel{margin:0 16px 8px;background:linear-gradient(100deg,var(--rose),var(--rose-2));border-radius:20px;padding:16px 14px;box-shadow:var(--shadow-lift);position:relative;overflow:hidden;}
+.flash-panel::after{content:'';position:absolute;right:-30px;top:-30px;width:120px;height:120px;border-radius:50%;background:rgba(255,255,255,.08);}
+.flash-head{display:flex;align-items:center;gap:10px;margin-bottom:12px;position:relative;}
 .flash-title{color:#fff;font-weight:800;font-size:15px;display:flex;align-items:center;gap:8px;}
-.flash-timer{background:rgba(0,0,0,.25);color:#fff;font-size:12px;font-weight:700;padding:4px 10px;border-radius:8px;}
-.see-all-flash{margin-left:auto;color:#fff;font-size:11.5px;font-weight:700;opacity:.9;}
-.flash-scroll{display:flex;gap:12px;overflow-x:auto;padding-bottom:4px;}
+.flash-timer{background:rgba(255,255,255,.18);color:#fff;font-size:12px;font-weight:700;padding:4px 10px;border-radius:8px;}
+.see-all-flash{margin-left:auto;color:#fff;font-size:11.5px;font-weight:700;opacity:.92;}
+.flash-scroll{display:flex;gap:12px;overflow-x:auto;padding-bottom:4px;position:relative;}
 .flash-scroll .card-wrap{flex:0 0 150px;}
 .flash-scroll .card{background:#fff;}
 
@@ -165,22 +155,22 @@ button{font-family:inherit;}
 .pill-row::-webkit-scrollbar{display:none;}
 .pill{
   flex:0 0 auto;padding:11px 18px;border-radius:999px;font-size:12.5px;font-weight:700;
-  background:#fff;border:1px solid var(--line);cursor:pointer;white-space:nowrap;color:var(--text-dark);
-  box-shadow:0 3px 10px -5px rgba(34,26,20,.18);min-height:40px;display:flex;align-items:center;transition:.18s;
+  background:#fff;border:1px solid var(--line-strong);cursor:pointer;white-space:nowrap;color:var(--text-dark);
+  box-shadow:0 3px 10px -5px rgba(156,107,46,.20);min-height:40px;display:flex;align-items:center;transition:.18s;
 }
 .pill.active{background:linear-gradient(100deg,var(--grad-from),var(--grad-to));border-color:transparent;color:#fff;box-shadow:var(--shadow-gold);}
 .pill i{margin-right:5px;}
 
-.searchbar{display:flex;align-items:center;gap:9px;background:#fff;border:1px solid var(--line);border-radius:var(--radius-md);padding:13px 15px;margin:2px 0 14px;box-shadow:0 3px 12px -6px rgba(34,26,20,.18);}
+.searchbar{display:flex;align-items:center;gap:9px;background:#fff;border:1px solid var(--line-strong);border-radius:var(--radius-md);padding:13px 15px;margin:2px 0 14px;box-shadow:0 3px 12px -6px rgba(156,107,46,.18);}
 .searchbar i{color:var(--secondary);font-size:15px;}
 .searchbar input{border:none;outline:none;flex:1;font-family:inherit;font-size:14px;background:transparent;color:var(--text-dark);}
 
 /* ---------- PAGE SUB-HEADER (ປຸ່ມກັບຄືນ) ---------- */
 .page-subheader{display:flex;align-items:center;gap:12px;padding:14px 16px 6px;}
 .back-btn{
-  width:44px;height:44px;border-radius:14px;background:#fff;border:1px solid var(--line);
+  width:44px;height:44px;border-radius:14px;background:#fff;border:1px solid var(--line-strong);
   display:flex;align-items:center;justify-content:center;font-size:17px;color:var(--primary);
-  cursor:pointer;box-shadow:0 3px 10px -5px rgba(34,26,20,.18);flex:0 0 auto;
+  cursor:pointer;box-shadow:0 3px 10px -5px rgba(156,107,46,.20);flex:0 0 auto;
 }
 .back-btn:active{transform:scale(.92);}
 .page-subheader h2{margin:0;font-size:18px;color:var(--text-dark);display:flex;align-items:center;gap:9px;}
@@ -195,66 +185,67 @@ button{font-family:inherit;}
 }
 .card:active{transform:scale(.98);}
 @media(hover:hover){ .card:hover{transform:translateY(-3px); box-shadow:var(--shadow-lift);} }
-.card .img{width:100%;aspect-ratio:1/1;object-fit:cover;background:linear-gradient(150deg,#F2ECE1,#E7DCC7);display:flex;align-items:center;justify-content:center;font-size:34px;color:#CBB68F;}
+.card .img{width:100%;aspect-ratio:1/1;object-fit:cover;background:linear-gradient(150deg,#FBF3E1,#F0DFB8);display:flex;align-items:center;justify-content:center;font-size:34px;color:#D8B45C;}
 .card .body{padding:11px 13px 13px;}
 .card .name{font-size:13.5px;font-weight:700;margin:0 0 5px;line-height:1.3;color:var(--text-dark);}
 .card .price{font-size:14px;font-weight:800;color:var(--primary);font-family:var(--font-heading);}
-.card .meta{font-size:11px;opacity:.65;margin-top:3px;color:var(--text-soft);display:flex;align-items:center;gap:4px;}
+.card .meta{font-size:11px;opacity:.75;margin-top:3px;color:var(--text-soft);display:flex;align-items:center;gap:4px;}
 .ribbon{position:absolute;top:11px;left:-6px;padding:4px 13px 4px 16px;font-size:9.5px;font-weight:800;color:#fff;letter-spacing:.4px;
-  box-shadow:0 4px 10px rgba(0,0,0,.28); z-index:2;text-transform:uppercase;}
-.ribbon::after{content:'';position:absolute;left:0;bottom:-6px;border-left:6px solid transparent;border-top:6px solid rgba(0,0,0,.35);}
-.ribbon.rent{background:linear-gradient(100deg,#2F6B3E,#4F9D5F);}
-.ribbon.pawn{background:linear-gradient(100deg,var(--secondary),var(--accent));color:#2B2013;}
-.ribbon.auction{background:linear-gradient(100deg,var(--primary),#A3223F);}
+  box-shadow:0 4px 10px rgba(156,107,46,.28); z-index:2;text-transform:uppercase;}
+.ribbon::after{content:'';position:absolute;left:0;bottom:-6px;border-left:6px solid transparent;border-top:6px solid rgba(59,46,34,.28);}
+.ribbon.rent{background:linear-gradient(100deg,#3E8B54,#5FAE72);}
+.ribbon.pawn{background:linear-gradient(100deg,var(--secondary),var(--accent));color:#4A3618;}
+.ribbon.auction{background:linear-gradient(100deg,var(--rose),var(--rose-2));}
 .card-wrap{position:relative;}
 
 /* live */
 .live-card{border-radius:var(--radius-lg);overflow:hidden;margin-bottom:14px;border:1px solid var(--line);background:var(--bg-card);box-shadow:var(--shadow-soft);}
-.live-frame-wrap{position:relative;width:100%;aspect-ratio:16/9;background:#000;}
+.live-frame-wrap{position:relative;width:100%;aspect-ratio:16/9;background:#1B140C;}
 .live-frame-wrap iframe{width:100%;height:100%;border:0;}
-.live-tag{position:absolute;top:10px;left:10px;background:#C81E3A;color:#fff;font-size:11px;font-weight:800;padding:4px 11px;border-radius:999px;display:flex;align-items:center;gap:5px;z-index:2;box-shadow:0 4px 10px rgba(0,0,0,.3);}
+.live-tag{position:absolute;top:10px;left:10px;background:var(--rose);color:#fff;font-size:11px;font-weight:800;padding:4px 11px;border-radius:999px;display:flex;align-items:center;gap:5px;z-index:2;box-shadow:0 4px 10px rgba(0,0,0,.25);}
 .live-tag .dot{width:7px;height:7px;background:#fff;border-radius:50%;animation:pulse 1.2s infinite;}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
 .live-body{padding:13px 15px;}
 
 /* auction detail */
 .auction-timer{display:flex;gap:8px;margin-top:12px;}
-.timer-box{background:linear-gradient(160deg,var(--bg-dark),#33221A);color:var(--accent);border-radius:13px;padding:9px 11px;text-align:center;min-width:50px;box-shadow:inset 0 0 0 1px rgba(227,194,133,.35);}
+.timer-box{background:linear-gradient(160deg,var(--secondary),var(--primary));color:#fff;border-radius:13px;padding:9px 11px;text-align:center;min-width:50px;box-shadow:var(--shadow-gold);}
 .timer-box b{display:block;font-size:17px;font-family:var(--font-heading);}
-.timer-box span{font-size:9px;opacity:.75;color:var(--text-light);}
+.timer-box span{font-size:9px;opacity:.9;}
 
 /* ---------- BOTTOM NAV (mobile) ---------- */
 .bottomnav{
   position:fixed;bottom:0;left:0;right:0;z-index:50;
   display:flex;justify-content:space-around;align-items:center;
   padding:8px 6px calc(8px + env(safe-area-inset-bottom));
-  background:linear-gradient(180deg,#231610,var(--bg-dark));
-  border-top:1px solid rgba(227,194,133,.20);
-  box-shadow:0 -8px 24px rgba(0,0,0,.3);
+  background:linear-gradient(180deg,#FFFDF7,var(--bg-dark-2));
+  border-top:1px solid var(--line-strong);
+  box-shadow:0 -8px 24px -8px rgba(156,107,46,.22);
 }
-.nav-item{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;font-size:10px;opacity:.55;cursor:pointer;padding:8px 10px;border-radius:14px;transition:.18s;color:var(--text-light);min-width:52px;min-height:52px;}
+.nav-item{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;font-size:10px;opacity:.62;cursor:pointer;padding:8px 10px;border-radius:14px;transition:.18s;color:var(--text-dark);min-width:52px;min-height:52px;font-weight:600;}
 .nav-item i{font-size:20px;}
-.nav-item.active{opacity:1;color:var(--accent);background:rgba(227,194,133,.14);}
+.nav-item.active{opacity:1;color:var(--primary);background:linear-gradient(160deg, rgba(212,175,55,.20), rgba(212,175,55,.06));}
 .nav-item.active i{transform:translateY(-1px);}
 .nav-item:active{transform:scale(.9);}
 
 /* ---------- SIDE NAV (desktop/tablet dock) ---------- */
 .sidenav{
   display:none; position:fixed; left:0; top:0; bottom:0; width:var(--side-w); z-index:60;
-  background:linear-gradient(180deg,var(--bg-dark),#231610);
-  border-right:1px solid rgba(227,194,133,.16);
+  background:linear-gradient(180deg,#FFFDF7,var(--bg-dark-2));
+  border-right:1px solid var(--line-strong);
   flex-direction:column; align-items:center; padding:20px 0 14px; gap:6px;
+  box-shadow:6px 0 22px -14px rgba(156,107,46,.20);
 }
-.sidenav .side-logo{width:48px;height:48px;border-radius:14px;object-fit:cover;border:2px solid rgba(227,194,133,.5);margin-bottom:18px;}
-.sidenav .side-item{width:64px;display:flex;flex-direction:column;align-items:center;gap:5px;padding:10px 4px;border-radius:14px;color:var(--text-light);opacity:.55;cursor:pointer;font-size:9.5px;transition:.18s;}
+.sidenav .side-logo{width:50px;height:50px;border-radius:15px;object-fit:cover;border:2px solid var(--line-strong);margin-bottom:18px;background:#fff;}
+.sidenav .side-item{width:68px;display:flex;flex-direction:column;align-items:center;gap:5px;padding:10px 4px;border-radius:14px;color:var(--text-dark);opacity:.62;cursor:pointer;font-size:9.5px;transition:.18s;font-weight:600;}
 .sidenav .side-item i{font-size:19px;}
-.sidenav .side-item.active{opacity:1;color:var(--accent);background:rgba(227,194,133,.14);box-shadow:inset 0 0 0 1px rgba(227,194,133,.22);}
+.sidenav .side-item.active{opacity:1;color:var(--primary);background:linear-gradient(160deg, rgba(212,175,55,.20), rgba(212,175,55,.06));box-shadow:inset 0 0 0 1px rgba(212,175,55,.30);}
 .sidenav .side-item:hover{opacity:.9;}
 .sidenav .side-spacer{flex:1;}
-.sidenav .side-fab{width:52px;height:52px;border-radius:16px;background:linear-gradient(135deg,var(--grad-from),var(--grad-to));display:flex;align-items:center;justify-content:center;color:#fff;font-size:18px;cursor:pointer;box-shadow:var(--shadow-gold);}
+.sidenav .side-fab{width:54px;height:54px;border-radius:16px;background:linear-gradient(135deg,var(--grad-from),var(--grad-to));display:flex;align-items:center;justify-content:center;color:#fff;font-size:18px;cursor:pointer;box-shadow:var(--shadow-gold);}
 
 /* ---------- MODAL / DRAWER ---------- */
-.overlay{position:fixed;inset:0;background:rgba(15,10,7,.6);backdrop-filter:blur(3px);z-index:90;display:none;}
+.overlay{position:fixed;inset:0;background:rgba(74,54,24,.34);backdrop-filter:blur(3px);z-index:90;display:none;}
 .overlay.show{display:block;}
 .drawer{
   position:fixed;top:0;right:0;height:100%;width:86%;max-width:360px;z-index:95;
@@ -263,34 +254,34 @@ button{font-family:inherit;}
   border-left:1px solid var(--line);
 }
 .drawer.show{transform:translateX(0);}
-.drawer-head{padding:20px 18px;background:linear-gradient(120deg,var(--bg-dark),var(--grad-from) 140%);display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:2;border-bottom:1px solid rgba(227,194,133,.18);}
-.drawer-head h3{margin:0;font-size:16px;color:var(--text-light);display:flex;align-items:center;gap:8px;}
-.drawer-head h3 i{color:var(--accent);}
-.drawer-close{width:36px;height:36px;border-radius:11px;background:rgba(227,194,133,.16);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;color:var(--accent);flex:0 0 auto;}
+.drawer-head{padding:20px 18px;background:linear-gradient(120deg, var(--bg-card), var(--accent) 160%);display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:2;border-bottom:1px solid var(--line-strong);}
+.drawer-head h3{margin:0;font-size:16px;color:var(--text-dark);display:flex;align-items:center;gap:8px;}
+.drawer-head h3 i{color:var(--primary);}
+.drawer-close{width:36px;height:36px;border-radius:11px;background:#fff;border:1px solid var(--line-strong);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;color:var(--primary);flex:0 0 auto;}
 .drawer-close:active{transform:scale(.9);}
 .drawer-body{padding:14px;}
 .drawer-item{display:flex;align-items:center;gap:12px;padding:15px 12px;border-radius:13px;font-size:14px;font-weight:600;cursor:pointer;color:var(--text-dark);min-height:48px;}
-.drawer-item:active{background:rgba(139,30,63,.08);}
+.drawer-item:active{background:rgba(156,107,46,.08);}
 .drawer-item i{width:22px;text-align:center;color:var(--primary);}
 
 .modal-center{position:fixed;inset:0;z-index:96;display:none;align-items:center;justify-content:center;padding:20px;}
 .modal-center.show{display:flex;}
-.modal-box{position:relative;background:#fffdf9;border:1px solid var(--line);border-radius:24px;width:100%;max-width:420px;max-height:88vh;overflow-y:auto;padding:24px 21px 21px;box-shadow:0 34px 70px -22px rgba(0,0,0,.45);}
+.modal-box{position:relative;background:#fffdf9;border:1px solid var(--line);border-radius:24px;width:100%;max-width:420px;max-height:88vh;overflow-y:auto;padding:24px 21px 21px;box-shadow:0 34px 70px -22px rgba(59,46,34,.35);}
 .modal-box h3{margin:0 0 14px;font-size:17.5px;display:flex;align-items:center;gap:9px;color:var(--primary);padding-right:34px;}
 .modal-close-x{position:absolute;top:15px;right:15px;width:34px;height:34px;border-radius:11px;background:var(--bg-page);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;color:var(--text-dark);cursor:pointer;font-size:15px;z-index:5;}
 .modal-close-x:active{transform:scale(.9);}
 
 /* forms */
 .field{margin-bottom:12px;}
-.field label{display:block;font-size:12px;opacity:.72;margin-bottom:5px;color:var(--text-soft);font-weight:600;}
+.field label{display:block;font-size:12px;opacity:.78;margin-bottom:5px;color:var(--text-soft);font-weight:600;}
 .field input,.field select,.field textarea{
-  width:100%;padding:12px 13px;border-radius:13px;border:1px solid var(--line);
+  width:100%;padding:12px 13px;border-radius:13px;border:1px solid var(--line-strong);
   background:#fff;color:var(--text-dark);font-size:14px;font-family:inherit;
 }
-.field input:focus,.field select:focus,.field textarea:focus{outline:none;border-color:var(--secondary);box-shadow:0 0 0 3px rgba(184,147,90,.18);}
+.field input:focus,.field select:focus,.field textarea:focus{outline:none;border-color:var(--secondary);box-shadow:0 0 0 3px rgba(212,175,55,.20);}
 .field textarea{resize:vertical;min-height:70px;}
 .field .hint{font-size:10.5px;color:var(--text-soft);margin-top:4px;}
-.img-preview{width:100%;aspect-ratio:16/9;border-radius:13px;object-fit:cover;background:#F2ECE1;margin-top:8px;display:none;}
+.img-preview{width:100%;aspect-ratio:16/9;border-radius:13px;object-fit:cover;background:#F8EFDC;margin-top:8px;display:none;}
 .btn{
   display:inline-flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:14px;border:none;
   border-radius:15px;font-weight:700;font-size:14px;cursor:pointer;color:#fff;min-height:49px;
@@ -299,59 +290,67 @@ button{font-family:inherit;}
 .btn:active{transform:scale(.98);}
 .btn:disabled{opacity:.6;cursor:default;transform:none;}
 .btn.secondary{background:#fff;color:var(--text-dark);border:1px solid var(--line-strong);box-shadow:none;}
-.btn.danger{background:linear-gradient(100deg,#B91C1C,#DC2626);}
-.btn.gold{background:linear-gradient(100deg,var(--secondary),var(--accent));color:#2B2013;}
+.btn.danger{background:linear-gradient(100deg,#C0392B,#E4573D);}
+.btn.gold{background:linear-gradient(100deg,var(--secondary),var(--accent));color:#4A3618;}
+.btn.rose{background:linear-gradient(100deg,var(--rose),var(--rose-2));}
 .btn.small{padding:10px 14px;font-size:12px;width:auto;min-height:40px;}
 .row2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
 .row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;}
 
-.toast{position:fixed;bottom:104px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--bg-dark);color:var(--text-light);border:1px solid rgba(227,194,133,.32);padding:12px 18px;border-radius:15px;font-size:13px;z-index:200;opacity:0;transition:.25s;display:flex;align-items:center;gap:8px;box-shadow:0 14px 34px rgba(0,0,0,.4);max-width:88vw;}
+.toast{position:fixed;bottom:104px;left:50%;transform:translateX(-50%) translateY(20px);background:#fff;color:var(--text-dark);border:1px solid var(--line-strong);padding:12px 18px;border-radius:15px;font-size:13px;z-index:200;opacity:0;transition:.25s;display:flex;align-items:center;gap:8px;box-shadow:0 14px 34px -10px rgba(59,46,34,.30);max-width:88vw;font-weight:600;}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
-.toast.err{border-color:#EF4444;} .toast.ok{border-color:#3FCE7B;}
+.toast.err{border-color:#E4573D;color:#B23A26;} .toast.ok{border-color:#2FA968;color:#1E7A4C;}
 
-.empty{text-align:center;padding:44px 20px;opacity:.6;font-size:13px;color:var(--text-soft);}
+.empty{text-align:center;padding:44px 20px;opacity:.7;font-size:13px;color:var(--text-soft);}
 .empty i{font-size:36px;margin-bottom:12px;display:block;color:var(--secondary);}
 
 /* admin table */
 .admin-list-item{background:#fff;border:1px solid var(--line);border-radius:15px;padding:13px;margin-bottom:10px;}
 .admin-list-item .top{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;}
 .admin-list-item .name{font-weight:700;font-size:13.5px;color:var(--text-dark);}
-.admin-list-item .sub{font-size:11.5px;opacity:.65;margin-top:2px;color:var(--text-soft);}
+.admin-list-item .sub{font-size:11.5px;opacity:.7;margin-top:2px;color:var(--text-soft);}
 .status-tag{font-size:10.5px;padding:3px 9px;border-radius:999px;font-weight:700;white-space:nowrap;}
-.icon-btn{width:38px;height:38px;border-radius:11px;background:var(--bg-page);border:1px solid var(--line);color:var(--text-dark);display:inline-flex;align-items:center;justify-content:center;cursor:pointer;flex:0 0 auto;}
+.icon-btn{width:38px;height:38px;border-radius:11px;background:var(--bg-page);border:1px solid var(--line-strong);color:var(--text-dark);display:inline-flex;align-items:center;justify-content:center;cursor:pointer;flex:0 0 auto;}
 .icon-btn:active{transform:scale(.92);}
+.icon-btn.up,.icon-btn.down{color:var(--primary);}
 
 .color-swatch-row{display:flex;gap:10px;flex-wrap:wrap;}
 .swatch-item{display:flex;flex-direction:column;align-items:center;gap:5px;font-size:9.5px;color:var(--text-soft);}
-.swatch-item input[type=color]{width:46px;height:46px;border-radius:13px;border:1px solid var(--line);background:none;cursor:pointer;}
+.swatch-item input[type=color]{width:46px;height:46px;border-radius:13px;border:1px solid var(--line-strong);background:none;cursor:pointer;}
 
 .icon-edit-row{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
-.icon-edit-row .icon-preview{width:40px;height:40px;border-radius:11px;background:var(--bg-page);display:flex;align-items:center;justify-content:center;color:var(--primary);flex:0 0 auto;}
+.icon-edit-row .icon-preview{width:40px;height:40px;border-radius:11px;background:var(--bg-page);display:flex;align-items:center;justify-content:center;color:var(--primary);flex:0 0 auto;border:1px solid var(--line);}
 .icon-edit-row .icon-fields{flex:1;display:grid;grid-template-columns:1fr 1fr;gap:6px;}
-.icon-edit-row input{padding:9px 10px;font-size:12.5px;border-radius:9px;border:1px solid var(--line);}
+.icon-edit-row input{padding:9px 10px;font-size:12.5px;border-radius:9px;border:1px solid var(--line-strong);}
 .section-divider{display:flex;align-items:center;gap:10px;margin:18px 0 12px;}
-.section-divider span{font-size:11px;font-weight:800;letter-spacing:.6px;text-transform:uppercase;color:var(--secondary);white-space:nowrap;}
+.section-divider span{font-size:11px;font-weight:800;letter-spacing:.6px;text-transform:uppercase;color:var(--primary);white-space:nowrap;}
 .section-divider::before,.section-divider::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,transparent,var(--line-strong),transparent);}
 
-.loading-spin{border:3px solid rgba(139,30,63,.12);border-top-color:var(--secondary);width:36px;height:36px;border-radius:50%;animation:spin 1s linear infinite;margin:0 auto;}
+.loading-spin{border:3px solid rgba(156,107,46,.14);border-top-color:var(--secondary);width:36px;height:36px;border-radius:50%;animation:spin 1s linear infinite;margin:0 auto;}
 @keyframes spin{to{transform:rotate(360deg)}}
 
 .fab-contact{position:fixed;right:16px;bottom:98px;z-index:45;width:56px;height:56px;border-radius:50%;
   background:linear-gradient(135deg,var(--grad-from),var(--grad-to));color:#fff;display:flex;align-items:center;justify-content:center;
-  box-shadow:0 14px 30px -10px rgba(139,30,63,.6);font-size:22px;border:2px solid rgba(255,255,255,.4);cursor:pointer;}
+  box-shadow:0 16px 30px -10px rgba(156,107,46,.55);font-size:22px;border:2px solid #fff;cursor:pointer;}
 .fab-contact:active{transform:scale(.92);}
 
 .tabbar{display:flex;gap:6px;overflow-x:auto;margin-bottom:12px;}
-.tabbar .tbtn{flex:0 0 auto;padding:9px 14px;border-radius:11px;font-size:12px;font-weight:700;background:var(--bg-page);border:1px solid var(--line);cursor:pointer;color:var(--text-dark);}
+.tabbar .tbtn{flex:0 0 auto;padding:9px 14px;border-radius:11px;font-size:12px;font-weight:700;background:var(--bg-page);border:1px solid var(--line-strong);cursor:pointer;color:var(--text-dark);}
 .tabbar .tbtn.active{background:var(--primary);color:#fff;border-color:transparent;}
 
 #initLoading{position:fixed;inset:0;background:var(--bg-page);z-index:999;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:16px;text-align:center;padding:0 30px;}
 #initLoading .init-logo{width:64px;height:64px;border-radius:18px;object-fit:cover;box-shadow:var(--shadow-gold);}
 
+/* banner slide editor thumbnail row */
+.banner-edit-item{background:#fff;border:1px solid var(--line);border-radius:15px;padding:13px;margin-bottom:12px;}
+.banner-edit-item .bthumb{width:100%;aspect-ratio:16/8;border-radius:11px;object-fit:cover;background:linear-gradient(150deg,#FBF3E1,#F0DFB8);margin-bottom:10px;}
+.marquee-edit-row{display:flex;align-items:center;gap:8px;margin-bottom:9px;}
+.marquee-edit-row input{flex:1;}
+
 /* ---------- RESPONSIVE: TABLET (≥820px) ---------- */
 @media (min-width:820px){
   body{padding-bottom:0;}
-  .app-shell{max-width:520px;margin:0 auto;box-shadow:0 0 70px rgba(34,26,20,.16);min-height:100vh;position:relative;background:var(--bg-page);}
+  .app-shell{max-width:520px;margin:0 auto;box-shadow:0 0 70px rgba(156,107,46,.14);min-height:100vh;position:relative;background:var(--bg-page);}
   .bottomnav{max-width:520px;left:50%;transform:translateX(-50%);}
   .drawer{max-width:520px;}
   .fab-contact{right:calc(50% - 260px + 16px);}
@@ -361,8 +360,8 @@ button{font-family:inherit;}
 /* ---------- RESPONSIVE: DESKTOP / PC (≥1080px) — sidebar dock layout ---------- */
 @media (min-width:1080px){
   body{padding-bottom:0;background:
-    radial-gradient(circle at 12% -4%, rgba(184,147,90,.14), transparent 42%),
-    radial-gradient(circle at 104% 8%, rgba(139,30,63,.08), transparent 46%),
+    radial-gradient(circle at 12% -4%, rgba(212,175,55,.16), transparent 42%),
+    radial-gradient(circle at 104% 8%, rgba(169,69,93,.06), transparent 46%),
     var(--bg-page-2);}
   .sidenav{display:flex;}
   .app-shell{
@@ -373,12 +372,14 @@ button{font-family:inherit;}
   .bottomnav{display:none;}
   .fab-contact{right:36px; bottom:32px;}
   .topbar{border-radius:var(--radius-lg); margin:0 0 4px; box-shadow:var(--shadow-lift);}
-  .banner{margin:16px 0;}
   .section{padding:6px 0 4px;}
   .page-subheader{padding:14px 0 6px;}
   .grid{grid-template-columns:repeat(4,1fr); gap:18px;}
   .drawer{max-width:400px;}
   .modal-box{max-width:460px;}
+  .banner-slider{margin:16px 0;}
+  .promo-marquee{margin:0 0 14px;}
+  .flash-panel{margin:0 0 8px;}
 }
 @media (min-width:1400px){
   .app-shell{max-width:1320px;}
@@ -387,17 +388,19 @@ button{font-family:inherit;}
 
 .desktop-hint{display:none;}
 .admin-shell{display:flex;min-height:100vh;background:var(--bg-page-2);}
-.admin-sidebar{width:230px;flex:0 0 230px;background:linear-gradient(180deg,var(--bg-dark),#231610);
-  display:flex;flex-direction:column;padding:20px 12px;gap:4px;position:sticky;top:0;height:100vh;overflow-y:auto;}
-.admin-sidebar-logo{display:flex;align-items:center;gap:10px;color:var(--text-light);font-weight:800;
+.admin-sidebar{width:232px;flex:0 0 232px;background:linear-gradient(180deg,#FFFDF7,var(--bg-dark-2));
+  display:flex;flex-direction:column;padding:20px 12px;gap:4px;position:sticky;top:0;height:100vh;overflow-y:auto;
+  border-right:1px solid var(--line-strong);}
+.admin-sidebar-logo{display:flex;align-items:center;gap:10px;color:var(--text-dark);font-weight:800;
   padding:6px 10px 20px;font-family:var(--font-heading);}
-.admin-sidebar-logo img{width:36px;height:36px;border-radius:10px;object-fit:cover;}
+.admin-sidebar-logo img{width:36px;height:36px;border-radius:10px;object-fit:cover;background:#fff;}
 .admin-nav-item{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:12px;
-  color:var(--text-light);opacity:.7;cursor:pointer;font-size:13.5px;}
-.admin-nav-item i{width:18px;text-align:center;}
-.admin-nav-item.active{opacity:1;background:rgba(227,194,133,.16);color:var(--accent);}
+  color:var(--text-dark);opacity:.72;cursor:pointer;font-size:13.5px;font-weight:600;}
+.admin-nav-item i{width:18px;text-align:center;color:var(--primary);}
+.admin-nav-item.active{opacity:1;background:linear-gradient(160deg, rgba(212,175,55,.22), rgba(212,175,55,.06));color:var(--primary);box-shadow:inset 0 0 0 1px rgba(212,175,55,.28);}
 .admin-nav-item:hover{opacity:1;}
-.admin-nav-item.logout{color:#ff8080;}
+.admin-nav-item.logout{color:#C0392B;}
+.admin-nav-item.logout i{color:#C0392B;}
 .admin-sidebar-spacer{flex:1;}
 .admin-main{flex:1;padding:24px 30px;overflow-y:auto;}
 .admin-topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;}
@@ -545,6 +548,8 @@ button{font-family:inherit;}
         <div class="admin-nav-item" data-sec="pawns" onclick="switchAdminSection('pawns')"><i class="fa-solid fa-hand-holding-dollar"></i><span>ຄຳຂໍຈຳນຳ</span></div>
         <div class="admin-nav-item" data-sec="auctions" onclick="switchAdminSection('auctions')"><i class="fa-solid fa-gavel"></i><span>ປະມູນ</span></div>
         <div class="admin-nav-item" data-sec="lives" onclick="switchAdminSection('lives')"><i class="fa-solid fa-video"></i><span>Live</span></div>
+        <div class="admin-nav-item" data-sec="banner" onclick="switchAdminSection('banner')"><i class="fa-solid fa-images"></i><span>Banner</span></div>
+        <div class="admin-nav-item" data-sec="marquee" onclick="switchAdminSection('marquee')"><i class="fa-solid fa-scroll"></i><span>ຂໍ້ຄວາມເລື່ອນ</span></div>
         <div class="admin-nav-item" data-sec="contacts" onclick="switchAdminSection('contacts')"><i class="fa-solid fa-address-book"></i><span>ຕິດຕໍ່</span></div>
         <div class="admin-nav-item" data-sec="theme" onclick="switchAdminSection('theme')"><i class="fa-solid fa-palette"></i><span>ປັບແຕ່ງ</span></div>
         <div class="admin-nav-item" data-sec="password" onclick="switchAdminSection('password')"><i class="fa-solid fa-key"></i><span>ລະຫັດຜ່ານ</span></div>
@@ -605,6 +610,8 @@ button{font-family:inherit;}
     <div class="drawer-item" onclick="showAdminSection('pawns')"><i class="fa-solid fa-hand-holding-dollar"></i> ຄຳຂໍຈຳນຳ</div>
     <div class="drawer-item" onclick="showAdminSection('auctions')"><i class="fa-solid fa-gavel"></i> ຈັດການປະມູນ</div>
     <div class="drawer-item" onclick="showAdminSection('lives')"><i class="fa-solid fa-video"></i> ຈັດການ Live</div>
+    <div class="drawer-item" onclick="showAdminSection('banner')"><i class="fa-solid fa-images"></i> ຈັດການ Banner</div>
+    <div class="drawer-item" onclick="showAdminSection('marquee')"><i class="fa-solid fa-scroll"></i> ຂໍ້ຄວາມເລື່ອນ</div>
     <div class="drawer-item" onclick="showAdminSection('contacts')"><i class="fa-solid fa-address-book"></i> ຂໍ້ຄວາມຕິດຕໍ່</div>
     <div class="drawer-item" onclick="showAdminSection('theme')"><i class="fa-solid fa-palette"></i> ປັບແຕ່ງສີ/ຟອນ/ໄອຄອນ/ໂລໂກ້</div>
     <div class="drawer-item" onclick="showAdminSection('password')"><i class="fa-solid fa-key"></i> ປ່ຽນລະຫັດຜ່ານ</div>
@@ -639,23 +646,34 @@ let SETTINGS = null;
 let ADMIN_TOKEN = localStorage.getItem('admin_token') || null;
 let PRODUCTS = [], AUCTIONS = [], LIVES = [];
 let EDIT_CACHE = {}; // ເກັບ object ຊົ່ວຄາວສຳລັບແກ້ໄຂ (ກັນບັນຫາ quote ໃນ onclick)
-const BANNER_SLIDES = [
-  { title:'ຍິນດີຕ້ອນຮັບ', subtitle:'ບໍລິການເຊົ່າ-ຈຳນຳ-ປະມູນ ຄົບວົງຈອນ ຫຼູຫຼາ ໄວ້ໃຈໄດ້', imageUrl:'' },
-  { title:'ໂປຣໂມຊັນພິເສດ', subtitle:'ຈຳນຳງ່າຍ ດອກເບ້ຍຕ່ຳ ຮັບເງິນທັນທີ', imageUrl:'' },
-  { title:'ປະມູນຮ້ອນແຮງ', subtitle:'ພະເຄື່ອງແທ້ ລາຄາຄຸ້ມຄ່າ ປະມູນອອນລາຍ 24 ຊົ່ວໂມງ', imageUrl:'' }
+
+// ຄ່າ default ຂອງ Banner slides ແລະ ຂໍ້ຄວາມເລື່ອນ (ໃຊ້ຖ້າຍັງບໍ່ໄດ້ຕັ້ງໃນ Admin)
+// ບັນທຶກຜ່ານ saveSettings key: "bannerSlides" / "promoItems" (backend ຮອງຮັບ key ໃໝ່ໆໄດ້ໂດຍອັດຕະໂນມັດ)
+const DEFAULT_BANNER_SLIDES = [
+  { title:'ຍິນດີຕ້ອນຮັບ', subtitle:'ບໍລິການເຊົ່າ-ຈຳນຳ-ປະມູນ ຄົບວົງຈອນ ຫຼູຫຼາ ໄວ້ໃຈໄດ້', imageUrl:'', badge:'ຮ້ານເທ້ ພະເຄື່ອງ' },
+  { title:'ຈຳນຳງ່າຍ ດ່ວນທັນໃຈ', subtitle:'ດອກເບ້ຍຕ່ຳ ຮັບເງິນທັນທີ ພາຍໃນ 15 ນາທີ', imageUrl:'', badge:'ໂປຣໂມຊັນພິເສດ' },
+  { title:'ປະມູນຮ້ອນແຮງ', subtitle:'ພະເຄື່ອງແທ້ ລາຄາຄຸ້ມຄ່າ ປະມູນອອນລາຍ 24 ຊົ່ວໂມງ', imageUrl:'', badge:'ປະມູນອອນລາຍ' }
 ];
-const PROMO_ITEMS = ['🔥 ຈຳນຳດ່ວນພາຍໃນ 15 ນາທີ','💎 ພະເຄື່ອງແທ້ 100%','📦 ຮັບປະກັນຄຸນນະພາບ','🎥 Live ຂາຍທຸກວັນ'];
+const DEFAULT_PROMO_ITEMS = ['🔥 ຈຳນຳດ່ວນພາຍໃນ 15 ນາທີ','💎 ພະເຄື່ອງແທ້ 100%','📦 ຮັບປະກັນຄຸນນະພາບ','🎥 Live ຂາຍທຸກວັນ'];
+
+function bannerSlides(){ return (SETTINGS && Array.isArray(SETTINGS.bannerSlides) && SETTINGS.bannerSlides.length) ? SETTINGS.bannerSlides : DEFAULT_BANNER_SLIDES; }
+function promoItems(){ return (SETTINGS && Array.isArray(SETTINGS.promoItems) && SETTINGS.promoItems.length) ? SETTINGS.promoItems : DEFAULT_PROMO_ITEMS; }
 
 let sliderIndex = 0, sliderTimer = null;
 function renderBannerSlider(){
-  document.getElementById('sliderTrack').innerHTML = BANNER_SLIDES.map(s =>
+  const slides = bannerSlides();
+  document.getElementById('sliderTrack').innerHTML = slides.map(s =>
     '<div class="slide">' + (s.imageUrl?'<img class="slide-bg" src="'+esc(s.imageUrl)+'">':'') +
-    '<div class="slide-overlay"></div><div class="slide-content"><h1>'+esc(s.title)+'</h1><p>'+esc(s.subtitle)+'</p></div></div>'
+    '<div class="slide-overlay"></div><div class="slide-content">' +
+    (s.badge ? '<span class="eyebrow-chip">'+esc(s.badge)+'</span>' : '') +
+    '<h1>'+esc(s.title||'')+'</h1><p>'+esc(s.subtitle||'')+'</p></div></div>'
   ).join('');
-  document.getElementById('sliderDots').innerHTML = BANNER_SLIDES.map((_,i)=>
+  document.getElementById('sliderDots').innerHTML = slides.map((_,i)=>
     '<div class="dot'+(i===0?' active':'')+'" onclick="gotoSlide('+i+')"></div>').join('');
+  sliderIndex = 0;
+  document.getElementById('sliderTrack').style.transform = 'translateX(0%)';
   if (sliderTimer) clearInterval(sliderTimer);
-  sliderTimer = setInterval(()=>gotoSlide((sliderIndex+1) % BANNER_SLIDES.length), 4000);
+  if (slides.length > 1) sliderTimer = setInterval(()=>gotoSlide((sliderIndex+1) % slides.length), 4500);
 }
 function gotoSlide(i){
   sliderIndex = i;
@@ -663,7 +681,7 @@ function gotoSlide(i){
   document.querySelectorAll('.slider-dots .dot').forEach((d,idx)=>d.classList.toggle('active', idx===i));
 }
 function renderMarquee(){
-  const html = PROMO_ITEMS.map(t=>'<span>'+esc(t)+'</span>').join('');
+  const html = promoItems().map(t=>'<span>'+esc(t)+'</span>').join('');
   document.getElementById('marqueeTrack').innerHTML = html + html;
 }
 
@@ -792,13 +810,8 @@ function applySettingsToUI(s) {
   applyTheme(s);
   document.getElementById('siteNameTxt').textContent = s.siteName || 'ຮ້ານເທ້ ພະເຄື່ອງ';
   document.getElementById('siteTagTxt').textContent = s.siteTagline || '';
-  // ອັບເດດ slide ທຳອິດຈາກ Admin banner settings
-  if (s.banner) {
-    BANNER_SLIDES[0].title = s.banner.title || BANNER_SLIDES[0].title;
-    BANNER_SLIDES[0].subtitle = s.banner.subtitle || BANNER_SLIDES[0].subtitle;
-    BANNER_SLIDES[0].imageUrl = s.banner.imageUrl || '';
-    renderBannerSlider();
-  }
+  renderBannerSlider();
+  renderMarquee();
   if (s.logoUrl) {
     document.getElementById('logoWrap').innerHTML = '<img src="' + esc(s.logoUrl) + '" onerror="this.parentNode.innerHTML=\'<div class=logo-fallback>ຮ້</div>\'">';
     const sideLogo = document.getElementById('sideLogo');
@@ -949,7 +962,7 @@ function auctionCardHtml(a) {
     + '<div class="body"><p class="name">' + esc(a.productName) + '</p><p class="price">' + fmt(a.currentPrice) + '</p><p class="meta">ລາຄາປັດຈຸບັນ</p></div></div></div>';
 }
 function auctionDetailHtml(a) {
-  const img = a.imageUrl ? '<img src="' + esc(a.imageUrl) + '" style="width:100%;aspect-ratio:16/10;object-fit:cover;">' : '<div style="width:100%;aspect-ratio:16/10;background:linear-gradient(150deg,#F2ECE1,#E7DCC7);display:flex;align-items:center;justify-content:center;font-size:38px;color:#CBB68F;"><i class="fa-solid fa-gavel"></i></div>';
+  const img = a.imageUrl ? '<img src="' + esc(a.imageUrl) + '" style="width:100%;aspect-ratio:16/10;object-fit:cover;">' : '<div style="width:100%;aspect-ratio:16/10;background:linear-gradient(150deg,#FBF3E1,#F0DFB8);display:flex;align-items:center;justify-content:center;font-size:38px;color:#D8B45C;"><i class="fa-solid fa-gavel"></i></div>';
   const ended = a.isEnded;
   return '<div class="live-card">' + img +
     '<div class="live-body">' +
@@ -966,7 +979,7 @@ function liveCardHtml(l) {
   return '<div class="live-card"><div class="live-frame-wrap">' +
     (active ? '<div class="live-tag"><span class="dot"></span> LIVE</div>' : '') +
     '<iframe src="' + esc(l.embedUrl) + '" allowfullscreen scrolling="no" frameborder="0"></iframe>' +
-    '</div><div class="live-body"><p class="name" style="font-size:14.5px;margin:0 0 4px;">' + esc(l.title) + '</p><p class="meta" style="opacity:.65;font-size:12px;">' + esc(l.description || '') + '</p></div></div>';
+    '</div><div class="live-body"><p class="name" style="font-size:14.5px;margin:0 0 4px;">' + esc(l.title) + '</p><p class="meta" style="opacity:.75;font-size:12px;">' + esc(l.description || '') + '</p></div></div>';
 }
 
 /*************************************************************
@@ -1051,10 +1064,12 @@ function switchAdminSection(name) {
   goPage('admin');
   document.querySelectorAll('.admin-nav-item[data-sec]').forEach(n => n.classList.toggle('active', n.dataset.sec === name));
   const titles = { dashboard:'ພາບລວມ', products:'ຈັດການສິນຄ້າ', rentals:'ຄຳຂໍເຊົ່າ', pawns:'ຄຳຂໍຈຳນຳ',
-    auctions:'ຈັດການປະມູນ', lives:'ຈັດການ Live', contacts:'ຂໍ້ຄວາມຕິດຕໍ່', theme:'ປັບແຕ່ງໜ້າຕາ', password:'ປ່ຽນລະຫັດຜ່ານ' };
+    auctions:'ຈັດການປະມູນ', lives:'ຈັດການ Live', banner:'ຈັດການ Banner', marquee:'ຂໍ້ຄວາມເລື່ອນ',
+    contacts:'ຂໍ້ຄວາມຕິດຕໍ່', theme:'ປັບແຕ່ງໜ້າຕາ', password:'ປ່ຽນລະຫັດຜ່ານ' };
   document.getElementById('adminSectionTitle').textContent = titles[name] || 'Admin';
   const map = { dashboard: adminDashboard, products: adminProducts, rentals: adminRentals, pawns: adminPawns,
-    auctions: adminAuctions, lives: adminLives, contacts: adminContacts, theme: adminTheme, password: adminPasswordForm };
+    auctions: adminAuctions, lives: adminLives, banner: adminBanner, marquee: adminMarquee,
+    contacts: adminContacts, theme: adminTheme, password: adminPasswordForm };
   (map[name] || adminDashboard)();
 }
 function val(id) { const el = document.getElementById(id); return el ? el.value.trim() : ''; }
@@ -1071,7 +1086,7 @@ function openContactModal() {
     '<div class="field"><label>ເບີໂທ</label><input id="ct_phone"></div>' +
     '<div class="field"><label>ຂໍ້ຄວາມ</label><textarea id="ct_msg"></textarea></div>' +
     '<button class="btn" id="ct_submit" onclick="submitContactForm()"><i class="fa-solid fa-paper-plane"></i> ສົ່ງຂໍ້ຄວາມ</button>' +
-    '<div style="margin-top:12px;text-align:center;font-size:12.5px;opacity:.75;">☎ ' + esc(SETTINGS ? SETTINGS.contactPhone : '') + '</div>'
+    '<div style="margin-top:12px;text-align:center;font-size:12.5px;opacity:.8;">☎ ' + esc(SETTINGS ? SETTINGS.contactPhone : '') + '</div>'
   );
 }
 function submitContactForm() {
@@ -1160,7 +1175,7 @@ function openBidModal(auctionId) {
   if (a.isEnded) { showToast('ການປະມູນນີ້ໝົດເວລາແລ້ວ', 'err'); return; }
   openModal(
     '<h3><i class="fa-solid fa-gavel"></i> ປະມູນ: ' + esc(a.productName) + '</h3>' +
-    '<p style="opacity:.75;font-size:13px;">ລາຄາປັດຈຸບັນ: <b style="color:var(--primary)">' + fmt(a.currentPrice) + '</b></p>' +
+    '<p style="opacity:.8;font-size:13px;">ລາຄາປັດຈຸບັນ: <b style="color:var(--primary)">' + fmt(a.currentPrice) + '</b></p>' +
     '<div class="field"><label>ຊື່ຜູ້ປະມູນ</label><input id="bid_name"></div>' +
     '<div class="field"><label>ເບີໂທ</label><input id="bid_phone"></div>' +
     '<div class="field"><label>ລາຄາປະມູນ (ກີບ)</label><input type="number" id="bid_amount" placeholder="ຫຼາຍກວ່າ ' + Number(a.currentPrice).toLocaleString() + '"></div>' +
@@ -1265,6 +1280,8 @@ function showAdminSection(section) {
   if (section === 'pawns') return adminPawns();
   if (section === 'auctions') return adminAuctions();
   if (section === 'lives') return adminLives();
+  if (section === 'banner') return adminBanner();
+  if (section === 'marquee') return adminMarquee();
   if (section === 'contacts') return adminContacts();
   if (section === 'theme') return adminTheme();
   if (section === 'password') return adminPasswordForm();
@@ -1289,7 +1306,7 @@ function adminDashboard() {
 function dashCard(icon, label, v) {
   return '<div class="admin-list-item" style="display:flex;align-items:center;gap:12px;">' +
     '<div style="width:42px;height:42px;border-radius:13px;background:linear-gradient(135deg,var(--grad-from),var(--grad-to));display:flex;align-items:center;justify-content:center;color:#fff;box-shadow:var(--shadow-gold);"><i class="fa-solid fa-' + icon + '"></i></div>' +
-    '<div><div style="font-size:12px;opacity:.7;">' + label + '</div><div style="font-weight:800;font-size:16px;">' + v + '</div></div></div>';
+    '<div><div style="font-size:12px;opacity:.75;">' + label + '</div><div style="font-weight:800;font-size:16px;">' + v + '</div></div></div>';
 }
 
 /* ---- Products management ---- */
@@ -1303,7 +1320,7 @@ function adminProducts() {
       '<div class="admin-list-item"><div class="top"><div><div class="name">' + esc(p.name) + '</div><div class="sub">' + (p.type === 'rent' ? 'ໃຫ້ເຊົ່າ' : 'ຈຳນຳ') + ' • ' + esc(p.category || '') + '</div></div>' +
       '<div style="display:flex;gap:6px;"><button class="icon-btn" data-act="edit" data-idx="' + idx + '"><i class="fa-solid fa-pen"></i></button>' +
       '<button class="icon-btn" data-act="del" data-id="' + esc(p.id) + '"><i class="fa-solid fa-trash"></i></button></div></div></div>'
-    ).join('') || '<p style="opacity:.6;font-size:13px;">ຍັງບໍ່ມີສິນຄ້າ</p>';
+    ).join('') || '<p style="opacity:.65;font-size:13px;">ຍັງບໍ່ມີສິນຄ້າ</p>';
     html += '<button class="btn secondary" style="margin-top:10px;" onclick="closeAdminModal()">ປິດ</button>';
     openAdminModal(html);
     document.querySelectorAll('#adminModalContent [data-act="edit"]').forEach(b => b.onclick = () => editProductForm(EDIT_CACHE.products[Number(b.dataset.idx)]));
@@ -1355,10 +1372,10 @@ function adminRentals() {
     let html = '<h3><i class="fa-solid fa-key"></i> ຄຳຂໍເຊົ່າ</h3>';
     html += list.map(r =>
       '<div class="admin-list-item"><div class="top"><div><div class="name">' + esc(r.customerName) + ' - ' + esc(r.productName) + '</div><div class="sub">📞 ' + esc(r.phone) + ' | ' + esc(r.startDate) + ' ➜ ' + esc(r.endDate) + '</div></div>' +
-      '<span class="status-tag" style="background:rgba(184,147,90,.20);color:#8A6D0C;">' + esc(r.status) + '</span></div>' +
+      '<span class="status-tag" style="background:rgba(212,175,55,.20);color:#7A5220;">' + esc(r.status) + '</span></div>' +
       '<div style="display:flex;gap:8px;margin-top:8px;"><button class="btn small" data-act="rok" data-id="' + esc(r.id) + '">ອະນຸມັດ</button>' +
       '<button class="btn small danger" data-act="rno" data-id="' + esc(r.id) + '">ປະຕິເສດ</button></div></div>'
-    ).join('') || '<p style="opacity:.6;font-size:13px;">ຍັງບໍ່ມີຄຳຂໍ</p>';
+    ).join('') || '<p style="opacity:.65;font-size:13px;">ຍັງບໍ່ມີຄຳຂໍ</p>';
     html += '<button class="btn secondary" style="margin-top:10px;" onclick="closeAdminModal()">ປິດ</button>';
     openAdminModal(html);
     document.querySelectorAll('[data-act="rok"]').forEach(b => b.onclick = () => setRentalStatus(b.dataset.id, 'ອະນຸມັດແລ້ວ'));
@@ -1373,10 +1390,10 @@ function adminPawns() {
     let html = '<h3><i class="fa-solid fa-hand-holding-dollar"></i> ຄຳຂໍຈຳນຳ</h3>';
     html += list.map(p =>
       '<div class="admin-list-item"><div class="top"><div><div class="name">' + esc(p.customerName) + ' - ' + esc(p.productName) + '</div><div class="sub">📞 ' + esc(p.phone) + ' | ' + fmt(p.pawnAmount) + '</div></div>' +
-      '<span class="status-tag" style="background:rgba(184,147,90,.20);color:#8A6D0C;">' + esc(p.status) + '</span></div>' +
+      '<span class="status-tag" style="background:rgba(212,175,55,.20);color:#7A5220;">' + esc(p.status) + '</span></div>' +
       '<div style="display:flex;gap:8px;margin-top:8px;"><button class="btn small" data-act="pok" data-id="' + esc(p.id) + '">ອະນຸມັດ</button>' +
       '<button class="btn small danger" data-act="pno" data-id="' + esc(p.id) + '">ປະຕິເສດ</button></div></div>'
-    ).join('') || '<p style="opacity:.6;font-size:13px;">ຍັງບໍ່ມີຄຳຂໍ</p>';
+    ).join('') || '<p style="opacity:.65;font-size:13px;">ຍັງບໍ່ມີຄຳຂໍ</p>';
     html += '<button class="btn secondary" style="margin-top:10px;" onclick="closeAdminModal()">ປິດ</button>';
     openAdminModal(html);
     document.querySelectorAll('[data-act="pok"]').forEach(b => b.onclick = () => setPawnStatus(b.dataset.id, 'ອະນຸມັດແລ້ວ'));
@@ -1393,7 +1410,7 @@ function adminContacts() {
     html += (list || []).map(c =>
       '<div class="admin-list-item"><div class="name">' + esc(c.name) + '</div><div class="sub">📞 ' + esc(c.phone) + '</div>' +
       '<div class="sub" style="margin-top:6px;">' + esc(c.message || '') + '</div></div>'
-    ).join('') || '<p style="opacity:.6;font-size:13px;">ຍັງບໍ່ມີຂໍ້ຄວາມ</p>';
+    ).join('') || '<p style="opacity:.65;font-size:13px;">ຍັງບໍ່ມີຂໍ້ຄວາມ</p>';
     html += '<button class="btn secondary" style="margin-top:10px;" onclick="closeAdminModal()">ປິດ</button>';
     openAdminModal(html);
   });
@@ -1409,7 +1426,7 @@ function adminAuctions() {
       '<div class="admin-list-item"><div class="top"><div><div class="name">' + esc(a.productName) + '</div><div class="sub">ປັດຈຸບັນ ' + fmt(a.currentPrice) + ' | ໝົດເວລາ ' + new Date(a.endTime).toLocaleString('lo-LA') + '</div></div>' +
       '<div style="display:flex;gap:6px;"><button class="icon-btn" data-act="aedit" data-idx="' + idx + '"><i class="fa-solid fa-pen"></i></button>' +
       '<button class="icon-btn" data-act="adel" data-id="' + esc(a.id) + '"><i class="fa-solid fa-trash"></i></button></div></div></div>'
-    ).join('') || '<p style="opacity:.6;font-size:13px;">ຍັງບໍ່ມີການປະມູນ</p>';
+    ).join('') || '<p style="opacity:.65;font-size:13px;">ຍັງບໍ່ມີການປະມູນ</p>';
     html += '<button class="btn secondary" style="margin-top:10px;" onclick="closeAdminModal()">ປິດ</button>';
     openAdminModal(html);
     document.querySelectorAll('[data-act="aedit"]').forEach(b => b.onclick = () => editAuctionForm(EDIT_CACHE.auctions[Number(b.dataset.idx)]));
@@ -1459,7 +1476,7 @@ function adminLives() {
       '<div class="admin-list-item"><div class="top"><div><div class="name">' + esc(l.title) + '</div><div class="sub">' + (l.isActive === true || l.isActive === 'TRUE' ? '🔴 ກຳລັງອອນລາຍ' : 'ປິດຢູ່') + '</div></div>' +
       '<div style="display:flex;gap:6px;"><button class="icon-btn" data-act="ledit" data-idx="' + idx + '"><i class="fa-solid fa-pen"></i></button>' +
       '<button class="icon-btn" data-act="ldel" data-id="' + esc(l.id) + '"><i class="fa-solid fa-trash"></i></button></div></div></div>'
-    ).join('') || '<p style="opacity:.6;font-size:13px;">ຍັງບໍ່ມີ Live</p>';
+    ).join('') || '<p style="opacity:.65;font-size:13px;">ຍັງບໍ່ມີ Live</p>';
     html += '<button class="btn secondary" style="margin-top:10px;" onclick="closeAdminModal()">ປິດ</button>';
     openAdminModal(html);
     document.querySelectorAll('[data-act="ledit"]').forEach(b => b.onclick = () => editLiveForm(EDIT_CACHE.lives[Number(b.dataset.idx)]));
@@ -1497,6 +1514,97 @@ function deleteLiveConfirm(id) {
   callServer('deleteLiveStream', [ADMIN_TOKEN, id], (r) => { if (r.success) { showToast('ລຶບແລ້ວ', 'ok'); adminLives(); loadAllData(); } });
 }
 
+/* ---- Banner management (ໃໝ່) ---- */
+function adminBanner() {
+  EDIT_CACHE.banner = JSON.parse(JSON.stringify(bannerSlides()));
+  renderBannerAdminList();
+}
+function renderBannerAdminList() {
+  const list = EDIT_CACHE.banner || [];
+  let html = '<h3><i class="fa-solid fa-images"></i> ຈັດການ Banner ໜ້າຫຼັກ</h3>' +
+    '<p class="field .hint" style="font-size:11.5px;color:var(--text-soft);margin:-6px 0 14px;">ເພີ່ມ/ແກ້ໄຂ/ລຶບ ແຜ່ນ Banner ທີ່ຈະສະລັບໝູນວຽນຢູ່ໜ້າຫຼັກ. ຮູບພາບແນະນຳອັດຕາສ່ວນ 16:8</p>' +
+    '<button class="btn small" onclick="addBannerSlide()" style="margin-bottom:14px;"><i class="fa-solid fa-plus"></i> ເພີ່ມ Banner ໃໝ່</button>';
+  html += list.map((s, idx) =>
+    '<div class="banner-edit-item">' +
+    (s.imageUrl ? '<img class="bthumb" src="' + esc(s.imageUrl) + '">' : '<div class="bthumb" style="display:flex;align-items:center;justify-content:center;font-size:26px;color:#D8B45C;"><i class="fa-solid fa-image"></i></div>') +
+    '<div class="field"><label>ປ້າຍ Eyebrow (ສັ້ນໆ)</label><input data-bk="badge" data-idx="' + idx + '" value="' + esc(s.badge || '') + '"></div>' +
+    '<div class="field"><label>ຫົວຂໍ້</label><input data-bk="title" data-idx="' + idx + '" value="' + esc(s.title || '') + '"></div>' +
+    '<div class="field"><label>ຄຳອະທິບາຍ</label><input data-bk="subtitle" data-idx="' + idx + '" value="' + esc(s.subtitle || '') + '"></div>' +
+    '<div class="field"><label>ຮູບພາບ (URL)</label><input data-bk="imageUrl" data-idx="' + idx + '" value="' + esc(s.imageUrl || '') + '"></div>' +
+    '<div style="display:flex;gap:8px;margin-top:8px;">' +
+    '<button class="icon-btn up" data-act="bup" data-idx="' + idx + '" title="ຍ້າຍຂຶ້ນ"><i class="fa-solid fa-arrow-up"></i></button>' +
+    '<button class="icon-btn down" data-act="bdown" data-idx="' + idx + '" title="ຍ້າຍລົງ"><i class="fa-solid fa-arrow-down"></i></button>' +
+    '<button class="icon-btn" data-act="bdel" data-idx="' + idx + '" style="margin-left:auto;color:#C0392B;" title="ລຶບ"><i class="fa-solid fa-trash"></i></button>' +
+    '</div></div>'
+  ).join('') || '<p style="opacity:.65;font-size:13px;">ຍັງບໍ່ມີ Banner, ກົດ "ເພີ່ມ Banner ໃໝ່" ຂ້າງເທິງ</p>';
+  html += '<button class="btn" id="bn_save" style="margin-top:6px;" onclick="saveBannerSlides()"><i class="fa-solid fa-check"></i> ບັນທຶກ Banner ທັງໝົດ</button>' +
+    '<button class="btn secondary" style="margin-top:8px;" onclick="closeAdminModal()">ປິດ</button>';
+  openAdminModal(html);
+  document.querySelectorAll('#adminModalContent [data-bk]').forEach(inp => inp.oninput = () => {
+    EDIT_CACHE.banner[Number(inp.dataset.idx)][inp.dataset.bk] = inp.value;
+  });
+  document.querySelectorAll('#adminModalContent [data-act="bup"]').forEach(b => b.onclick = () => moveBannerSlide(Number(b.dataset.idx), -1));
+  document.querySelectorAll('#adminModalContent [data-act="bdown"]').forEach(b => b.onclick = () => moveBannerSlide(Number(b.dataset.idx), 1));
+  document.querySelectorAll('#adminModalContent [data-act="bdel"]').forEach(b => b.onclick = () => { EDIT_CACHE.banner.splice(Number(b.dataset.idx), 1); renderBannerAdminList(); });
+}
+function addBannerSlide() {
+  EDIT_CACHE.banner = EDIT_CACHE.banner || [];
+  EDIT_CACHE.banner.push({ badge: '', title: 'ຫົວຂໍ້ Banner ໃໝ່', subtitle: '', imageUrl: '' });
+  renderBannerAdminList();
+}
+function moveBannerSlide(idx, dir) {
+  const list = EDIT_CACHE.banner; const to = idx + dir;
+  if (to < 0 || to >= list.length) return;
+  const tmp = list[idx]; list[idx] = list[to]; list[to] = tmp;
+  renderBannerAdminList();
+}
+function saveBannerSlides() {
+  setBtnLoading('bn_save', true);
+  callServer('saveSettings', [ADMIN_TOKEN, { bannerSlides: EDIT_CACHE.banner || [] }], (r) => {
+    setBtnLoading('bn_save', false);
+    if (!r.success) { showToast(r.message || 'ຜິດພາດ', 'err'); return; }
+    SETTINGS = r.settings; renderBannerSlider();
+    showToast('ບັນທຶກ Banner ສຳເລັດ ✅', 'ok');
+    closeAdminModal();
+  });
+}
+
+/* ---- Marquee (ຂໍ້ຄວາມເລື່ອນ) management (ໃໝ່) ---- */
+function adminMarquee() {
+  EDIT_CACHE.marquee = JSON.parse(JSON.stringify(promoItems()));
+  renderMarqueeAdminList();
+}
+function renderMarqueeAdminList() {
+  const list = EDIT_CACHE.marquee || [];
+  let html = '<h3><i class="fa-solid fa-scroll"></i> ຂໍ້ຄວາມເລື່ອນ (Marquee)</h3>' +
+    '<p style="font-size:11.5px;color:var(--text-soft);margin:-6px 0 14px;">ຂໍ້ຄວາມທີ່ຈະແລ່ນວົນຢູ່ແຖບຄຳ ໃຕ້ Banner. ໃສ່ emoji ນຳໜ້າໄດ້ ເຊັ່ນ 🔥 💎</p>' +
+    '<button class="btn small" onclick="addMarqueeItem()" style="margin-bottom:14px;"><i class="fa-solid fa-plus"></i> ເພີ່ມຂໍ້ຄວາມ</button>';
+  html += list.map((t, idx) =>
+    '<div class="marquee-edit-row"><input data-mk="1" data-idx="' + idx + '" value="' + esc(t) + '">' +
+    '<button class="icon-btn" data-act="mdel" data-idx="' + idx + '" style="color:#C0392B;"><i class="fa-solid fa-trash"></i></button></div>'
+  ).join('') || '<p style="opacity:.65;font-size:13px;">ຍັງບໍ່ມີຂໍ້ຄວາມ</p>';
+  html += '<button class="btn" id="mq_save" style="margin-top:10px;" onclick="saveMarqueeItems()"><i class="fa-solid fa-check"></i> ບັນທຶກຂໍ້ຄວາມທັງໝົດ</button>' +
+    '<button class="btn secondary" style="margin-top:8px;" onclick="closeAdminModal()">ປິດ</button>';
+  openAdminModal(html);
+  document.querySelectorAll('#adminModalContent [data-mk]').forEach(inp => inp.oninput = () => { EDIT_CACHE.marquee[Number(inp.dataset.idx)] = inp.value; });
+  document.querySelectorAll('#adminModalContent [data-act="mdel"]').forEach(b => b.onclick = () => { EDIT_CACHE.marquee.splice(Number(b.dataset.idx), 1); renderMarqueeAdminList(); });
+}
+function addMarqueeItem() {
+  EDIT_CACHE.marquee = EDIT_CACHE.marquee || [];
+  EDIT_CACHE.marquee.push('✨ ຂໍ້ຄວາມໃໝ່');
+  renderMarqueeAdminList();
+}
+function saveMarqueeItems() {
+  setBtnLoading('mq_save', true);
+  callServer('saveSettings', [ADMIN_TOKEN, { promoItems: (EDIT_CACHE.marquee || []).filter(t => t && t.trim()) }], (r) => {
+    setBtnLoading('mq_save', false);
+    if (!r.success) { showToast(r.message || 'ຜິດພາດ', 'err'); return; }
+    SETTINGS = r.settings; renderMarquee();
+    showToast('ບັນທຶກຂໍ້ຄວາມສຳເລັດ ✅', 'ok');
+    closeAdminModal();
+  });
+}
+
 /* ---- Change password ---- */
 function adminPasswordForm() {
   openAdminModal(
@@ -1518,6 +1626,13 @@ function submitChangePassword() {
 }
 
 /* ---- Theme / Font / Icon / Logo customization (ຈັດເຕັມ: ທຸກສີ, ທຸກໄອຄອນ, ທຸກຫົວຂໍ້) ---- */
+// ໂຕນສີ Luxe ໃໝ່ ທີ່ແນະນຳໂດຍ default (ຂາວ-ຄຳ-ພາດເທວ, ບໍ່ມືດ) — ໃຊ້ກັບປຸ່ມ "ໃຊ້ໂຕນສີ Luxe ໃໝ່" ຂ້າງລຸ່ມ
+const LUXE_THEME_PRESET = {
+  primary:'#9C6B2E', secondary:'#D4AF37', accent:'#F3DFA0',
+  gradientFrom:'#D8B45C', gradientTo:'#8B6B2E',
+  bgPage:'#FDFAF2', bgDark:'#F6E9C9', bgCard:'#FFFFFF',
+  textLight:'#4A3618', textDark:'#3B2E22'
+};
 function adminTheme() {
   const s = SETTINGS || {};
   const c = s.themeColors || {};
@@ -1527,14 +1642,19 @@ function adminTheme() {
   openAdminModal(
     '<h3><i class="fa-solid fa-palette"></i> ປັບແຕ່ງໜ້າຕາລະບົບ</h3>' +
 
+    '<div class="admin-list-item" style="background:linear-gradient(100deg,rgba(212,175,55,.14),rgba(212,175,55,.03));border-color:var(--line-strong);">' +
+    '<div style="font-weight:700;font-size:13px;margin-bottom:6px;color:var(--primary);"><i class="fa-solid fa-wand-magic-sparkles"></i> ໂຕນສີ "Luxe ຂາວ-ຄຳ" (ແນະນຳ)</div>' +
+    '<div style="font-size:11.5px;color:var(--text-soft);margin-bottom:10px;">ກົດເພື່ອຕັ້ງຄ່າສີທັງໝົດເປັນໂຕນຂາວພາດເທວ-ຄຳ ທັນສະໄໝ ບໍ່ໃຊ້ພື້ນຫຼັງມືດ ແລ້ວກົດ "ບັນທຶກ" ອີກຄັ້ງດ້ານລຸ່ມ</div>' +
+    '<button type="button" class="btn gold small" onclick="applyLuxePreset()"><i class="fa-solid fa-sparkles"></i> ໃຊ້ໂຕນສີ Luxe ຂາວ-ຄຳ</button>' +
+    '</div>' +
+
     '<div class="section-divider"><span>ຂໍ້ມູນຮ້ານ</span></div>' +
     '<div class="field"><label>ຊື່ຮ້ານ</label><input id="th_name" value="' + esc(s.siteName || '') + '"></div>' +
     '<div class="field"><label>ຄຳຂວັນ / Tagline</label><input id="th_tag" value="' + esc(s.siteTagline || '') + '"></div>' +
     '<div class="field"><label>ໂລໂກ້ (URL ຮູບພາບ)</label><input id="th_logo" value="' + esc(s.logoUrl || '') + '"><img id="th_logoprev" class="img-preview" style="aspect-ratio:1/1;max-width:110px;" src="' + esc(s.logoUrl || '') + '" onerror="this.style.display=\'none\'" ' + (s.logoUrl ? '' : 'style="display:none;"') + '></div>' +
-    '<div class="field"><label>ຫົວຂໍ້ Banner</label><input id="th_btitle" value="' + esc((s.banner && s.banner.title) || '') + '"></div>' +
-    '<div class="field"><label>ຄຳອະທິບາຍ Banner</label><input id="th_bsub" value="' + esc((s.banner && s.banner.subtitle) || '') + '"></div>' +
     '<div class="field"><label>ເບີໂທຕິດຕໍ່</label><input id="th_phone" value="' + esc(s.contactPhone || '') + '"></div>' +
     '<div class="field"><label>ລິ້ງ Facebook</label><input id="th_fb" value="' + esc(s.contactFacebook || '') + '"></div>' +
+    '<div class="field hint" style="font-size:11px;color:var(--text-soft);">ຫົວຂໍ້/ຄຳອະທິບາຍ Banner ຍ້າຍໄປຈັດການທີ່ໜ້າ "ຈັດການ Banner" ແລ້ວ (ຮອງຮັບຫຼາຍແຜ່ນ)</div>' +
 
     '<div class="section-divider"><span>ຟອນ</span></div>' +
     '<div class="field"><div class="row2">' +
@@ -1544,11 +1664,11 @@ function adminTheme() {
 
     '<div class="section-divider"><span>ໂຕນສີ (Theme Colors)</span></div>' +
     '<div class="field"><div class="color-swatch-row">' +
-    colorSwatch('th_primary', 'ຫຼັກ', c.primary) + colorSwatch('th_secondary', 'ຄຳ', c.secondary) + colorSwatch('th_accent', 'ຄຳອ່ອນ', c.accent) +
-    colorSwatch('th_gfrom', 'ໄລ້1', c.gradientFrom) + colorSwatch('th_gto', 'ໄລ້2', c.gradientTo) +
-    colorSwatch('th_bgpage', 'ພື້ນຫຼັງ', c.bgPage) + colorSwatch('th_bgcard', 'ບັດ/ກາດ', c.bgCard) +
-    colorSwatch('th_bgdark', 'ດຳ/nav', c.bgDark) + colorSwatch('th_textdark', 'ໂຕໜັງສືເຂັ້ມ', c.textDark) +
-    colorSwatch('th_textlight', 'ໂຕໜັງສືອ່ອນ', c.textLight) +
+    colorSwatch('th_primary', 'ຫຼັກ', c.primary || LUXE_THEME_PRESET.primary) + colorSwatch('th_secondary', 'ຄຳ', c.secondary || LUXE_THEME_PRESET.secondary) + colorSwatch('th_accent', 'ຄຳອ່ອນ', c.accent || LUXE_THEME_PRESET.accent) +
+    colorSwatch('th_gfrom', 'ໄລ້1', c.gradientFrom || LUXE_THEME_PRESET.gradientFrom) + colorSwatch('th_gto', 'ໄລ້2', c.gradientTo || LUXE_THEME_PRESET.gradientTo) +
+    colorSwatch('th_bgpage', 'ພື້ນຫຼັງ', c.bgPage || LUXE_THEME_PRESET.bgPage) + colorSwatch('th_bgcard', 'ບັດ/ກາດ', c.bgCard || LUXE_THEME_PRESET.bgCard) +
+    colorSwatch('th_bgdark', 'ພື້ນ Nav/ຄຳອ່ອນ', c.bgDark || LUXE_THEME_PRESET.bgDark) + colorSwatch('th_textdark', 'ໂຕໜັງສືເຂັ້ມ', c.textDark || LUXE_THEME_PRESET.textDark) +
+    colorSwatch('th_textlight', 'ໂຕໜັງສືເທິງພື້ນຄຳ', c.textLight || LUXE_THEME_PRESET.textLight) +
     '</div></div>' +
 
     '<div class="section-divider"><span>ໄອຄອນ ແລະ ຊື່ແຕ່ລະໜ້າ</span></div>' +
@@ -1573,9 +1693,19 @@ function adminTheme() {
   );
   document.getElementById('th_logo').addEventListener('input', () => previewImg('th_logo', 'th_logoprev'));
 }
+function applyLuxePreset() {
+  Object.keys(LUXE_THEME_PRESET).forEach(k => {
+    const map = { primary:'th_primary', secondary:'th_secondary', accent:'th_accent', gradientFrom:'th_gfrom', gradientTo:'th_gto',
+      bgPage:'th_bgpage', bgDark:'th_bgdark', bgCard:'th_bgcard', textLight:'th_textlight', textDark:'th_textdark' };
+    const el = document.getElementById(map[k]);
+    if (el) el.value = LUXE_THEME_PRESET[k];
+  });
+  showToast('ຕັ້ງຄ່າໂຕນສີ Luxe ແລ້ວ, ກົດ "ບັນທຶກ" ເພື່ອນຳໃຊ້', 'ok');
+}
 function fontOption(role, current) {
   const opts = role === 'heading' ? [
     ["'Noto Serif Lao','Playfair Display',serif", "ຫຼູຫຼາ (Serif)"],
+    ["'Noto Serif Lao','Cormorant Garamond',serif", "ຫຼູຫຼາ ບາງເບົາ (Garamond)"],
     ["'Noto Sans Lao','Inter',sans-serif", "ທັນສະໄໝ (Sans)"]
   ] : [
     ["'Noto Sans Lao','Inter',sans-serif", "ອ່ານງ່າຍ (Sans)"],
@@ -1584,7 +1714,7 @@ function fontOption(role, current) {
   return opts.map(o => '<option value="' + esc(o[0]) + '" ' + (current === o[0] ? 'selected' : '') + '>' + o[1] + '</option>').join('');
 }
 function colorSwatch(id, label, v) {
-  return '<div class="swatch-item"><input type="color" id="' + id + '" value="' + (v || '#8B1E3F') + '"><span>' + label + '</span></div>';
+  return '<div class="swatch-item"><input type="color" id="' + id + '" value="' + (v || '#9C6B2E') + '"><span>' + label + '</span></div>';
 }
 function iconEditRow(key, label, icon, title) {
   const ic = icon || 'fa-circle';
@@ -1605,7 +1735,6 @@ function saveThemeForm() {
   const newSettings = {
     siteName: val('th_name'), siteTagline: val('th_tag'), logoUrl: val('th_logo'),
     contactPhone: val('th_phone'), contactFacebook: val('th_fb'),
-    banner: { title: val('th_btitle'), subtitle: val('th_bsub') },
     fonts: { heading: document.getElementById('th_font_heading').value, body: document.getElementById('th_font_body').value },
     themeColors: {
       primary: val('th_primary'), secondary: val('th_secondary'), accent: val('th_accent'),
