@@ -14,7 +14,7 @@
 <link rel="apple-touch-icon" sizes="152x152" href="icons/icon-152.png">
 <link rel="apple-touch-icon" sizes="167x167" href="icons/icon-167.png">
 <link rel="apple-touch-icon" sizes="180x180" href="icons/icon-180.png">
-<meta name="theme-color" content="#7A1226">
+<meta name="theme-color" content="#15100C">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -24,215 +24,269 @@
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Lao:wght@400;500;600;700;800&family=Noto+Serif+Lao:wght@500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 <style>
+/* ============================================================
+   ໂຕນສີ / DESIGN TOKENS — Luxe Ivory & Gold
+   ຂາວພາດເທວ (ivory) x ຄຳໂບຮານ (antique gold) x ດຳວາຍນ໌ (deep charcoal/wine)
+   ============================================================ */
 :root{
-  --primary:#7A1226;
-  --secondary:#C9A227;
-  --accent:#D4AF37;
-  --bg-dark:#1F1410;
+  --primary:#8B1E3F;        /* ວາຍນ໌ເຂັ້ມ / jewel wine */
+  --primary-2:#6E1731;
+  --secondary:#B8935A;      /* ຄຳໂບຮານ / antique bronze-gold */
+  --accent:#E3C285;         /* ຄຳອ່ອນ foil highlight */
+  --bg-dark:#15100C;        /* ດຳວາຍນ໌ ສຳລັບ nav / hero */
+  --bg-dark-2:#241811;
   --bg-card:#FFFFFF;
-  --bg-page:#FAF6EF;
-  --text-light:#FFF8EC;
-  --text-dark:#2B2118;
-  --text-soft:#7A6E5E;
-  --grad-from:#7A1226;
-  --grad-to:#B8862E;
+  --bg-page:#FAF7F2;        /* ຂາວພາດເທວ */
+  --bg-page-2:#F2ECE1;
+  --text-light:#FCF6EA;
+  --text-dark:#221A14;
+  --text-soft:#8A7A68;
+  --grad-from:#8B1E3F;
+  --grad-to:#B8935A;
   --font-heading:'Noto Serif Lao','Playfair Display',serif;
   --font-body:'Noto Sans Lao','Inter',sans-serif;
-  --line:rgba(43,33,24,.10);
-  --shadow-soft:0 10px 26px -14px rgba(43,33,24,.28);
+  --line:rgba(34,26,20,.09);
+  --line-strong:rgba(34,26,20,.16);
+  --shadow-soft:0 14px 34px -18px rgba(34,26,20,.30);
+  --shadow-lift:0 20px 44px -20px rgba(34,26,20,.38);
+  --shadow-gold:0 10px 26px -12px rgba(184,147,90,.55);
+  --radius-lg:22px;
+  --radius-md:16px;
+  --radius-sm:11px;
+  --side-w:88px;
 }
 *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+html{scroll-behavior:smooth;}
 body{
   margin:0; font-family:var(--font-body);
   background:
-    radial-gradient(circle at 15% 0%, rgba(201,162,39,.10), transparent 40%),
-    radial-gradient(circle at 100% 10%, rgba(122,18,38,.06), transparent 45%),
+    radial-gradient(circle at 12% -4%, rgba(184,147,90,.14), transparent 42%),
+    radial-gradient(circle at 104% 8%, rgba(139,30,63,.08), transparent 46%),
     var(--bg-page);
-  color:var(--text-dark); min-height:100vh; padding-bottom:88px; overflow-x:hidden;
+  color:var(--text-dark); min-height:100vh; padding-bottom:92px; overflow-x:hidden;
 }
 a{text-decoration:none;color:inherit;}
 ::-webkit-scrollbar{width:6px;height:6px;} ::-webkit-scrollbar-thumb{background:var(--secondary);border-radius:10px;}
 h1,h2,h3{font-family:var(--font-heading);}
 :focus-visible{outline:2px solid var(--accent);outline-offset:2px;}
 button{font-family:inherit;}
+@media (prefers-reduced-motion: reduce){ *{animation-duration:.001ms !important; transition-duration:.001ms !important;} }
+
+/* subtle diamond / gem lattice texture used behind hero + dark surfaces */
+.gem-texture{
+  background-image:
+    radial-gradient(circle at 20% 20%, rgba(252,246,234,.10) 0 1px, transparent 1.6px),
+    radial-gradient(circle at 60% 55%, rgba(252,246,234,.08) 0 1px, transparent 1.6px),
+    radial-gradient(circle at 85% 15%, rgba(252,246,234,.10) 0 1px, transparent 1.6px);
+  background-size:64px 64px, 90px 90px, 120px 120px;
+}
 
 /* ---------- TOP BAR ---------- */
 .topbar{
   position:sticky; top:0; z-index:40;
   display:flex; align-items:center; justify-content:space-between;
-  padding:14px 16px; backdrop-filter:blur(14px);
-  background:linear-gradient(120deg, var(--grad-from), var(--grad-to));
-  box-shadow:0 6px 20px -8px rgba(0,0,0,.35);
+  padding:14px 16px; backdrop-filter:blur(16px);
+  background:linear-gradient(120deg, var(--bg-dark) 0%, #2E1D14 55%, var(--grad-from) 130%);
+  box-shadow:0 8px 24px -10px rgba(0,0,0,.45);
+  border-bottom:1px solid rgba(227,194,133,.18);
 }
-.brand{display:flex; align-items:center; gap:10px; min-width:0;}
-.brand img{width:42px;height:42px;border-radius:13px;object-fit:cover;border:2px solid rgba(255,255,255,.65);box-shadow:0 4px 10px rgba(0,0,0,.25);flex:0 0 auto;}
+.brand{display:flex; align-items:center; gap:11px; min-width:0;}
+.brand img{width:42px;height:42px;border-radius:13px;object-fit:cover;border:2px solid rgba(227,194,133,.55);box-shadow:0 4px 14px rgba(0,0,0,.35);flex:0 0 auto;}
 .brand .logo-fallback{
   width:42px;height:42px;border-radius:13px;display:flex;align-items:center;justify-content:center;
-  background:rgba(255,255,255,.18); font-weight:800; font-size:17px; border:2px solid rgba(255,255,255,.5); color:#fff;flex:0 0 auto;
+  background:linear-gradient(135deg, var(--secondary), var(--accent)); font-weight:800; font-size:17px; border:2px solid rgba(255,255,255,.35); color:#241811;flex:0 0 auto;
 }
 .brand-text{min-width:0;}
-.brand-text .name{font-weight:800;font-size:16px;line-height:1.15;color:#fff;font-family:var(--font-heading);letter-spacing:.2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.brand-text .tag{font-size:10.5px;opacity:.88;color:var(--text-light);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.brand-text .name{font-weight:800;font-size:16px;line-height:1.15;color:var(--text-light);font-family:var(--font-heading);letter-spacing:.2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.brand-text .tag{font-size:10.5px;opacity:.75;color:var(--accent);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;letter-spacing:.3px;}
 .top-actions{display:flex;gap:10px;align-items:center;flex:0 0 auto;}
 .icon-btn-top{
   width:44px;height:44px;border-radius:14px;display:flex;align-items:center;justify-content:center;
-  background:rgba(255,255,255,.16); border:1px solid rgba(255,255,255,.28); font-size:17px; cursor:pointer; color:#fff; position:relative;
+  background:rgba(227,194,133,.14); border:1px solid rgba(227,194,133,.28); font-size:17px; cursor:pointer; color:var(--accent); position:relative;
 }
 .icon-btn-top:active{transform:scale(.92);}
-.admin-dot{position:absolute;top:-2px;right:-2px;width:12px;height:12px;border-radius:50%;background:#22c55e;border:2px solid var(--grad-from);}
+.admin-dot{position:absolute;top:-2px;right:-2px;width:12px;height:12px;border-radius:50%;background:#3FCE7B;border:2px solid var(--bg-dark);box-shadow:0 0 0 2px rgba(63,206,123,.25);}
 
-/* ---------- BANNER ---------- */
+/* ---------- BANNER / HERO ---------- */
 .banner{
-  margin:14px 16px; border-radius:22px; padding:24px 22px;
-  background:linear-gradient(135deg,var(--grad-from) 0%, var(--grad-to) 100%);
-  position:relative; overflow:hidden; box-shadow:var(--shadow-soft);
+  margin:14px 16px; border-radius:26px; padding:30px 24px 26px;
+  background:
+    radial-gradient(circle at 88% 0%, rgba(227,194,133,.30), transparent 55%),
+    linear-gradient(135deg, var(--bg-dark) 0%, #2C1B12 48%, var(--grad-from) 100%);
+  position:relative; overflow:hidden; box-shadow:var(--shadow-lift);
+  border:1px solid rgba(227,194,133,.22);
 }
-.banner::before{content:'';position:absolute;inset:0;background:
-  repeating-linear-gradient(115deg, rgba(255,255,255,.06) 0 2px, transparent 2px 34px);}
-.banner::after{content:'';position:absolute;right:-30px;top:-30px;width:160px;height:160px;border-radius:50%;background:radial-gradient(circle, rgba(255,255,255,.22), transparent 70%);}
-.banner h1{margin:0 0 6px;font-size:22px;font-weight:800;position:relative;color:#fff;}
-.banner p{margin:0;font-size:13px;opacity:.92;position:relative;color:var(--text-light);max-width:80%;}
-.banner .deco{position:absolute;right:14px;bottom:10px;font-size:56px;opacity:.24;color:#fff;}
+.banner::before{content:'';position:absolute;inset:0;
+  background:repeating-linear-gradient(115deg, rgba(227,194,133,.055) 0 2px, transparent 2px 34px);}
+.banner .eyebrow{position:relative;display:inline-flex;align-items:center;gap:6px;font-size:10.5px;letter-spacing:1.4px;font-weight:700;color:var(--accent);text-transform:uppercase;margin-bottom:10px;opacity:.9;}
+.banner .eyebrow::before{content:'';width:16px;height:1px;background:var(--accent);display:inline-block;}
+.banner h1{margin:0 0 8px;font-size:24px;font-weight:800;position:relative;
+  background:linear-gradient(100deg,#FFF6E3,var(--accent) 60%,#FFF6E3);
+  -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;}
+.banner p{margin:0;font-size:13px;line-height:1.6;position:relative;color:rgba(252,246,234,.82);max-width:78%;}
+.banner .deco{position:absolute;right:-6px;bottom:-10px;font-size:98px;opacity:.14;color:var(--accent);transform:rotate(-8deg);}
+.banner .deco-ring{position:absolute;right:20px;top:-30px;width:120px;height:120px;border-radius:50%;border:1px solid rgba(227,194,133,.25);}
 
 /* ---------- SECTION ---------- */
 .section{padding:6px 16px 4px;}
-.section-head{display:flex;align-items:center;justify-content:space-between;margin:16px 0 10px;}
-.section-head h2{font-size:16px;margin:0;font-weight:700;display:flex;align-items:center;gap:8px;color:var(--text-dark);}
-.section-head .see-all{font-size:12px;color:var(--primary);font-weight:700;cursor:pointer;padding:6px 4px;}
-.pill-row{display:flex;gap:9px;overflow-x:auto;padding:2px 2px 8px;-webkit-overflow-scrolling:touch;}
+.section-head{display:flex;align-items:center;justify-content:space-between;margin:20px 0 12px;}
+.section-head h2{font-size:16.5px;margin:0;font-weight:700;display:flex;align-items:center;gap:9px;color:var(--text-dark);letter-spacing:.1px;}
+.section-head h2 .ico-badge{width:30px;height:30px;border-radius:10px;display:inline-flex;align-items:center;justify-content:center;background:linear-gradient(135deg,var(--grad-from),var(--grad-to));color:#fff;font-size:13.5px;box-shadow:var(--shadow-gold);}
+.section-head .see-all{font-size:12px;color:var(--primary);font-weight:700;cursor:pointer;padding:6px 4px;display:flex;align-items:center;gap:4px;}
+.section-head .see-all i{font-size:10px;}
+.pill-row{display:flex;gap:9px;overflow-x:auto;padding:2px 2px 8px;-webkit-overflow-scrolling:touch;scrollbar-width:none;}
+.pill-row::-webkit-scrollbar{display:none;}
 .pill{
   flex:0 0 auto;padding:11px 18px;border-radius:999px;font-size:12.5px;font-weight:700;
   background:#fff;border:1px solid var(--line);cursor:pointer;white-space:nowrap;color:var(--text-dark);
-  box-shadow:0 2px 6px -3px rgba(43,33,24,.15);min-height:40px;display:flex;align-items:center;
+  box-shadow:0 3px 10px -5px rgba(34,26,20,.18);min-height:40px;display:flex;align-items:center;transition:.18s;
 }
-.pill.active{background:linear-gradient(100deg,var(--grad-from),var(--grad-to));border-color:transparent;color:#fff;}
+.pill.active{background:linear-gradient(100deg,var(--grad-from),var(--grad-to));border-color:transparent;color:#fff;box-shadow:var(--shadow-gold);}
 .pill i{margin-right:5px;}
 
-.searchbar{display:flex;align-items:center;gap:8px;background:#fff;border:1px solid var(--line);border-radius:14px;padding:12px 14px;margin:2px 0 14px;box-shadow:0 2px 8px -4px rgba(43,33,24,.15);}
-.searchbar i{color:var(--secondary);}
+.searchbar{display:flex;align-items:center;gap:9px;background:#fff;border:1px solid var(--line);border-radius:var(--radius-md);padding:13px 15px;margin:2px 0 14px;box-shadow:0 3px 12px -6px rgba(34,26,20,.18);}
+.searchbar i{color:var(--secondary);font-size:15px;}
 .searchbar input{border:none;outline:none;flex:1;font-family:inherit;font-size:14px;background:transparent;color:var(--text-dark);}
 
 /* ---------- PAGE SUB-HEADER (ປຸ່ມກັບຄືນ) ---------- */
 .page-subheader{display:flex;align-items:center;gap:12px;padding:14px 16px 6px;}
 .back-btn{
-  width:44px;height:44px;border-radius:13px;background:#fff;border:1px solid var(--line);
+  width:44px;height:44px;border-radius:14px;background:#fff;border:1px solid var(--line);
   display:flex;align-items:center;justify-content:center;font-size:17px;color:var(--primary);
-  cursor:pointer;box-shadow:0 2px 8px -4px rgba(43,33,24,.15);flex:0 0 auto;
+  cursor:pointer;box-shadow:0 3px 10px -5px rgba(34,26,20,.18);flex:0 0 auto;
 }
 .back-btn:active{transform:scale(.92);}
-.page-subheader h2{margin:0;font-size:17px;color:var(--text-dark);display:flex;align-items:center;gap:8px;}
+.page-subheader h2{margin:0;font-size:18px;color:var(--text-dark);display:flex;align-items:center;gap:9px;}
+.page-subheader h2 i{color:var(--primary);}
 
 /* ---------- GRID / CARDS ---------- */
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:13px;}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
 .card{
   background:var(--bg-card);
-  border:1px solid var(--line); border-radius:18px; overflow:hidden;
-  box-shadow:var(--shadow-soft); transition:transform .15s ease;
+  border:1px solid var(--line); border-radius:var(--radius-lg); overflow:hidden;
+  box-shadow:var(--shadow-soft); transition:transform .18s ease, box-shadow .18s ease;
 }
 .card:active{transform:scale(.98);}
-.card .img{width:100%;aspect-ratio:1/1;object-fit:cover;background:#f1ebdd;display:flex;align-items:center;justify-content:center;font-size:34px;color:#d8cbb0;}
-.card .body{padding:10px 12px 12px;}
-.card .name{font-size:13.5px;font-weight:700;margin:0 0 4px;line-height:1.3;color:var(--text-dark);}
-.card .price{font-size:13.5px;font-weight:800;color:var(--primary);font-family:var(--font-heading);}
-.card .meta{font-size:11px;opacity:.6;margin-top:2px;color:var(--text-soft);}
-.ribbon{position:absolute;top:10px;left:-6px;padding:4px 12px 4px 16px;font-size:10px;font-weight:800;color:#fff;letter-spacing:.3px;
-  box-shadow:0 3px 8px rgba(0,0,0,.25); z-index:2;}
+@media(hover:hover){ .card:hover{transform:translateY(-3px); box-shadow:var(--shadow-lift);} }
+.card .img{width:100%;aspect-ratio:1/1;object-fit:cover;background:linear-gradient(150deg,#F2ECE1,#E7DCC7);display:flex;align-items:center;justify-content:center;font-size:34px;color:#CBB68F;}
+.card .body{padding:11px 13px 13px;}
+.card .name{font-size:13.5px;font-weight:700;margin:0 0 5px;line-height:1.3;color:var(--text-dark);}
+.card .price{font-size:14px;font-weight:800;color:var(--primary);font-family:var(--font-heading);}
+.card .meta{font-size:11px;opacity:.65;margin-top:3px;color:var(--text-soft);display:flex;align-items:center;gap:4px;}
+.ribbon{position:absolute;top:11px;left:-6px;padding:4px 13px 4px 16px;font-size:9.5px;font-weight:800;color:#fff;letter-spacing:.4px;
+  box-shadow:0 4px 10px rgba(0,0,0,.28); z-index:2;text-transform:uppercase;}
 .ribbon::after{content:'';position:absolute;left:0;bottom:-6px;border-left:6px solid transparent;border-top:6px solid rgba(0,0,0,.35);}
-.ribbon.rent{background:linear-gradient(100deg,#2f6b3e,#4f9d5f);}
-.ribbon.pawn{background:linear-gradient(100deg,var(--secondary),var(--accent));}
-.ribbon.auction{background:linear-gradient(100deg,var(--primary),#a3223f);}
+.ribbon.rent{background:linear-gradient(100deg,#2F6B3E,#4F9D5F);}
+.ribbon.pawn{background:linear-gradient(100deg,var(--secondary),var(--accent));color:#2B2013;}
+.ribbon.auction{background:linear-gradient(100deg,var(--primary),#A3223F);}
 .card-wrap{position:relative;}
 
 /* live */
-.live-card{border-radius:20px;overflow:hidden;margin-bottom:14px;border:1px solid var(--line);background:var(--bg-card);box-shadow:var(--shadow-soft);}
+.live-card{border-radius:var(--radius-lg);overflow:hidden;margin-bottom:14px;border:1px solid var(--line);background:var(--bg-card);box-shadow:var(--shadow-soft);}
 .live-frame-wrap{position:relative;width:100%;aspect-ratio:16/9;background:#000;}
 .live-frame-wrap iframe{width:100%;height:100%;border:0;}
-.live-tag{position:absolute;top:10px;left:10px;background:#c81e3a;color:#fff;font-size:11px;font-weight:800;padding:4px 10px;border-radius:999px;display:flex;align-items:center;gap:5px;z-index:2;}
+.live-tag{position:absolute;top:10px;left:10px;background:#C81E3A;color:#fff;font-size:11px;font-weight:800;padding:4px 11px;border-radius:999px;display:flex;align-items:center;gap:5px;z-index:2;box-shadow:0 4px 10px rgba(0,0,0,.3);}
 .live-tag .dot{width:7px;height:7px;background:#fff;border-radius:50%;animation:pulse 1.2s infinite;}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
-.live-body{padding:12px 14px;}
+.live-body{padding:13px 15px;}
 
 /* auction detail */
-.auction-timer{display:flex;gap:8px;margin-top:10px;}
-.timer-box{background:linear-gradient(160deg,var(--bg-dark),#33221a);color:var(--accent);border-radius:12px;padding:8px 10px;text-align:center;min-width:48px;box-shadow:inset 0 0 0 1px rgba(212,175,55,.35);}
-.timer-box b{display:block;font-size:16px;font-family:var(--font-heading);}
+.auction-timer{display:flex;gap:8px;margin-top:12px;}
+.timer-box{background:linear-gradient(160deg,var(--bg-dark),#33221A);color:var(--accent);border-radius:13px;padding:9px 11px;text-align:center;min-width:50px;box-shadow:inset 0 0 0 1px rgba(227,194,133,.35);}
+.timer-box b{display:block;font-size:17px;font-family:var(--font-heading);}
 .timer-box span{font-size:9px;opacity:.75;color:var(--text-light);}
 
-/* ---------- BOTTOM NAV ---------- */
+/* ---------- BOTTOM NAV (mobile) ---------- */
 .bottomnav{
   position:fixed;bottom:0;left:0;right:0;z-index:50;
   display:flex;justify-content:space-around;align-items:center;
   padding:8px 6px calc(8px + env(safe-area-inset-bottom));
-  background:linear-gradient(180deg,#241812,var(--bg-dark));
-  border-top:1px solid rgba(212,175,55,.18);
-  box-shadow:0 -6px 20px rgba(0,0,0,.25);
+  background:linear-gradient(180deg,#231610,var(--bg-dark));
+  border-top:1px solid rgba(227,194,133,.20);
+  box-shadow:0 -8px 24px rgba(0,0,0,.3);
 }
-.nav-item{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;font-size:10px;opacity:.55;cursor:pointer;padding:8px 10px;border-radius:14px;transition:.15s;color:var(--text-light);min-width:52px;min-height:52px;}
+.nav-item{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;font-size:10px;opacity:.55;cursor:pointer;padding:8px 10px;border-radius:14px;transition:.18s;color:var(--text-light);min-width:52px;min-height:52px;}
 .nav-item i{font-size:20px;}
-.nav-item.active{opacity:1;color:var(--accent);background:rgba(212,175,55,.12);}
+.nav-item.active{opacity:1;color:var(--accent);background:rgba(227,194,133,.14);}
 .nav-item.active i{transform:translateY(-1px);}
 .nav-item:active{transform:scale(.9);}
 
+/* ---------- SIDE NAV (desktop/tablet dock) ---------- */
+.sidenav{
+  display:none; position:fixed; left:0; top:0; bottom:0; width:var(--side-w); z-index:60;
+  background:linear-gradient(180deg,var(--bg-dark),#231610);
+  border-right:1px solid rgba(227,194,133,.16);
+  flex-direction:column; align-items:center; padding:20px 0 14px; gap:6px;
+}
+.sidenav .side-logo{width:48px;height:48px;border-radius:14px;object-fit:cover;border:2px solid rgba(227,194,133,.5);margin-bottom:18px;}
+.sidenav .side-item{width:64px;display:flex;flex-direction:column;align-items:center;gap:5px;padding:10px 4px;border-radius:14px;color:var(--text-light);opacity:.55;cursor:pointer;font-size:9.5px;transition:.18s;}
+.sidenav .side-item i{font-size:19px;}
+.sidenav .side-item.active{opacity:1;color:var(--accent);background:rgba(227,194,133,.14);box-shadow:inset 0 0 0 1px rgba(227,194,133,.22);}
+.sidenav .side-item:hover{opacity:.9;}
+.sidenav .side-spacer{flex:1;}
+.sidenav .side-fab{width:52px;height:52px;border-radius:16px;background:linear-gradient(135deg,var(--grad-from),var(--grad-to));display:flex;align-items:center;justify-content:center;color:#fff;font-size:18px;cursor:pointer;box-shadow:var(--shadow-gold);}
+
 /* ---------- MODAL / DRAWER ---------- */
-.overlay{position:fixed;inset:0;background:rgba(20,12,8,.55);backdrop-filter:blur(2px);z-index:90;display:none;}
+.overlay{position:fixed;inset:0;background:rgba(15,10,7,.6);backdrop-filter:blur(3px);z-index:90;display:none;}
 .overlay.show{display:block;}
 .drawer{
   position:fixed;top:0;right:0;height:100%;width:86%;max-width:360px;z-index:95;
   background:linear-gradient(180deg,#fffdf8,var(--bg-page));
-  transform:translateX(100%);transition:transform .28s ease;overflow-y:auto;
+  transform:translateX(100%);transition:transform .3s cubic-bezier(.2,.8,.2,1);overflow-y:auto;
   border-left:1px solid var(--line);
 }
 .drawer.show{transform:translateX(0);}
-.drawer-head{padding:18px 18px;background:linear-gradient(120deg,var(--grad-from),var(--grad-to));display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:2;}
-.drawer-head h3{margin:0;font-size:16px;color:#fff;}
-.drawer-close{width:36px;height:36px;border-radius:11px;background:rgba(255,255,255,.18);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;color:#fff;flex:0 0 auto;}
+.drawer-head{padding:20px 18px;background:linear-gradient(120deg,var(--bg-dark),var(--grad-from) 140%);display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:2;border-bottom:1px solid rgba(227,194,133,.18);}
+.drawer-head h3{margin:0;font-size:16px;color:var(--text-light);display:flex;align-items:center;gap:8px;}
+.drawer-head h3 i{color:var(--accent);}
+.drawer-close{width:36px;height:36px;border-radius:11px;background:rgba(227,194,133,.16);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;color:var(--accent);flex:0 0 auto;}
 .drawer-close:active{transform:scale(.9);}
 .drawer-body{padding:14px;}
-.drawer-item{display:flex;align-items:center;gap:12px;padding:15px 12px;border-radius:12px;font-size:14px;font-weight:600;cursor:pointer;color:var(--text-dark);min-height:48px;}
-.drawer-item:active{background:rgba(122,18,38,.08);}
+.drawer-item{display:flex;align-items:center;gap:12px;padding:15px 12px;border-radius:13px;font-size:14px;font-weight:600;cursor:pointer;color:var(--text-dark);min-height:48px;}
+.drawer-item:active{background:rgba(139,30,63,.08);}
 .drawer-item i{width:22px;text-align:center;color:var(--primary);}
 
 .modal-center{position:fixed;inset:0;z-index:96;display:none;align-items:center;justify-content:center;padding:20px;}
 .modal-center.show{display:flex;}
-.modal-box{position:relative;background:#fffdf9;border:1px solid var(--line);border-radius:20px;width:100%;max-width:420px;max-height:88vh;overflow-y:auto;padding:22px 20px 20px;box-shadow:0 30px 60px -20px rgba(0,0,0,.4);}
-.modal-box h3{margin:0 0 14px;font-size:17px;display:flex;align-items:center;gap:8px;color:var(--primary);padding-right:34px;}
-.modal-close-x{position:absolute;top:14px;right:14px;width:34px;height:34px;border-radius:11px;background:var(--bg-page);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;color:var(--text-dark);cursor:pointer;font-size:15px;z-index:5;}
+.modal-box{position:relative;background:#fffdf9;border:1px solid var(--line);border-radius:24px;width:100%;max-width:420px;max-height:88vh;overflow-y:auto;padding:24px 21px 21px;box-shadow:0 34px 70px -22px rgba(0,0,0,.45);}
+.modal-box h3{margin:0 0 14px;font-size:17.5px;display:flex;align-items:center;gap:9px;color:var(--primary);padding-right:34px;}
+.modal-close-x{position:absolute;top:15px;right:15px;width:34px;height:34px;border-radius:11px;background:var(--bg-page);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;color:var(--text-dark);cursor:pointer;font-size:15px;z-index:5;}
 .modal-close-x:active{transform:scale(.9);}
 
 /* forms */
 .field{margin-bottom:12px;}
-.field label{display:block;font-size:12px;opacity:.7;margin-bottom:5px;color:var(--text-soft);font-weight:600;}
+.field label{display:block;font-size:12px;opacity:.72;margin-bottom:5px;color:var(--text-soft);font-weight:600;}
 .field input,.field select,.field textarea{
-  width:100%;padding:12px;border-radius:12px;border:1px solid var(--line);
+  width:100%;padding:12px 13px;border-radius:13px;border:1px solid var(--line);
   background:#fff;color:var(--text-dark);font-size:14px;font-family:inherit;
 }
-.field input:focus,.field select:focus,.field textarea:focus{outline:none;border-color:var(--secondary);box-shadow:0 0 0 3px rgba(201,162,39,.15);}
+.field input:focus,.field select:focus,.field textarea:focus{outline:none;border-color:var(--secondary);box-shadow:0 0 0 3px rgba(184,147,90,.18);}
 .field textarea{resize:vertical;min-height:70px;}
 .field .hint{font-size:10.5px;color:var(--text-soft);margin-top:4px;}
-.img-preview{width:100%;aspect-ratio:16/9;border-radius:12px;object-fit:cover;background:#f1ebdd;margin-top:8px;display:none;}
+.img-preview{width:100%;aspect-ratio:16/9;border-radius:13px;object-fit:cover;background:#F2ECE1;margin-top:8px;display:none;}
 .btn{
-  display:inline-flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:13px;border:none;
-  border-radius:14px;font-weight:700;font-size:14px;cursor:pointer;color:#fff;min-height:48px;
-  background:linear-gradient(100deg,var(--grad-from),var(--grad-to));box-shadow:0 8px 18px -8px rgba(122,18,38,.5);
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:14px;border:none;
+  border-radius:15px;font-weight:700;font-size:14px;cursor:pointer;color:#fff;min-height:49px;
+  background:linear-gradient(100deg,var(--grad-from),var(--grad-to));box-shadow:var(--shadow-gold);transition:transform .12s;
 }
 .btn:active{transform:scale(.98);}
 .btn:disabled{opacity:.6;cursor:default;transform:none;}
-.btn.secondary{background:#fff;color:var(--text-dark);border:1px solid var(--line);box-shadow:none;}
-.btn.danger{background:linear-gradient(100deg,#b91c1c,#dc2626);}
-.btn.gold{background:linear-gradient(100deg,var(--secondary),var(--accent));}
+.btn.secondary{background:#fff;color:var(--text-dark);border:1px solid var(--line-strong);box-shadow:none;}
+.btn.danger{background:linear-gradient(100deg,#B91C1C,#DC2626);}
+.btn.gold{background:linear-gradient(100deg,var(--secondary),var(--accent));color:#2B2013;}
 .btn.small{padding:10px 14px;font-size:12px;width:auto;min-height:40px;}
 .row2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
 .row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;}
 
-.toast{position:fixed;bottom:100px;left:50%;transform:translateX(-50%) translateY(20px);background:#241812;color:#fff;border:1px solid rgba(212,175,55,.3);padding:12px 18px;border-radius:14px;font-size:13px;z-index:200;opacity:0;transition:.25s;display:flex;align-items:center;gap:8px;box-shadow:0 10px 30px rgba(0,0,0,.35);max-width:88vw;}
+.toast{position:fixed;bottom:104px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--bg-dark);color:var(--text-light);border:1px solid rgba(227,194,133,.32);padding:12px 18px;border-radius:15px;font-size:13px;z-index:200;opacity:0;transition:.25s;display:flex;align-items:center;gap:8px;box-shadow:0 14px 34px rgba(0,0,0,.4);max-width:88vw;}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
-.toast.err{border-color:#ef4444;} .toast.ok{border-color:#22c55e;}
+.toast.err{border-color:#EF4444;} .toast.ok{border-color:#3FCE7B;}
 
-.empty{text-align:center;padding:40px 20px;opacity:.55;font-size:13px;color:var(--text-soft);}
-.empty i{font-size:34px;margin-bottom:10px;display:block;color:var(--secondary);}
+.empty{text-align:center;padding:44px 20px;opacity:.6;font-size:13px;color:var(--text-soft);}
+.empty i{font-size:36px;margin-bottom:12px;display:block;color:var(--secondary);}
 
 /* admin table */
-.admin-list-item{background:#fff;border:1px solid var(--line);border-radius:14px;padding:12px;margin-bottom:10px;}
+.admin-list-item{background:#fff;border:1px solid var(--line);border-radius:15px;padding:13px;margin-bottom:10px;}
 .admin-list-item .top{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;}
 .admin-list-item .name{font-weight:700;font-size:13.5px;color:var(--text-dark);}
 .admin-list-item .sub{font-size:11.5px;opacity:.65;margin-top:2px;color:var(--text-soft);}
@@ -241,43 +295,90 @@ button{font-family:inherit;}
 .icon-btn:active{transform:scale(.92);}
 
 .color-swatch-row{display:flex;gap:10px;flex-wrap:wrap;}
-.swatch-item{display:flex;flex-direction:column;align-items:center;gap:5px;font-size:10px;color:var(--text-soft);}
-.swatch-item input[type=color]{width:46px;height:46px;border-radius:12px;border:1px solid var(--line);background:none;cursor:pointer;}
+.swatch-item{display:flex;flex-direction:column;align-items:center;gap:5px;font-size:9.5px;color:var(--text-soft);}
+.swatch-item input[type=color]{width:46px;height:46px;border-radius:13px;border:1px solid var(--line);background:none;cursor:pointer;}
 
 .icon-edit-row{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
 .icon-edit-row .icon-preview{width:40px;height:40px;border-radius:11px;background:var(--bg-page);display:flex;align-items:center;justify-content:center;color:var(--primary);flex:0 0 auto;}
 .icon-edit-row .icon-fields{flex:1;display:grid;grid-template-columns:1fr 1fr;gap:6px;}
 .icon-edit-row input{padding:9px 10px;font-size:12.5px;border-radius:9px;border:1px solid var(--line);}
+.section-divider{display:flex;align-items:center;gap:10px;margin:18px 0 12px;}
+.section-divider span{font-size:11px;font-weight:800;letter-spacing:.6px;text-transform:uppercase;color:var(--secondary);white-space:nowrap;}
+.section-divider::before,.section-divider::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,transparent,var(--line-strong),transparent);}
 
-.loading-spin{border:3px solid rgba(122,18,38,.12);border-top-color:var(--secondary);width:34px;height:34px;border-radius:50%;animation:spin 1s linear infinite;margin:0 auto;}
+.loading-spin{border:3px solid rgba(139,30,63,.12);border-top-color:var(--secondary);width:36px;height:36px;border-radius:50%;animation:spin 1s linear infinite;margin:0 auto;}
 @keyframes spin{to{transform:rotate(360deg)}}
 
-.fab-contact{position:fixed;right:16px;bottom:96px;z-index:45;width:54px;height:54px;border-radius:50%;
+.fab-contact{position:fixed;right:16px;bottom:98px;z-index:45;width:56px;height:56px;border-radius:50%;
   background:linear-gradient(135deg,var(--grad-from),var(--grad-to));color:#fff;display:flex;align-items:center;justify-content:center;
-  box-shadow:0 10px 24px -8px rgba(122,18,38,.55);font-size:21px;border:2px solid rgba(255,255,255,.5);cursor:pointer;}
+  box-shadow:0 14px 30px -10px rgba(139,30,63,.6);font-size:22px;border:2px solid rgba(255,255,255,.4);cursor:pointer;}
 .fab-contact:active{transform:scale(.92);}
 
 .tabbar{display:flex;gap:6px;overflow-x:auto;margin-bottom:12px;}
-.tabbar .tbtn{flex:0 0 auto;padding:9px 14px;border-radius:10px;font-size:12px;font-weight:700;background:var(--bg-page);border:1px solid var(--line);cursor:pointer;color:var(--text-dark);}
+.tabbar .tbtn{flex:0 0 auto;padding:9px 14px;border-radius:11px;font-size:12px;font-weight:700;background:var(--bg-page);border:1px solid var(--line);cursor:pointer;color:var(--text-dark);}
 .tabbar .tbtn.active{background:var(--primary);color:#fff;border-color:transparent;}
 
-#initLoading{position:fixed;inset:0;background:var(--bg-page);z-index:999;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:14px;text-align:center;padding:0 30px;}
+#initLoading{position:fixed;inset:0;background:var(--bg-page);z-index:999;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:16px;text-align:center;padding:0 30px;}
+#initLoading .init-logo{width:64px;height:64px;border-radius:18px;object-fit:cover;box-shadow:var(--shadow-gold);}
 
-.desktop-hint{display:none;}
+/* ---------- RESPONSIVE: TABLET (≥820px) ---------- */
 @media (min-width:820px){
   body{padding-bottom:0;}
-  .app-shell{max-width:480px;margin:0 auto;box-shadow:0 0 60px rgba(0,0,0,.18);min-height:100vh;position:relative;background:var(--bg-page);}
-  .bottomnav{max-width:480px;left:50%;transform:translateX(-50%);}
-  .drawer{max-width:480px;}
-  .fab-contact{right:calc(50% - 240px + 16px);}
+  .app-shell{max-width:520px;margin:0 auto;box-shadow:0 0 70px rgba(34,26,20,.16);min-height:100vh;position:relative;background:var(--bg-page);}
+  .bottomnav{max-width:520px;left:50%;transform:translateX(-50%);}
+  .drawer{max-width:520px;}
+  .fab-contact{right:calc(50% - 260px + 16px);}
+  .grid{grid-template-columns:repeat(3,1fr);}
 }
+
+/* ---------- RESPONSIVE: DESKTOP / PC (≥1080px) — sidebar dock layout ---------- */
+@media (min-width:1080px){
+  body{padding-bottom:0;background:
+    radial-gradient(circle at 12% -4%, rgba(184,147,90,.14), transparent 42%),
+    radial-gradient(circle at 104% 8%, rgba(139,30,63,.08), transparent 46%),
+    var(--bg-page-2);}
+  .sidenav{display:flex;}
+  .app-shell{
+    max-width:1180px; margin:0 auto 0 calc(var(--side-w) + 28px);
+    min-height:100vh; box-shadow:none; background:transparent;
+    padding-top:6px;
+  }
+  .bottomnav{display:none;}
+  .fab-contact{right:36px; bottom:32px;}
+  .topbar{border-radius:var(--radius-lg); margin:0 0 4px; box-shadow:var(--shadow-lift);}
+  .banner{margin:16px 0;}
+  .section{padding:6px 0 4px;}
+  .page-subheader{padding:14px 0 6px;}
+  .grid{grid-template-columns:repeat(4,1fr); gap:18px;}
+  .drawer{max-width:400px;}
+  .modal-box{max-width:460px;}
+}
+@media (min-width:1400px){
+  .app-shell{max-width:1320px;}
+  .grid{grid-template-columns:repeat(5,1fr);}
+}
+
+.desktop-hint{display:none;}
 </style>
 </head>
 <body>
 
 <div id="initLoading">
+  <img class="init-logo" src="https://i.postimg.cc/853zyV8G/Tey.png" onerror="this.style.display='none'">
   <div class="loading-spin"></div>
   <div style="font-size:13px;color:var(--text-soft);">ກຳລັງໂຫຼດຂໍ້ມູນ...</div>
+</div>
+
+<!-- ================= SIDE NAV (Desktop dock) ================= -->
+<div class="sidenav" id="sidenav">
+  <img class="side-logo" id="sideLogo" src="https://i.postimg.cc/853zyV8G/Tey.png" onerror="this.style.display='none'">
+  <div class="side-item active" data-nav="home" onclick="goPage('home')"><i class="fa-solid fa-house"></i><span>ໜ້າຫຼັກ</span></div>
+  <div class="side-item" data-nav="rent" onclick="goPage('rent')"><i class="fa-solid fa-box-open"></i><span>ເຊົ່າ</span></div>
+  <div class="side-item" data-nav="pawn" onclick="goPage('pawn')"><i class="fa-solid fa-gem"></i><span>ຈຳນຳ</span></div>
+  <div class="side-item" data-nav="auction" onclick="goPage('auction')"><i class="fa-solid fa-gavel"></i><span>ປະມູນ</span></div>
+  <div class="side-item" data-nav="live" onclick="goPage('live')"><i class="fa-solid fa-video"></i><span>Live</span></div>
+  <div class="side-spacer"></div>
+  <div class="side-fab" onclick="openAdminLogin()" title="Admin"><i class="fa-solid fa-user-shield"></i></div>
 </div>
 
 <div class="app-shell">
@@ -298,9 +399,11 @@ button{font-family:inherit;}
 
   <!-- ================= HOME PAGE ================= -->
   <div id="page-home" class="page">
-    <div class="banner">
-      <div class="deco"><i class="fa-solid fa-gem"></i></div>
-      <h1 id="bannerTitle">ຍິນດີຕ້ອນຮັບ 👋</h1>
+    <div class="banner gem-texture">
+      <div class="deco-ring"></div>
+      <div class="deco" id="bannerDecoIcon"><i class="fa-solid fa-gem"></i></div>
+      <div class="eyebrow">ຮ້ານເທ້ ພະເຄື່ອງ</div>
+      <h1 id="bannerTitle">ຍິນດີຕ້ອນຮັບ</h1>
       <p id="bannerSub">ບໍລິການເຊົ່າ-ຈຳນຳ-ປະມູນ ຄົບວົງຈອນ ຫຼູຫຼາ ໄວ້ໃຈໄດ້</p>
     </div>
 
@@ -315,22 +418,22 @@ button{font-family:inherit;}
     </div>
 
     <div class="section">
-      <div class="section-head"><h2>🔴 ກຳລັງ Live</h2><span class="see-all" onclick="goPage('live')">ເບິ່ງທັງໝົດ</span></div>
+      <div class="section-head"><h2><span class="ico-badge"><i class="fa-solid fa-video"></i></span> ກຳລັງ Live</h2><span class="see-all" onclick="goPage('live')">ເບິ່ງທັງໝົດ <i class="fa-solid fa-chevron-right"></i></span></div>
       <div id="homeLiveList"></div>
     </div>
 
     <div class="section">
-      <div class="section-head"><h2>⚡ ກຳລັງປະມູນ</h2><span class="see-all" onclick="goPage('auction')">ເບິ່ງທັງໝົດ</span></div>
+      <div class="section-head"><h2><span class="ico-badge"><i class="fa-solid fa-gavel"></i></span> ກຳລັງປະມູນ</h2><span class="see-all" onclick="goPage('auction')">ເບິ່ງທັງໝົດ <i class="fa-solid fa-chevron-right"></i></span></div>
       <div class="grid" id="homeAuctionGrid"></div>
     </div>
 
     <div class="section">
-      <div class="section-head"><h2>📦 ສິນຄ້າໃຫ້ເຊົ່າ</h2><span class="see-all" onclick="goPage('rent')">ເບິ່ງທັງໝົດ</span></div>
+      <div class="section-head"><h2><span class="ico-badge"><i class="fa-solid fa-box-open"></i></span> ສິນຄ້າໃຫ້ເຊົ່າ</h2><span class="see-all" onclick="goPage('rent')">ເບິ່ງທັງໝົດ <i class="fa-solid fa-chevron-right"></i></span></div>
       <div class="grid" id="homeRentGrid"></div>
     </div>
 
     <div class="section">
-      <div class="section-head"><h2>💎 ຮັບຈຳນຳ</h2><span class="see-all" onclick="goPage('pawn')">ເບິ່ງທັງໝົດ</span></div>
+      <div class="section-head"><h2><span class="ico-badge"><i class="fa-solid fa-gem"></i></span> ຮັບຈຳນຳ</h2><span class="see-all" onclick="goPage('pawn')">ເບິ່ງທັງໝົດ <i class="fa-solid fa-chevron-right"></i></span></div>
       <div class="grid" id="homePawnGrid"></div>
     </div>
   </div>
@@ -357,7 +460,7 @@ button{font-family:inherit;}
     <div class="section" style="padding-top:6px;">
       <div class="searchbar"><i class="fa-solid fa-magnifying-glass"></i><input id="pawnSearch" placeholder="ຄົ້ນຫາສິນຄ້າ..." oninput="renderPawnGrid()"></div>
       <div class="grid" id="pawnGrid" style="margin-top:12px;"></div>
-      <button class="btn gold" style="margin-top:16px" onclick="openPawnRequestModal()"><i class="fa-solid fa-hand-holding-dollar"></i> ຂໍຈຳນຳສິນຄ້າຂອງທ່ານ</button>
+      <button class="btn gold" style="margin-top:18px" onclick="openPawnRequestModal()"><i class="fa-solid fa-hand-holding-dollar"></i> ຂໍຈຳນຳສິນຄ້າຂອງທ່ານ</button>
     </div>
   </div>
 
@@ -383,7 +486,7 @@ button{font-family:inherit;}
     </div>
   </div>
 
-  <!-- ================= BOTTOM NAV ================= -->
+  <!-- ================= BOTTOM NAV (mobile) ================= -->
   <div class="bottomnav" id="bottomnav">
     <div class="nav-item active" data-nav="home" onclick="goPage('home')"><i class="fa-solid fa-house"></i><span>ໜ້າຫຼັກ</span></div>
     <div class="nav-item" data-nav="rent" onclick="goPage('rent')"><i class="fa-solid fa-box-open"></i><span>ເຊົ່າ</span></div>
@@ -395,7 +498,7 @@ button{font-family:inherit;}
 </div>
 
 <!-- floating contact button -->
-<div class="fab-contact" onclick="openContactModal()"><i class="fa-solid fa-phone"></i></div>
+<div class="fab-contact" onclick="openContactModal()"><i class="fa-solid fa-phone" id="fabPhoneIcon"></i></div>
 
 <!-- ================= RIGHT DRAWER (3-DOT MENU) ================= -->
 <div class="overlay" id="overlay" onclick="closeAllOverlays()"></div>
@@ -431,7 +534,7 @@ button{font-family:inherit;}
     <div class="drawer-item" onclick="showAdminSection('password')"><i class="fa-solid fa-key"></i> ປ່ຽນລະຫັດຜ່ານ</div>
     <div class="drawer-item" onclick="showAdminSection('sheet')"><i class="fa-solid fa-table"></i> ເປີດ Google Sheet</div>
     <hr style="border-color:var(--line);margin:10px 0;">
-    <div class="drawer-item" onclick="adminLogout()" style="color:#c0392b;"><i class="fa-solid fa-right-from-bracket" style="color:#c0392b;"></i> ອອກຈາກລະບົບ</div>
+    <div class="drawer-item" onclick="adminLogout()" style="color:#C0392B;"><i class="fa-solid fa-right-from-bracket" style="color:#C0392B;"></i> ອອກຈາກລະບົບ</div>
   </div>
 </div>
 
@@ -442,7 +545,7 @@ button{font-family:inherit;}
 
 <!-- ================= ADMIN SECTION MODAL (full content) ================= -->
 <div class="modal-center" id="adminModalCenter">
-  <div class="modal-box" style="max-width:520px;" id="adminModalContent"></div>
+  <div class="modal-box" style="max-width:560px;" id="adminModalContent"></div>
 </div>
 
 <div class="toast" id="toast"></div>
@@ -590,6 +693,8 @@ function applySettingsToUI(s) {
   document.getElementById('bannerSub').textContent = (s.banner && s.banner.subtitle) || '';
   if (s.logoUrl) {
     document.getElementById('logoWrap').innerHTML = '<img src="' + esc(s.logoUrl) + '" onerror="this.parentNode.innerHTML=\'<div class=logo-fallback>ຮ້</div>\'">';
+    const sideLogo = document.getElementById('sideLogo');
+    if (sideLogo) sideLogo.src = s.logoUrl;
   }
   const icons = s.icons || {};
   const titles = s.pageTitles || {};
@@ -598,6 +703,11 @@ function applySettingsToUI(s) {
     if (navEl) {
       if (icons[key]) navEl.querySelector('i').className = 'fa-solid ' + icons[key];
       if (titles[key]) navEl.querySelector('span').textContent = titles[key];
+    }
+    const sideEl = document.querySelector('.side-item[data-nav="' + key + '"]');
+    if (sideEl) {
+      if (icons[key]) sideEl.querySelector('i').className = 'fa-solid ' + icons[key];
+      if (titles[key]) sideEl.querySelector('span').textContent = titles[key];
     }
     const pillEl = document.querySelector('.pill[data-goto="' + key + '"]');
     if (pillEl) {
@@ -609,6 +719,17 @@ function applySettingsToUI(s) {
     if (subHeadIcon && icons[key]) subHeadIcon.className = 'fa-solid ' + icons[key];
   });
   if (icons.menu) document.querySelector('#menuBtn i').className = 'fa-solid ' + icons.menu;
+  if (icons.phone) {
+    const fabIcon = document.getElementById('fabPhoneIcon');
+    if (fabIcon) fabIcon.className = 'fa-solid ' + icons.phone;
+  }
+  if (icons.search) {
+    document.querySelectorAll('.searchbar > i').forEach(i => i.className = 'fa-solid ' + icons.search);
+  }
+  if (icons.bannerDeco) {
+    const bd = document.getElementById('bannerDecoIcon');
+    if (bd) bd.innerHTML = '<i class="fa-solid ' + esc(icons.bannerDeco) + '"></i>';
+  }
 }
 
 function applyTheme(s) {
@@ -712,16 +833,16 @@ function auctionCardHtml(a) {
     + '<div class="body"><p class="name">' + esc(a.productName) + '</p><p class="price">' + fmt(a.currentPrice) + '</p><p class="meta">ລາຄາປັດຈຸບັນ</p></div></div></div>';
 }
 function auctionDetailHtml(a) {
-  const img = a.imageUrl ? '<img src="' + esc(a.imageUrl) + '" style="width:100%;aspect-ratio:16/10;object-fit:cover;">' : '<div style="width:100%;aspect-ratio:16/10;background:#f1ebdd;display:flex;align-items:center;justify-content:center;font-size:38px;color:#d8cbb0;"><i class="fa-solid fa-gavel"></i></div>';
+  const img = a.imageUrl ? '<img src="' + esc(a.imageUrl) + '" style="width:100%;aspect-ratio:16/10;object-fit:cover;">' : '<div style="width:100%;aspect-ratio:16/10;background:linear-gradient(150deg,#F2ECE1,#E7DCC7);display:flex;align-items:center;justify-content:center;font-size:38px;color:#CBB68F;"><i class="fa-solid fa-gavel"></i></div>';
   const ended = a.isEnded;
   return '<div class="live-card">' + img +
     '<div class="live-body">' +
     '<p class="name" style="font-size:15px;margin:0 0 6px;">' + esc(a.productName) + '</p>' +
-    '<p class="price" style="font-size:18px;">' + fmt(a.currentPrice) + '</p>' +
+    '<p class="price" style="font-size:19px;">' + fmt(a.currentPrice) + '</p>' +
     '<div class="auction-timer" id="timer-' + a.id + '"></div>' +
     (ended
-      ? '<button class="btn secondary" style="margin-top:12px;" disabled><i class="fa-solid fa-flag-checkered"></i> ໝົດເວລາປະມູນແລ້ວ</button>'
-      : '<button class="btn" style="margin-top:12px;" onclick="openBidModal(\'' + a.id + '\')"><i class="fa-solid fa-hand"></i> ປະມູນລາຄາ</button>') +
+      ? '<button class="btn secondary" style="margin-top:14px;" disabled><i class="fa-solid fa-flag-checkered"></i> ໝົດເວລາປະມູນແລ້ວ</button>'
+      : '<button class="btn" style="margin-top:14px;" onclick="openBidModal(\'' + a.id + '\')"><i class="fa-solid fa-hand"></i> ປະມູນລາຄາ</button>') +
     '</div></div>';
 }
 function liveCardHtml(l) {
@@ -742,7 +863,7 @@ function startCountdown(id, endTime) {
     const el = document.getElementById('timer-' + id);
     if (!el) { clearInterval(timers[id]); return; }
     const diff = new Date(endTime).getTime() - Date.now();
-    if (diff <= 0) { el.innerHTML = '<span style="color:#c0392b;font-weight:700;">ໝົດເວລາປະມູນແລ້ວ</span>'; clearInterval(timers[id]); return; }
+    if (diff <= 0) { el.innerHTML = '<span style="color:#C0392B;font-weight:700;">ໝົດເວລາປະມູນແລ້ວ</span>'; clearInterval(timers[id]); return; }
     const d = Math.floor(diff / 86400000), h = Math.floor(diff % 86400000 / 3600000), m = Math.floor(diff % 3600000 / 60000), s = Math.floor(diff % 60000 / 1000);
     el.innerHTML = tbox(d, 'ວັນ') + tbox(h, 'ຊມ') + tbox(m, 'ນທ') + tbox(s, 'ວິ');
   }
@@ -760,6 +881,7 @@ function goPage(name, pushState) {
   document.querySelectorAll('.page').forEach(p => p.style.display = 'none');
   document.getElementById('page-' + name).style.display = 'block';
   document.querySelectorAll('.nav-item').forEach(n => n.classList.toggle('active', n.dataset.nav === name));
+  document.querySelectorAll('.side-item[data-nav]').forEach(n => n.classList.toggle('active', n.dataset.nav === name));
   document.querySelectorAll('.pill[data-goto]').forEach(n => n.classList.toggle('active', n.dataset.goto === name));
   window.scrollTo(0, 0);
   if (pushState && location.hash !== '#' + name) {
@@ -814,8 +936,9 @@ function val(id) { const el = document.getElementById(id); return el ? el.value.
  *************************************************************/
 function openContactModal() {
   closeDrawer();
+  const phoneIcon = (SETTINGS && SETTINGS.icons && SETTINGS.icons.phone) || 'fa-phone';
   openModal(
-    '<h3><i class="fa-solid fa-phone"></i> ຕິດຕໍ່ພວກເຮົາ</h3>' +
+    '<h3><i class="fa-solid ' + esc(phoneIcon) + '"></i> ຕິດຕໍ່ພວກເຮົາ</h3>' +
     '<div class="field"><label>ຊື່</label><input id="ct_name"></div>' +
     '<div class="field"><label>ເບີໂທ</label><input id="ct_phone"></div>' +
     '<div class="field"><label>ຂໍ້ຄວາມ</label><textarea id="ct_msg"></textarea></div>' +
@@ -1019,7 +1142,7 @@ function adminDashboard() {
 }
 function dashCard(icon, label, v) {
   return '<div class="admin-list-item" style="display:flex;align-items:center;gap:12px;">' +
-    '<div style="width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg,var(--grad-from),var(--grad-to));display:flex;align-items:center;justify-content:center;color:#fff;"><i class="fa-solid fa-' + icon + '"></i></div>' +
+    '<div style="width:42px;height:42px;border-radius:13px;background:linear-gradient(135deg,var(--grad-from),var(--grad-to));display:flex;align-items:center;justify-content:center;color:#fff;box-shadow:var(--shadow-gold);"><i class="fa-solid fa-' + icon + '"></i></div>' +
     '<div><div style="font-size:12px;opacity:.7;">' + label + '</div><div style="font-weight:800;font-size:16px;">' + v + '</div></div></div>';
 }
 
@@ -1086,7 +1209,7 @@ function adminRentals() {
     let html = '<h3><i class="fa-solid fa-key"></i> ຄຳຂໍເຊົ່າ</h3>';
     html += list.map(r =>
       '<div class="admin-list-item"><div class="top"><div><div class="name">' + esc(r.customerName) + ' - ' + esc(r.productName) + '</div><div class="sub">📞 ' + esc(r.phone) + ' | ' + esc(r.startDate) + ' ➜ ' + esc(r.endDate) + '</div></div>' +
-      '<span class="status-tag" style="background:rgba(201,162,39,.18);color:#8a6d0c;">' + esc(r.status) + '</span></div>' +
+      '<span class="status-tag" style="background:rgba(184,147,90,.20);color:#8A6D0C;">' + esc(r.status) + '</span></div>' +
       '<div style="display:flex;gap:8px;margin-top:8px;"><button class="btn small" data-act="rok" data-id="' + esc(r.id) + '">ອະນຸມັດ</button>' +
       '<button class="btn small danger" data-act="rno" data-id="' + esc(r.id) + '">ປະຕິເສດ</button></div></div>'
     ).join('') || '<p style="opacity:.6;font-size:13px;">ຍັງບໍ່ມີຄຳຂໍ</p>';
@@ -1104,7 +1227,7 @@ function adminPawns() {
     let html = '<h3><i class="fa-solid fa-hand-holding-dollar"></i> ຄຳຂໍຈຳນຳ</h3>';
     html += list.map(p =>
       '<div class="admin-list-item"><div class="top"><div><div class="name">' + esc(p.customerName) + ' - ' + esc(p.productName) + '</div><div class="sub">📞 ' + esc(p.phone) + ' | ' + fmt(p.pawnAmount) + '</div></div>' +
-      '<span class="status-tag" style="background:rgba(201,162,39,.18);color:#8a6d0c;">' + esc(p.status) + '</span></div>' +
+      '<span class="status-tag" style="background:rgba(184,147,90,.20);color:#8A6D0C;">' + esc(p.status) + '</span></div>' +
       '<div style="display:flex;gap:8px;margin-top:8px;"><button class="btn small" data-act="pok" data-id="' + esc(p.id) + '">ອະນຸມັດ</button>' +
       '<button class="btn small danger" data-act="pno" data-id="' + esc(p.id) + '">ປະຕິເສດ</button></div></div>'
     ).join('') || '<p style="opacity:.6;font-size:13px;">ຍັງບໍ່ມີຄຳຂໍ</p>';
@@ -1248,7 +1371,7 @@ function submitChangePassword() {
   });
 }
 
-/* ---- Theme / Font / Icon / Logo customization ---- */
+/* ---- Theme / Font / Icon / Logo customization (ຈັດເຕັມ: ທຸກສີ, ທຸກໄອຄອນ, ທຸກຫົວຂໍ້) ---- */
 function adminTheme() {
   const s = SETTINGS || {};
   const c = s.themeColors || {};
@@ -1257,6 +1380,8 @@ function adminTheme() {
   const titles = s.pageTitles || {};
   openAdminModal(
     '<h3><i class="fa-solid fa-palette"></i> ປັບແຕ່ງໜ້າຕາລະບົບ</h3>' +
+
+    '<div class="section-divider"><span>ຂໍ້ມູນຮ້ານ</span></div>' +
     '<div class="field"><label>ຊື່ຮ້ານ</label><input id="th_name" value="' + esc(s.siteName || '') + '"></div>' +
     '<div class="field"><label>ຄຳຂວັນ / Tagline</label><input id="th_tag" value="' + esc(s.siteTagline || '') + '"></div>' +
     '<div class="field"><label>ໂລໂກ້ (URL ຮູບພາບ)</label><input id="th_logo" value="' + esc(s.logoUrl || '') + '"><img id="th_logoprev" class="img-preview" style="aspect-ratio:1/1;max-width:110px;" src="' + esc(s.logoUrl || '') + '" onerror="this.style.display=\'none\'" ' + (s.logoUrl ? '' : 'style="display:none;"') + '></div>' +
@@ -1265,20 +1390,23 @@ function adminTheme() {
     '<div class="field"><label>ເບີໂທຕິດຕໍ່</label><input id="th_phone" value="' + esc(s.contactPhone || '') + '"></div>' +
     '<div class="field"><label>ລິ້ງ Facebook</label><input id="th_fb" value="' + esc(s.contactFacebook || '') + '"></div>' +
 
-    '<div class="field"><label>ຟອນ (Fonts)</label>' +
-    '<div class="row2">' +
+    '<div class="section-divider"><span>ຟອນ</span></div>' +
+    '<div class="field"><div class="row2">' +
     '<select id="th_font_heading">' + fontOption('heading', f.heading) + '</select>' +
     '<select id="th_font_body">' + fontOption('body', f.body) + '</select>' +
     '</div><div class="hint">ຊ້າຍ = ຟອນຫົວຂໍ້/ລາຄາ, ຂວາ = ຟອນຂໍ້ຄວາມທົ່ວໄປ</div></div>' +
 
-    '<div class="field"><label>ໂຕນສີ (Theme Colors)</label>' +
-    '<div class="color-swatch-row">' +
-    colorSwatch('th_primary', 'ຫຼັກ', c.primary) + colorSwatch('th_secondary', 'ຄຳ', c.secondary) + colorSwatch('th_accent', 'ເນັ້ນ', c.accent) +
+    '<div class="section-divider"><span>ໂຕນສີ (Theme Colors)</span></div>' +
+    '<div class="field"><div class="color-swatch-row">' +
+    colorSwatch('th_primary', 'ຫຼັກ', c.primary) + colorSwatch('th_secondary', 'ຄຳ', c.secondary) + colorSwatch('th_accent', 'ຄຳອ່ອນ', c.accent) +
     colorSwatch('th_gfrom', 'ໄລ້1', c.gradientFrom) + colorSwatch('th_gto', 'ໄລ້2', c.gradientTo) +
-    colorSwatch('th_bgpage', 'ພື້ນຫຼັງ', c.bgPage) + colorSwatch('th_bgdark', 'ແຖບລຸ່ມ', c.bgDark) +
+    colorSwatch('th_bgpage', 'ພື້ນຫຼັງ', c.bgPage) + colorSwatch('th_bgcard', 'ບັດ/ກາດ', c.bgCard) +
+    colorSwatch('th_bgdark', 'ດຳ/nav', c.bgDark) + colorSwatch('th_textdark', 'ໂຕໜັງສືເຂັ້ມ', c.textDark) +
+    colorSwatch('th_textlight', 'ໂຕໜັງສືອ່ອນ', c.textLight) +
     '</div></div>' +
 
-    '<div class="field"><label>ໄອຄອນ ແລະ ຊື່ແຕ່ລະໜ້າ (Icon = FontAwesome class ເຊັ່ນ fa-house)</label>' +
+    '<div class="section-divider"><span>ໄອຄອນ ແລະ ຊື່ແຕ່ລະໜ້າ</span></div>' +
+    '<div class="field"><div class="hint" style="margin-bottom:8px;">Icon = ຊື່ FontAwesome class ເຊັ່ນ fa-house (ເບິ່ງໄດ້ທີ່ fontawesome.com/icons)</div>' +
     iconEditRow('home', 'ໜ້າຫຼັກ', icons.home, titles.home) +
     iconEditRow('rent', 'ເຊົ່າ', icons.rent, titles.rent) +
     iconEditRow('pawn', 'ຈຳນຳ', icons.pawn, titles.pawn) +
@@ -1286,7 +1414,15 @@ function adminTheme() {
     iconEditRow('live', 'Live', icons.live, titles.live) +
     '</div>' +
 
-    '<button class="btn" id="th_save" onclick="saveThemeForm()" style="margin-top:14px;"><i class="fa-solid fa-check"></i> ບັນທຶກການປັບແຕ່ງ</button>' +
+    '<div class="section-divider"><span>ໄອຄອນອື່ນໆ ໃນລະບົບ</span></div>' +
+    '<div class="field">' +
+    miscIconRow('menu', 'ປຸ່ມເມນູ (3 ຈຸດ)', icons.menu) +
+    miscIconRow('phone', 'ປຸ່ມໂທ / FAB ຕິດຕໍ່', icons.phone) +
+    miscIconRow('search', 'ໄອຄອນຄົ້ນຫາ', icons.search) +
+    miscIconRow('bannerDeco', 'ໄອຄອນສັນຍາລັກ Banner', icons.bannerDeco) +
+    '</div>' +
+
+    '<button class="btn" id="th_save" onclick="saveThemeForm()" style="margin-top:16px;"><i class="fa-solid fa-check"></i> ບັນທຶກການປັບແຕ່ງ</button>' +
     '<button class="btn secondary" style="margin-top:8px;" onclick="closeAdminModal()">ປິດ</button>'
   );
   document.getElementById('th_logo').addEventListener('input', () => previewImg('th_logo', 'th_logoprev'));
@@ -1302,7 +1438,7 @@ function fontOption(role, current) {
   return opts.map(o => '<option value="' + esc(o[0]) + '" ' + (current === o[0] ? 'selected' : '') + '>' + o[1] + '</option>').join('');
 }
 function colorSwatch(id, label, v) {
-  return '<div class="swatch-item"><input type="color" id="' + id + '" value="' + (v || '#7A1226') + '"><span>' + label + '</span></div>';
+  return '<div class="swatch-item"><input type="color" id="' + id + '" value="' + (v || '#8B1E3F') + '"><span>' + label + '</span></div>';
 }
 function iconEditRow(key, label, icon, title) {
   const ic = icon || 'fa-circle';
@@ -1311,6 +1447,13 @@ function iconEditRow(key, label, icon, title) {
     '<input id="ic_' + key + '" placeholder="fa-house" value="' + esc(ic) + '" oninput="document.getElementById(\'prev_' + key + '\').className=\'fa-solid \'+this.value">' +
     '<input id="tt_' + key + '" placeholder="ຊື່ໜ້າ" value="' + esc(title || label) + '">' +
     '</div></div>';
+}
+function miscIconRow(key, label, icon) {
+  const ic = icon || 'fa-circle';
+  return '<div class="icon-edit-row"><div class="icon-preview"><i class="fa-solid ' + esc(ic) + '" id="prevmisc_' + key + '"></i></div>' +
+    '<div class="icon-fields" style="grid-template-columns:1fr;">' +
+    '<input id="icmisc_' + key + '" placeholder="fa-phone" value="' + esc(ic) + '" oninput="document.getElementById(\'prevmisc_' + key + '\').className=\'fa-solid \'+this.value">' +
+    '</div><div style="font-size:11.5px;color:var(--text-soft);margin-left:6px;flex:0 0 auto;align-self:center;">' + esc(label) + '</div></div>';
 }
 function saveThemeForm() {
   const newSettings = {
@@ -1321,13 +1464,11 @@ function saveThemeForm() {
     themeColors: {
       primary: val('th_primary'), secondary: val('th_secondary'), accent: val('th_accent'),
       gradientFrom: val('th_gfrom'), gradientTo: val('th_gto'), bgPage: val('th_bgpage'), bgDark: val('th_bgdark'),
-      bgCard: (SETTINGS.themeColors && SETTINGS.themeColors.bgCard) || '#FFFFFF',
-      textLight: (SETTINGS.themeColors && SETTINGS.themeColors.textLight) || '#FFF8EC',
-      textDark: (SETTINGS.themeColors && SETTINGS.themeColors.textDark) || '#2B2118'
+      bgCard: val('th_bgcard'), textLight: val('th_textlight'), textDark: val('th_textdark')
     },
     icons: {
       home: val('ic_home'), rent: val('ic_rent'), pawn: val('ic_pawn'), auction: val('ic_auction'), live: val('ic_live'),
-      menu: (SETTINGS.icons && SETTINGS.icons.menu) || 'fa-ellipsis-vertical'
+      menu: val('icmisc_menu'), phone: val('icmisc_phone'), search: val('icmisc_search'), bannerDeco: val('icmisc_bannerDeco')
     },
     pageTitles: {
       home: val('tt_home'), rent: val('tt_rent'), pawn: val('tt_pawn'), auction: val('tt_auction'), live: val('tt_live')
