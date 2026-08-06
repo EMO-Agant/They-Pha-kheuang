@@ -93,15 +93,15 @@ button{font-family:inherit;}
   border-bottom:1px solid var(--line-strong);
 }
 .brand{display:flex; align-items:center; gap:11px; min-width:0;}
-.brand img{width:44px;height:44px;border-radius:14px;object-fit:cover;border:2px solid rgba(156,107,46,.35);box-shadow:0 4px 14px rgba(156,107,46,.22);flex:0 0 auto;background:#fff;}
+.brand img{width:58px;height:58px;border-radius:16px;object-fit:cover;border:2px solid rgba(156,107,46,.35);box-shadow:0 4px 14px rgba(156,107,46,.22);flex:0 0 auto;background:#fff;}
 .brand .logo-fallback{
-  width:44px;height:44px;border-radius:14px;display:flex;align-items:center;justify-content:center;
-  background:linear-gradient(135deg, var(--secondary), var(--primary)); font-weight:800; font-size:17px; border:2px solid #fff; color:#fff;flex:0 0 auto;
+  width:58px;height:58px;border-radius:16px;display:flex;align-items:center;justify-content:center;
+  background:linear-gradient(135deg, var(--secondary), var(--primary)); font-weight:800; font-size:22px; border:2px solid #fff; color:#fff;flex:0 0 auto;
   box-shadow:var(--shadow-gold);
 }
 .brand-text{min-width:0;}
-.brand-text .name{font-weight:800;font-size:16px;line-height:1.15;color:var(--text-dark);font-family:var(--font-heading);letter-spacing:.2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.brand-text .tag{font-size:10.5px;opacity:.85;color:var(--primary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;letter-spacing:.3px;font-weight:600;}
+.brand-text .name{font-weight:800;font-size:20px;line-height:1.2;color:var(--text-dark);font-family:var(--font-heading);letter-spacing:.2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.brand-text .tag{font-size:12px;opacity:.85;color:var(--primary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;letter-spacing:.3px;font-weight:600;}
 .top-actions{display:flex;gap:10px;align-items:center;flex:0 0 auto;}
 .icon-btn-top{
   width:44px;height:44px;border-radius:14px;display:flex;align-items:center;justify-content:center;
@@ -114,7 +114,7 @@ button{font-family:inherit;}
 /* ---------- BANNER / HERO (slider) ---------- */
 .banner-slider{margin:14px 16px;border-radius:26px;overflow:hidden;position:relative;box-shadow:var(--shadow-lift);border:1px solid var(--line-strong);}
 .slider-track{display:flex;transition:transform .5s cubic-bezier(.2,.8,.2,1);}
-.slide{min-width:100%;position:relative;aspect-ratio:16/8;background:linear-gradient(135deg,var(--grad-from),var(--grad-to));display:flex;flex-direction:column;justify-content:center;padding:26px 26px;overflow:hidden;}
+.slide{min-width:100%;position:relative;aspect-ratio:16/6.5;background:linear-gradient(135deg,var(--grad-from),var(--grad-to));display:flex;flex-direction:column;justify-content:center;padding:26px 26px;overflow:hidden;}
 .slide::before{content:'';position:absolute;inset:0;
   background:repeating-linear-gradient(115deg, rgba(255,255,255,.09) 0 2px, transparent 2px 34px);}
 .slide::after{content:'';position:absolute;right:-18px;bottom:-24px;width:150px;height:150px;border-radius:50%;border:1px solid rgba(255,255,255,.35);}
@@ -322,6 +322,17 @@ button{font-family:inherit;}
 .icon-edit-row .icon-preview{width:40px;height:40px;border-radius:11px;background:var(--bg-page);display:flex;align-items:center;justify-content:center;color:var(--primary);flex:0 0 auto;border:1px solid var(--line);}
 .icon-edit-row .icon-fields{flex:1;display:grid;grid-template-columns:1fr 1fr;gap:6px;}
 .icon-edit-row input{padding:9px 10px;font-size:12.5px;border-radius:9px;border:1px solid var(--line-strong);}
+.icon-edit-row{position:relative;}
+.icon-pick-btn{width:38px;height:38px;border-radius:11px;background:linear-gradient(135deg,var(--grad-from),var(--grad-to));color:#fff;border:none;cursor:pointer;flex:0 0 auto;font-size:15px;box-shadow:var(--shadow-gold);}
+.icon-pick-btn:active{transform:scale(.92);}
+.icon-picker-panel{position:fixed;z-index:300;width:270px;max-height:260px;background:#fff;border:1px solid var(--line-strong);border-radius:16px;box-shadow:0 20px 40px -14px rgba(59,46,34,.35);display:none;overflow:hidden;}
+.icon-picker-panel.show{display:block;}
+.icon-picker-tabs{display:flex;border-bottom:1px solid var(--line);}
+.icon-picker-tabs .ipt{flex:1;text-align:center;padding:9px;font-size:12px;font-weight:700;cursor:pointer;color:var(--text-soft);}
+.icon-picker-tabs .ipt.active{color:var(--primary);background:rgba(212,175,55,.12);}
+.icon-picker-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:4px;padding:10px;max-height:210px;overflow-y:auto;}
+.ip-item{aspect-ratio:1/1;display:flex;align-items:center;justify-content:center;border-radius:9px;cursor:pointer;color:var(--primary);background:var(--bg-page);font-size:15px;}
+.ip-item:hover{background:rgba(212,175,55,.22);}
 .section-divider{display:flex;align-items:center;gap:10px;margin:18px 0 12px;}
 .section-divider span{font-size:11px;font-weight:800;letter-spacing:.6px;text-transform:uppercase;color:var(--primary);white-space:nowrap;}
 .section-divider::before,.section-divider::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,transparent,var(--line-strong),transparent);}
@@ -632,6 +643,13 @@ button{font-family:inherit;}
 </div>
 
 <div class="toast" id="toast"></div>
+<div class="icon-picker-panel" id="iconPickerPanel">
+  <div class="icon-picker-tabs">
+    <div class="ipt active" data-tab="icon" onclick="switchIconPickerTab('icon')">ໄອຄອນ</div>
+    <div class="ipt" data-tab="emoji" onclick="switchIconPickerTab('emoji')">ອີໂມຈິ</div>
+  </div>
+  <div class="icon-picker-grid" id="iconPickerGrid"></div>
+</div>
 
 <script>
 /*************************************************************
@@ -840,30 +858,27 @@ function applySettingsToUI(s) {
   ['home', 'rent', 'pawn', 'auction', 'live'].forEach(key => {
     const navEl = document.querySelector('.nav-item[data-nav="' + key + '"]');
     if (navEl) {
-      if (icons[key]) navEl.querySelector('i').className = 'fa-solid ' + icons[key];
+      if (icons[key]) applyIconToEl(navEl.querySelector('i'), icons[key]);
       if (titles[key]) navEl.querySelector('span').textContent = titles[key];
     }
     const sideEl = document.querySelector('.side-item[data-nav="' + key + '"]');
     if (sideEl) {
-      if (icons[key]) sideEl.querySelector('i').className = 'fa-solid ' + icons[key];
+      if (icons[key]) applyIconToEl(sideEl.querySelector('i'), icons[key]);
       if (titles[key]) sideEl.querySelector('span').textContent = titles[key];
     }
     const pillEl = document.querySelector('.pill[data-goto="' + key + '"]');
     if (pillEl) {
       const ic = pillEl.querySelector('i');
-      if (ic && icons[key]) ic.className = 'fa-solid ' + icons[key];
+      if (ic && icons[key]) applyIconToEl(ic, icons[key]);
       if (titles[key]) pillEl.lastChild.textContent = titles[key];
     }
     const subHeadIcon = document.querySelector('#page-' + key + ' .page-subheader h2 i');
-    if (subHeadIcon && icons[key]) subHeadIcon.className = 'fa-solid ' + icons[key];
+    if (subHeadIcon && icons[key]) applyIconToEl(subHeadIcon, icons[key]);
   });
-  if (icons.menu) document.querySelector('#menuBtn i').className = 'fa-solid ' + icons.menu;
-  if (icons.phone) {
-    const fabIcon = document.getElementById('fabPhoneIcon');
-    if (fabIcon) fabIcon.className = 'fa-solid ' + icons.phone;
-  }
+  if (icons.menu) applyIconToEl(document.querySelector('#menuBtn i'), icons.menu);
+  if (icons.phone) applyIconToEl(document.getElementById('fabPhoneIcon'), icons.phone);
   if (icons.search) {
-    document.querySelectorAll('.searchbar > i').forEach(i => i.className = 'fa-solid ' + icons.search);
+    document.querySelectorAll('.searchbar > i').forEach(i => applyIconToEl(i, icons.search));
   }
 }
 
@@ -1546,17 +1561,19 @@ function renderBannerAdminList() {
     '<p style="font-size:11.5px;color:var(--text-soft);margin:-6px 0 14px;">ສາມາດກຳນົດວັນທີ່ເລີ່ມ-ໝົດ ແລະ ເປີດ/ປິດ ໄດ້ຕໍ່ Banner. ຮູບແນະນຳອັດຕາສ່ວນ 16:8</p>' +
     '<button class="btn small" onclick="editBannerForm()" style="margin-bottom:14px;"><i class="fa-solid fa-plus"></i> ເພີ່ມ Banner ໃໝ່</button>';
   html += list.map((s, idx) =>
-    '<div class="admin-list-item"><div class="top"><div>' +
-    '<div class="name">' + esc(s.title || '(ບໍ່ມີຫົວຂໍ້)') + '</div>' +
+    '<div class="admin-list-item" style="display:flex;align-items:center;gap:12px;">' +
+    '<img src="' + esc(s.image || '') + '" style="width:88px;height:50px;object-fit:cover;border-radius:10px;background:linear-gradient(150deg,#FBF3E1,#F0DFB8);flex:0 0 auto;" onerror="this.style.opacity=\'.25\'">' +
+    '<div style="flex:1;min-width:0;">' +
     '<div class="sub">' + (s.status === 'inactive' ? 'ປິດຢູ່' : 'ເປີດໃຊ້') +
       (s.startDate ? ' | ເລີ່ມ ' + esc(new Date(s.startDate).toLocaleString('lo-LA')) : '') +
-      (s.endDate ? ' - ໝົດ ' + esc(new Date(s.endDate).toLocaleString('lo-LA')) : '') + '</div></div>' +
-    '<div style="display:flex;gap:6px;">' +
+      (s.endDate ? ' - ໝົດ ' + esc(new Date(s.endDate).toLocaleString('lo-LA')) : '') + '</div>' +
+    '</div>' +
+    '<div style="display:flex;gap:6px;flex:0 0 auto;">' +
     '<button class="icon-btn up" data-act="bup" data-idx="' + idx + '"><i class="fa-solid fa-arrow-up"></i></button>' +
     '<button class="icon-btn down" data-act="bdown" data-idx="' + idx + '"><i class="fa-solid fa-arrow-down"></i></button>' +
     '<button class="icon-btn" data-act="bedit" data-idx="' + idx + '"><i class="fa-solid fa-pen"></i></button>' +
     '<button class="icon-btn" data-act="bdel" data-id="' + esc(s.id) + '" style="color:#C0392B;"><i class="fa-solid fa-trash"></i></button>' +
-    '</div></div></div>'
+    '</div></div>'
   ).join('') || '<p style="opacity:.65;font-size:13px;">ຍັງບໍ່ມີ Banner, ກົດ "ເພີ່ມ Banner ໃໝ່" ຂ້າງເທິງ</p>';
   html += '<button class="btn secondary" style="margin-top:10px;" onclick="closeAdminModal()">ປິດ</button>';
   openAdminModal(html);
@@ -1822,20 +1839,72 @@ function fontOption(role, current) {
 function colorSwatch(id, label, v) {
   return '<div class="swatch-item"><input type="color" id="' + id + '" value="' + (v || '#9C6B2E') + '"><span>' + label + '</span></div>';
 }
+function iconHtml(value) {
+  value = value || '';
+  if (value.indexOf('fa-') === 0) return '<i class="fa-solid ' + esc(value) + '"></i>';
+  return '<span style="font-style:normal;">' + esc(value) + '</span>';
+}
+function applyIconToEl(el, value) {
+  if (!el || !value) return;
+  if (value.indexOf('fa-') === 0) { el.className = 'fa-solid ' + value; el.textContent = ''; }
+  else { el.className = ''; el.style.fontStyle = 'normal'; el.textContent = value; }
+}
+function updateIconPreview(inputId, previewId) {
+  document.getElementById(previewId).innerHTML = iconHtml(val(inputId));
+}
+const ICON_LIST = ['fa-house','fa-box-open','fa-gem','fa-gavel','fa-video','fa-user','fa-ellipsis-vertical','fa-cart-shopping','fa-phone','fa-magnifying-glass','fa-star','fa-tag','fa-tags','fa-coins','fa-shield','fa-crown','fa-ring','fa-gift','fa-fire','fa-bolt','fa-heart','fa-bell','fa-key','fa-gauge','fa-image','fa-scroll','fa-address-book','fa-store','fa-warehouse','fa-hand-holding-dollar','fa-money-bill','fa-truck','fa-clock','fa-calendar','fa-map-pin','fa-envelope','fa-circle'];
+const EMOJI_LIST = ['🏠','📦','💎','🔨','📹','👤','☰','🛒','📞','🔍','⭐','🏷️','🪙','🛡️','👑','💍','🎁','🔥','⚡','❤️','🔔','🔑','📊','🖼️','📜','📇','🏪','💰','🚚','⏰','📅','📍','✉️','🎉','✅','🌟'];
+let ICON_PICKER_TARGET = null;
+function openIconPicker(inputId, previewId, btnEl) {
+  ICON_PICKER_TARGET = { inputId: inputId, previewId: previewId };
+  switchIconPickerTab('icon');
+  const panel = document.getElementById('iconPickerPanel');
+  const rect = btnEl.getBoundingClientRect();
+  let top = window.scrollY + rect.bottom + 6, left = window.scrollX + rect.left;
+  if (left + 270 > window.innerWidth) left = window.innerWidth - 280;
+  panel.style.top = top + 'px'; panel.style.left = left + 'px';
+  panel.classList.add('show');
+}
+function switchIconPickerTab(tab) {
+  document.querySelectorAll('.icon-picker-tabs .ipt').forEach(t => t.classList.toggle('active', t.dataset.tab === tab));
+  const grid = document.getElementById('iconPickerGrid');
+  const list = tab === 'icon' ? ICON_LIST : EMOJI_LIST;
+  grid.innerHTML = list.map(v => tab === 'icon'
+    ? '<div class="ip-item" onclick="chooseIconValue(\'' + v + '\')"><i class="fa-solid ' + v + '"></i></div>'
+    : '<div class="ip-item" onclick="chooseIconValue(\'' + v + '\')" style="font-size:18px;">' + v + '</div>'
+  ).join('');
+}
+function chooseIconValue(v) {
+  if (!ICON_PICKER_TARGET) return;
+  const input = document.getElementById(ICON_PICKER_TARGET.inputId);
+  input.value = v;
+  updateIconPreview(ICON_PICKER_TARGET.inputId, ICON_PICKER_TARGET.previewId);
+  document.getElementById('iconPickerPanel').classList.remove('show');
+}
+document.addEventListener('click', function (e) {
+  const panel = document.getElementById('iconPickerPanel');
+  if (panel && panel.classList.contains('show') && !panel.contains(e.target) && !e.target.closest('.icon-pick-btn')) {
+    panel.classList.remove('show');
+  }
+});
 function iconEditRow(key, label, icon, title) {
   const ic = icon || 'fa-circle';
-  return '<div class="icon-edit-row"><div class="icon-preview"><i class="fa-solid ' + esc(ic) + '" id="prev_' + key + '"></i></div>' +
+  return '<div class="icon-edit-row"><div class="icon-preview" id="prev_' + key + '">' + iconHtml(ic) + '</div>' +
     '<div class="icon-fields">' +
-    '<input id="ic_' + key + '" placeholder="fa-house" value="' + esc(ic) + '" oninput="document.getElementById(\'prev_' + key + '\').className=\'fa-solid \'+this.value">' +
+    '<input id="ic_' + key + '" placeholder="fa-house ຫຼື 🏠" value="' + esc(ic) + '" oninput="updateIconPreview(\'ic_' + key + '\',\'prev_' + key + '\')">' +
     '<input id="tt_' + key + '" placeholder="ຊື່ໜ້າ" value="' + esc(title || label) + '">' +
-    '</div></div>';
+    '</div>' +
+    '<button type="button" class="icon-pick-btn" onclick="openIconPicker(\'ic_' + key + '\',\'prev_' + key + '\',this)"><i class="fa-solid fa-icons"></i></button>' +
+    '</div>';
 }
 function miscIconRow(key, label, icon) {
   const ic = icon || 'fa-circle';
-  return '<div class="icon-edit-row"><div class="icon-preview"><i class="fa-solid ' + esc(ic) + '" id="prevmisc_' + key + '"></i></div>' +
+  return '<div class="icon-edit-row"><div class="icon-preview" id="prevmisc_' + key + '">' + iconHtml(ic) + '</div>' +
     '<div class="icon-fields" style="grid-template-columns:1fr;">' +
-    '<input id="icmisc_' + key + '" placeholder="fa-phone" value="' + esc(ic) + '" oninput="document.getElementById(\'prevmisc_' + key + '\').className=\'fa-solid \'+this.value">' +
-    '</div><div style="font-size:11.5px;color:var(--text-soft);margin-left:6px;flex:0 0 auto;align-self:center;">' + esc(label) + '</div></div>';
+    '<input id="icmisc_' + key + '" placeholder="fa-phone ຫຼື 📞" value="' + esc(ic) + '" oninput="updateIconPreview(\'icmisc_' + key + '\',\'prevmisc_' + key + '\')">' +
+    '</div>' +
+    '<button type="button" class="icon-pick-btn" onclick="openIconPicker(\'icmisc_' + key + '\',\'prevmisc_' + key + '\',this)"><i class="fa-solid fa-icons"></i></button>' +
+    '<div style="font-size:11.5px;color:var(--text-soft);margin-left:6px;flex:0 0 auto;align-self:center;">' + esc(label) + '</div></div>';
 }
 function saveThemeForm() {
   const newSettings = {
