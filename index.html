@@ -352,6 +352,14 @@ button{font-family:inherit;}
 #initLoading{position:fixed;inset:0;background:var(--bg-page);z-index:999;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:16px;text-align:center;padding:0 30px;}
 #initLoading .init-logo{width:64px;height:64px;border-radius:18px;object-fit:cover;box-shadow:var(--shadow-gold);}
 
+/* ໂຕນຳ້ບາງໆ ດ້ານເທິງ topbar - ສະແດງພຽງຊົ່ວຄາວຕອນກຳລັງໂຫຼດຂໍ້ມູນຄັ້ງທຳອິດ (ບໍ່ບັງໜ້າ, ບໍ່ຢຸດຜູ້ໃຊ້) */
+#topLoadingBar{position:fixed;top:0;left:0;height:3px;width:0%;z-index:500;background:linear-gradient(90deg,var(--secondary),var(--primary));transition:width .35s ease, opacity .3s ease;opacity:0;pointer-events:none;}
+#topLoadingBar.show{opacity:1;}
+
+/* admin ອິນລາຍ loading skeleton ຂະນະປ່ຽນໜ້າ */
+.admin-inline-loading{padding:50px 0;text-align:center;}
+.admin-inline-loading p{margin-top:12px;color:var(--text-soft);font-size:13px;font-weight:600;}
+
 /* banner slide editor thumbnail row */
 .banner-edit-item{background:#fff;border:1px solid var(--line);border-radius:15px;padding:13px;margin-bottom:12px;}
 .banner-edit-item .bthumb{width:100%;aspect-ratio:16/8;border-radius:11px;object-fit:cover;background:linear-gradient(150deg,#FBF3E1,#F0DFB8);margin-bottom:10px;}
@@ -424,6 +432,8 @@ button{font-family:inherit;}
 </style>
 </head>
 <body>
+
+<div id="topLoadingBar"></div>
 
 <!-- ================= SIDE NAV (Desktop dock) ================= -->
 <div class="sidenav" id="sidenav">
@@ -654,6 +664,7 @@ let SETTINGS = null;
 let ADMIN_TOKEN = localStorage.getItem('admin_token') || null;
 let PRODUCTS = [], AUCTIONS = [], LIVES = [], BANNERS = [], MARQUEE_ITEMS = [];
 let EDIT_CACHE = {}; // ເກັບ object ຊົ່ວຄາວສຳລັບແກ້ໄຂ (ກັນບັນຫາ quote ໃນ onclick)
+let BOOTSTRAP_DONE = false; // ກັນບໍ່ໃຫ້ restoreAdminSession() ຖືກເອີ້ນຊ້ຳຫຼາຍເທື່ອ
 
 function bannerSlides(){ return BANNERS; }
 function promoItems(){ return MARQUEE_ITEMS.map(m => m.text); }
@@ -801,24 +812,63 @@ function showToast(msg, type) {
 }
 
 /*************************************************************
- * ໂຫຼດ SETTINGS ແລະ ຂໍ້ມູນທັງໝົດ (ຄັ້ງດຽວ)
+ * ບານ loading ບາງໆ ດ້ານເທິງສຸດ (ບໍ່ບັງໜ້າ, ບໍ່ຢຸດການໃຊ້ງານ)
  *************************************************************/
-function loadBootstrap() {
+function showTopLoading() {
+  const bar = document.getElementById('topLoadingBar');
+  if (!bar) return;
+  bar.classList.add('show');
+  bar.style.width = '70%';
+}
+function hideTopLoading() {
+  const bar = document.getElementById('topLoadingBar');
+  if (!bar) return;
+  bar.style.width = '100%';
+  setTimeout(() => { bar.classList.remove('show'); bar.style.width = '0%'; }, 300);
+}
+
+/*************************************************************
+ * CACHE ຂໍ້ມູນທ້ອງຖິ່ນ (localStorage) - ໃຫ້ໜ້າຫຼັກສະແດງທັນທີ
+ * ໂດຍບໍ່ຕ້ອງລໍຖ້າເຊີບເວີ, ແລ້ວຄ່ອຍອັບເດດຂໍ້ມູນສົດຢູ່ທາງຫຼັງແບບງຽບໆ
+ *************************************************************/
+const BOOTSTRAP_CACHE_KEY = 'thae_phakhueang_bootstrap_v1';
+function loadBootstrapCache_() {
+  try {
+    const raw = localStorage.getItem(BOOTSTRAP_CACHE_KEY);
+    return raw ? JSON.parse(raw) : null;
+  } catch (e) { return null; }
+}
+function saveBootstrapCache_(data) {
+  try { localStorage.setItem(BOOTSTRAP_CACHE_KEY, JSON.stringify(data)); } catch (e) { /* ບໍ່ເປັນຫຍັງຖ້າເກັບບໍ່ໄດ້ */ }
+}
+
+/*************************************************************
+ * ໂຫຼດ SETTINGS ແລະ ຂໍ້ມູນທັງໝົດ
+ *  - silent = true  -> ໂຫຼດຢູ່ທາງຫຼັງແບບງຽບໆ (ບໍ່ສະແດງໜ້າ error ຖ້າພາດ)
+ *  - silent = false -> ໂຫຼດຄັ້ງທຳອິດ / ຮ້ອງຂໍໂດຍກົງ (ສະແດງ error ຖ້າພາດ)
+ *************************************************************/
+function loadBootstrap(silent) {
+  if (!silent) showTopLoading();
   callServer('getBootstrapData', [], (data) => {
-    if (!data || data.__networkError) return handleBootstrapError();
-    SETTINGS = data.settings;
-    PRODUCTS = data.products || [];
-    AUCTIONS = data.auctions || [];
-    LIVES = data.lives || [];
-    BANNERS = data.banners || [];
-    MARQUEE_ITEMS = data.marquee || [];
-    applySettingsToUI(SETTINGS);
-    renderRentGrid(); renderPawnGrid(); renderHomeRent(); renderHomePawn();
-    renderAuctionList(); renderHomeAuction();
-    renderLiveList(); renderHomeLive();
-    restoreAdminSession();
+    if (!silent) hideTopLoading();
+    if (!data || data.__networkError) { if (!silent) handleBootstrapError(); return; }
+    applyBootstrapData(data);
+    saveBootstrapCache_(data);
+    if (!BOOTSTRAP_DONE) { BOOTSTRAP_DONE = true; restoreAdminSession(); }
     document.getElementById('initLoading')?.remove();
-  }, handleBootstrapError);
+  }, () => { if (!silent) { hideTopLoading(); handleBootstrapError(); } });
+}
+function applyBootstrapData(data) {
+  SETTINGS = data.settings;
+  PRODUCTS = data.products || [];
+  AUCTIONS = data.auctions || [];
+  LIVES = data.lives || [];
+  BANNERS = data.banners || [];
+  MARQUEE_ITEMS = data.marquee || [];
+  applySettingsToUI(SETTINGS);
+  renderRentGrid(); renderPawnGrid(); renderHomeRent(); renderHomePawn();
+  renderAuctionList(); renderHomeAuction();
+  renderLiveList(); renderHomeLive();
 }
 function handleBootstrapError() {
   const el = document.getElementById('initLoading');
@@ -830,6 +880,26 @@ function handleBootstrapError() {
   } else {
     showToast('ເຊື່ອມຕໍ່ເຊີບເວີບໍ່ໄດ້', 'err');
   }
+}
+
+/*************************************************************
+ * ອັບເດດຂໍ້ມູນຢູ່ທາງຫຼັງແບບງຽບໆເປັນໄລຍະ (silent background refresh)
+ * ເພື່ອໃຫ້ຫນ້າຫຼັກສະແດງລາຍການໃໝ່/ການປະມູນໃໝ່ ໂດຍຜູ້ໃຊ້ບໍ່ຕ້ອງກົດຣີເຟຣດເອງ
+ * ຈະຂ້າມການອັບເດດ ຖ້າມີ modal/drawer ເປີດຢູ່ ເພື່ອບໍ່ລົບກວນຜູ້ໃຊ້
+ *************************************************************/
+let AUTO_REFRESH_TIMER = null;
+function isUserBusyWithModal_() {
+  return document.getElementById('modalCenter').classList.contains('show') ||
+    document.getElementById('adminModalCenter').classList.contains('show') ||
+    document.getElementById('mainDrawer').classList.contains('show') ||
+    document.getElementById('adminDrawer').classList.contains('show');
+}
+function startAutoRefresh() {
+  if (AUTO_REFRESH_TIMER) clearInterval(AUTO_REFRESH_TIMER);
+  AUTO_REFRESH_TIMER = setInterval(() => {
+    if (isUserBusyWithModal_()) return; // ຢ່າລົບກວນຜູ້ໃຊ້ຂະນະກຳລັງປ້ອນຟອມ
+    loadBootstrap(true);
+  }, 45000); // ທຸກ 45 ວິນາທີ
 }
 
 function applySettingsToUI(s) {
@@ -892,7 +962,7 @@ function applyTheme(s) {
   if (c.gradientTo) r.setProperty('--grad-to', c.gradientTo);
 }
 
-function loadAllData() { loadBootstrap(); } // alias (ໃຊ້ຫຼັງອັບເດດຂໍ້ມູນຝັ່ງ admin)
+function loadAllData() { loadBootstrap(true); } // alias (ໃຊ້ຫຼັງອັບເດດຂໍ້ມູນຝັ່ງ admin - ອັບເດດແບບງຽບໆ ບໍ່ລົບກວນໜ້າຈໍ)
 
 function fmt(n) { n = Number(n) || 0; return n.toLocaleString('lo-LA') + ' ກີບ'; }
 function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m])); }
@@ -1090,6 +1160,9 @@ function switchAdminSection(name) {
     auctions:'ຈັດການປະມູນ', lives:'ຈັດການ Live', banner:'ຈັດການ Banner', marquee:'ຂໍ້ຄວາມເລື່ອນ',
     contacts:'ຂໍ້ຄວາມຕິດຕໍ່', theme:'ປັບແຕ່ງໜ້າຕາ', password:'ປ່ຽນລະຫັດຜ່ານ' };
   document.getElementById('adminSectionTitle').textContent = titles[name] || 'Admin';
+  // ສະແດງ loading ຊົ່ວຄາວ ພາຍໃນຫນ້າ admin ທັນທີ ເພື່ອບໍ່ໃຫ້ຮູ້ສຶກວ່າໜ້າວ່າງເປົ່າ/ຄ້າງ ຂະນະລໍຖ້າຂໍ້ມູນຈາກເຊີບເວີ
+  document.getElementById('adminContent').innerHTML =
+    '<div class="admin-inline-loading"><div class="loading-spin"></div><p>ກຳລັງໂຫຼດ...</p></div>';
   const map = { dashboard: adminDashboard, products: adminProducts, rentals: adminRentals, pawns: adminPawns,
     auctions: adminAuctions, lives: adminLives, banner: adminBanner, marquee: adminMarquee,
     contacts: adminContacts, theme: adminTheme, password: adminPasswordForm };
@@ -1346,8 +1419,8 @@ function adminProducts() {
     ).join('') || '<p style="opacity:.65;font-size:13px;">ຍັງບໍ່ມີສິນຄ້າ</p>';
     html += '<button class="btn secondary" style="margin-top:10px;" onclick="closeAdminModal()">ປິດ</button>';
     openAdminModal(html);
-    document.querySelectorAll('#adminModalContent [data-act="edit"]').forEach(b => b.onclick = () => editProductForm(EDIT_CACHE.products[Number(b.dataset.idx)]));
-    document.querySelectorAll('#adminModalContent [data-act="del"]').forEach(b => b.onclick = () => deleteProductConfirm(b.dataset.id));
+    document.querySelectorAll('#adminContent [data-act="edit"]').forEach(b => b.onclick = () => editProductForm(EDIT_CACHE.products[Number(b.dataset.idx)]));
+    document.querySelectorAll('#adminContent [data-act="del"]').forEach(b => b.onclick = () => deleteProductConfirm(b.dataset.id));
   });
 }
 function editProductForm(p) {
@@ -1567,10 +1640,10 @@ function renderBannerAdminList() {
   ).join('') || '<p style="opacity:.65;font-size:13px;">ຍັງບໍ່ມີ Banner, ກົດ "ເພີ່ມ Banner ໃໝ່" ຂ້າງເທິງ</p>';
   html += '<button class="btn secondary" style="margin-top:10px;" onclick="closeAdminModal()">ປິດ</button>';
   openAdminModal(html);
-  document.querySelectorAll('#adminModalContent [data-act="bedit"]').forEach(b => b.onclick = () => editBannerForm(EDIT_CACHE.bannerList[Number(b.dataset.idx)]));
-  document.querySelectorAll('#adminModalContent [data-act="bdel"]').forEach(b => b.onclick = () => deleteBannerConfirm(b.dataset.id));
-  document.querySelectorAll('#adminModalContent [data-act="bup"]').forEach(b => b.onclick = () => moveBannerSlide(Number(b.dataset.idx), -1));
-  document.querySelectorAll('#adminModalContent [data-act="bdown"]').forEach(b => b.onclick = () => moveBannerSlide(Number(b.dataset.idx), 1));
+  document.querySelectorAll('#adminContent [data-act="bedit"]').forEach(b => b.onclick = () => editBannerForm(EDIT_CACHE.bannerList[Number(b.dataset.idx)]));
+  document.querySelectorAll('#adminContent [data-act="bdel"]').forEach(b => b.onclick = () => deleteBannerConfirm(b.dataset.id));
+  document.querySelectorAll('#adminContent [data-act="bup"]').forEach(b => b.onclick = () => moveBannerSlide(Number(b.dataset.idx), -1));
+  document.querySelectorAll('#adminContent [data-act="bdown"]').forEach(b => b.onclick = () => moveBannerSlide(Number(b.dataset.idx), 1));
 }
 function editBannerForm(s) {
   s = s || {};
@@ -1661,10 +1734,10 @@ function renderMarqueeAdminList() {
   ).join('') || '<p style="opacity:.65;font-size:13px;">ຍັງບໍ່ມີຂໍ້ຄວາມ</p>';
   html += '<button class="btn secondary" style="margin-top:10px;" onclick="closeAdminModal()">ປິດ</button>';
   openAdminModal(html);
-  document.querySelectorAll('#adminModalContent [data-act="medit"]').forEach(b => b.onclick = () => editMarqueeForm(EDIT_CACHE.marqueeList[Number(b.dataset.idx)]));
-  document.querySelectorAll('#adminModalContent [data-act="mdel"]').forEach(b => b.onclick = () => deleteMarqueeConfirm(b.dataset.id));
-  document.querySelectorAll('#adminModalContent [data-act="mup"]').forEach(b => b.onclick = () => moveMarqueeItem(Number(b.dataset.idx), -1));
-  document.querySelectorAll('#adminModalContent [data-act="mdown"]').forEach(b => b.onclick = () => moveMarqueeItem(Number(b.dataset.idx), 1));
+  document.querySelectorAll('#adminContent [data-act="medit"]').forEach(b => b.onclick = () => editMarqueeForm(EDIT_CACHE.marqueeList[Number(b.dataset.idx)]));
+  document.querySelectorAll('#adminContent [data-act="mdel"]').forEach(b => b.onclick = () => deleteMarqueeConfirm(b.dataset.id));
+  document.querySelectorAll('#adminContent [data-act="mup"]').forEach(b => b.onclick = () => moveMarqueeItem(Number(b.dataset.idx), -1));
+  document.querySelectorAll('#adminContent [data-act="mdown"]').forEach(b => b.onclick = () => moveMarqueeItem(Number(b.dataset.idx), 1));
 }
 function editMarqueeForm(m) {
   m = m || {};
@@ -1942,11 +2015,21 @@ function setBtnLoading(btnId, loading) {
 
 /*************************************************************
  * INIT
+ * - ຖ້າມີຂໍ້ມູນທີ່ເຄີຍເກັບໄວ້ (cache) -> ສະແດງໜ້າຫຼັກທັນທີໂດຍບໍ່ຕ້ອງລໍຖ້າເຊີບເວີ
+ * - ຈາກນັ້ນຄ່ອຍໂຫຼດຂໍ້ມູນສົດຢູ່ທາງຫຼັງແບບງຽບໆ ມາທັບຂໍ້ມູນເກົ່າອີກຄັ້ງ
+ * - ຕັ້ງເວລາອັບເດດອັດຕະໂນມັດເປັນໄລຍະ ເພື່ອໃຫ້ເຫັນລາຍການ/ການປະມູນໃໝ່ ໂດຍບໍ່ຕ້ອງກົດຣີເຟຣດ
  *************************************************************/
 window.addEventListener('DOMContentLoaded', () => {
-  loadBootstrap();
+  const cached = loadBootstrapCache_();
+  if (cached) {
+    applyBootstrapData(cached);
+    BOOTSTRAP_DONE = true;
+    restoreAdminSession();
+  }
+  loadBootstrap(!!cached); // ຖ້າມີ cache ແລ້ວ -> ໂຫຼດແບບງຽບໆ (ບໍ່ສະແດງ error ຖ້າພາດ), ຖ້າບໍ່ມີ -> ໂຫຼດປົກກະຕິ
   const initial = (location.hash || '#home').replace('#', '') || 'home';
   if (initial !== 'home') goPage(initial, false);
+  startAutoRefresh();
 });
 renderBannerSlider();
 renderMarquee();
