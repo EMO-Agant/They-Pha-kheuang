@@ -386,6 +386,27 @@ button{font-family:inherit;}
 }
 
 .desktop-hint{display:none;}
+.admin-shell{display:flex;min-height:100vh;background:var(--bg-page-2);}
+.admin-sidebar{width:230px;flex:0 0 230px;background:linear-gradient(180deg,var(--bg-dark),#231610);
+  display:flex;flex-direction:column;padding:20px 12px;gap:4px;position:sticky;top:0;height:100vh;overflow-y:auto;}
+.admin-sidebar-logo{display:flex;align-items:center;gap:10px;color:var(--text-light);font-weight:800;
+  padding:6px 10px 20px;font-family:var(--font-heading);}
+.admin-sidebar-logo img{width:36px;height:36px;border-radius:10px;object-fit:cover;}
+.admin-nav-item{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:12px;
+  color:var(--text-light);opacity:.7;cursor:pointer;font-size:13.5px;}
+.admin-nav-item i{width:18px;text-align:center;}
+.admin-nav-item.active{opacity:1;background:rgba(227,194,133,.16);color:var(--accent);}
+.admin-nav-item:hover{opacity:1;}
+.admin-nav-item.logout{color:#ff8080;}
+.admin-sidebar-spacer{flex:1;}
+.admin-main{flex:1;padding:24px 30px;overflow-y:auto;}
+.admin-topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;}
+.admin-topbar h2{margin:0;font-size:20px;color:var(--text-dark);}
+@media(max-width:900px){
+  .admin-sidebar{position:fixed;left:0;top:0;height:100%;transform:translateX(-100%);transition:.25s;z-index:80;}
+  .admin-sidebar.show{transform:translateX(0);}
+  .admin-main{padding:16px;}
+}
 </style>
 </head>
 <body>
@@ -510,6 +531,34 @@ button{font-family:inherit;}
     </div>
     <div class="section" style="padding-top:6px;">
       <div id="liveList"></div>
+    </div>
+  </div>
+
+  <!-- ================= ADMIN FULL PAGE ================= -->
+  <div id="page-admin" class="page" style="display:none;">
+    <div class="admin-shell">
+      <div class="admin-sidebar" id="adminSidebar">
+        <div class="admin-sidebar-logo"><img id="adminSideLogo" src=""><span>Admin</span></div>
+        <div class="admin-nav-item active" data-sec="dashboard" onclick="switchAdminSection('dashboard')"><i class="fa-solid fa-chart-line"></i><span>ພາບລວມ</span></div>
+        <div class="admin-nav-item" data-sec="products" onclick="switchAdminSection('products')"><i class="fa-solid fa-box"></i><span>ສິນຄ້າ</span></div>
+        <div class="admin-nav-item" data-sec="rentals" onclick="switchAdminSection('rentals')"><i class="fa-solid fa-key"></i><span>ຄຳຂໍເຊົ່າ</span></div>
+        <div class="admin-nav-item" data-sec="pawns" onclick="switchAdminSection('pawns')"><i class="fa-solid fa-hand-holding-dollar"></i><span>ຄຳຂໍຈຳນຳ</span></div>
+        <div class="admin-nav-item" data-sec="auctions" onclick="switchAdminSection('auctions')"><i class="fa-solid fa-gavel"></i><span>ປະມູນ</span></div>
+        <div class="admin-nav-item" data-sec="lives" onclick="switchAdminSection('lives')"><i class="fa-solid fa-video"></i><span>Live</span></div>
+        <div class="admin-nav-item" data-sec="contacts" onclick="switchAdminSection('contacts')"><i class="fa-solid fa-address-book"></i><span>ຕິດຕໍ່</span></div>
+        <div class="admin-nav-item" data-sec="theme" onclick="switchAdminSection('theme')"><i class="fa-solid fa-palette"></i><span>ປັບແຕ່ງ</span></div>
+        <div class="admin-nav-item" data-sec="password" onclick="switchAdminSection('password')"><i class="fa-solid fa-key"></i><span>ລະຫັດຜ່ານ</span></div>
+        <div class="admin-nav-item" onclick="window.open('https://docs.google.com/spreadsheets/d/1Nw2vJAh5nFdcueQVA3zs4xNmkoYBZK-q944bEVl9VDI/edit','_blank')"><i class="fa-solid fa-table"></i><span>Sheet</span></div>
+        <div class="admin-sidebar-spacer"></div>
+        <div class="admin-nav-item logout" onclick="adminLogout()"><i class="fa-solid fa-right-from-bracket"></i><span>ອອກຈາກລະບົບ</span></div>
+      </div>
+      <div class="admin-main">
+        <div class="admin-topbar">
+          <h2 id="adminSectionTitle">ພາບລວມ</h2>
+          <div class="back-btn" onclick="goPage('home')"><i class="fa-solid fa-house"></i></div>
+        </div>
+        <div id="adminContent"></div>
+      </div>
     </div>
   </div>
 
@@ -941,7 +990,7 @@ function tbox(v, l) { return '<div class="timer-box"><b>' + String(v).padStart(2
 /*************************************************************
  * NAVIGATION (ຮອງຮັບ browser back/forward ຜ່ານ hash)
  *************************************************************/
-const VALID_PAGES = ['home', 'rent', 'pawn', 'auction', 'live'];
+const VALID_PAGES = ['home', 'rent', 'pawn', 'auction', 'live', 'admin'];
 function goPage(name, pushState) {
   pushState = pushState !== false;
   if (VALID_PAGES.indexOf(name) === -1) name = 'home';
@@ -992,10 +1041,22 @@ function openModal(html) {
 }
 function closeModal() { document.getElementById('modalCenter').classList.remove('show'); document.getElementById('overlay').classList.remove('show'); }
 function openAdminModal(html) {
-  document.getElementById('adminModalContent').innerHTML = '<div class="modal-close-x" onclick="closeAdminModal()"><i class="fa-solid fa-xmark"></i></div>' + html;
-  document.getElementById('adminModalCenter').classList.add('show');
+  // ຟັງຊັນເດີມ (adminDashboard, adminProducts, ... ) ຄົງໄວ້ຄືເກົ່າ 100%
+  // ແຕ່ດຽວນີ້ໃຫ້ໄປວາງໃນໜ້າ Admin ເຕັມ ແທນ popup
+  document.getElementById('adminContent').innerHTML = html;
 }
-function closeAdminModal() { document.getElementById('adminModalCenter').classList.remove('show'); }
+function closeAdminModal() { switchAdminSection('dashboard'); }
+
+function switchAdminSection(name) {
+  goPage('admin');
+  document.querySelectorAll('.admin-nav-item[data-sec]').forEach(n => n.classList.toggle('active', n.dataset.sec === name));
+  const titles = { dashboard:'ພາບລວມ', products:'ຈັດການສິນຄ້າ', rentals:'ຄຳຂໍເຊົ່າ', pawns:'ຄຳຂໍຈຳນຳ',
+    auctions:'ຈັດການປະມູນ', lives:'ຈັດການ Live', contacts:'ຂໍ້ຄວາມຕິດຕໍ່', theme:'ປັບແຕ່ງໜ້າຕາ', password:'ປ່ຽນລະຫັດຜ່ານ' };
+  document.getElementById('adminSectionTitle').textContent = titles[name] || 'Admin';
+  const map = { dashboard: adminDashboard, products: adminProducts, rentals: adminRentals, pawns: adminPawns,
+    auctions: adminAuctions, lives: adminLives, contacts: adminContacts, theme: adminTheme, password: adminPasswordForm };
+  (map[name] || adminDashboard)();
+}
 function val(id) { const el = document.getElementById(id); return el ? el.value.trim() : ''; }
 
 /*************************************************************
@@ -1124,41 +1185,59 @@ function openAdminLogin() {
   closeDrawer();
   openModal(
     '<h3><i class="fa-solid fa-user-shield"></i> ເຂົ້າສູ່ລະບົບຫຼັງບ້ານ</h3>' +
-    '<div class="field"><label>ຊື່ຜູ້ໃຊ້</label><input id="ad_user" autocomplete="username"></div>' +
     '<div class="field"><label>ລະຫັດຜ່ານ</label><input type="password" id="ad_pass" autocomplete="current-password"></div>' +
-    '<button class="btn" id="ad_submit" onclick="doAdminLogin()"><i class="fa-solid fa-right-to-bracket"></i> ເຂົ້າສູ່ລະບົບ</button>' +
-    '<p style="font-size:11px;opacity:.6;margin-top:10px;text-align:center;">ຖ້າເຂົ້າລະບົບບໍ່ໄດ້: ຊື່ຜູ້ໃຊ້/ລະຫັດຜ່ານເລີ່ມຕົ້ນຄື <b>admin / admin123</b> (ປ່ຽນໄດ້ຫຼັງ login)</p>'
+    '<button class="btn" id="ad_submit" onclick="doAdminLogin()"><i class="fa-solid fa-right-to-bracket"></i> ເຂົ້າສູ່ລະບົບ</button>'
   );
 }
 function doAdminLogin() {
-  const u = val('ad_user'), p = val('ad_pass');
-  if (!u || !p) { showToast('ກະລຸນາປ້ອນຂໍ້ມູນໃຫ້ຄົບ', 'err'); return; }
+  const p = val('ad_pass');
+  if (!p) { showToast('ກະລຸນາປ້ອນລະຫັດຜ່ານ', 'err'); return; }
   setBtnLoading('ad_submit', true);
-  callServer('adminLogin', [u, p], (res) => {
+  callServer('adminLogin', [p], (res) => {
     setBtnLoading('ad_submit', false);
     if (res.success) {
       ADMIN_TOKEN = res.token;
       localStorage.setItem('admin_token', ADMIN_TOKEN);
+      localStorage.setItem('admin_saved_pass', p);
       closeModal();
       showToast('ເຂົ້າສູ່ລະບົບສຳເລັດ ✅', 'ok');
       setAdminUiState(true);
-      openAdminDrawer();
-    } else showToast(res.message || 'ຊື່ຜູ້ໃຊ້ ຫຼື ລະຫັດຜ່ານ ບໍ່ຖືກຕ້ອງ', 'err');
+      switchAdminSection('dashboard');
+    } else showToast(res.message || 'ລະຫັດຜ່ານບໍ່ຖືກຕ້ອງ', 'err');
   });
 }
 function restoreAdminSession() {
-  if (!ADMIN_TOKEN) { setAdminUiState(false); return; }
-  callServer('checkAdminToken', [ADMIN_TOKEN], (res) => {
-    if (res && res.success) { setAdminUiState(true); }
-    else { ADMIN_TOKEN = null; localStorage.removeItem('admin_token'); setAdminUiState(false); }
+  if (ADMIN_TOKEN) {
+    callServer('checkAdminToken', [ADMIN_TOKEN], (res) => {
+      if (res && res.success) { setAdminUiState(true); autoEnterAdminIfNeeded(); }
+      else trySavedAutoLogin();
+    }, trySavedAutoLogin);
+  } else {
+    trySavedAutoLogin();
+  }
+}
+function trySavedAutoLogin() {
+  const savedPass = localStorage.getItem('admin_saved_pass');
+  if (!savedPass) { ADMIN_TOKEN = null; localStorage.removeItem('admin_token'); setAdminUiState(false); return; }
+  callServer('adminLogin', [savedPass], (res) => {
+    if (res.success) {
+      ADMIN_TOKEN = res.token; localStorage.setItem('admin_token', ADMIN_TOKEN);
+      setAdminUiState(true); autoEnterAdminIfNeeded();
+    } else {
+      localStorage.removeItem('admin_saved_pass'); localStorage.removeItem('admin_token');
+      setAdminUiState(false);
+    }
   }, () => setAdminUiState(false));
+}
+function autoEnterAdminIfNeeded() {
+  if (location.hash === '#admin') switchAdminSection('dashboard');
 }
 function setAdminUiState(loggedIn) {
   const item = document.getElementById('adminEntryItem');
   const menuBtn = document.getElementById('menuBtn');
   if (loggedIn) {
     item.innerHTML = '<i class="fa-solid fa-gauge"></i> ໄປຫຼັງບ້ານ Admin (ເຂົ້າແລ້ວ)';
-    item.onclick = function () { closeDrawer(); openAdminDrawer(); };
+    item.onclick = function () { closeDrawer(); switchAdminSection('dashboard'); };
     if (!menuBtn.querySelector('.admin-dot')) {
       const dot = document.createElement('span'); dot.className = 'admin-dot'; menuBtn.appendChild(dot);
     }
