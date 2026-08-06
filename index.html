@@ -116,6 +116,23 @@ button{font-family:inherit;}
   position:relative; overflow:hidden; box-shadow:var(--shadow-lift);
   border:1px solid rgba(227,194,133,.22);
 }
+.banner-slider{margin:14px 16px;border-radius:26px;overflow:hidden;position:relative;box-shadow:var(--shadow-lift);border:1px solid var(--line);}
+.slider-track{display:flex;transition:transform .5s ease;}
+.slide{min-width:100%;position:relative;aspect-ratio:16/8;background:linear-gradient(135deg,var(--grad-from),var(--grad-to));display:flex;flex-direction:column;justify-content:center;padding:26px 24px;}
+.slide img.slide-bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;}
+.slide .slide-overlay{position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.15),rgba(0,0,0,.45));z-index:1;}
+.slide .slide-content{position:relative;z-index:2;color:#fff;}
+.slide h1{margin:0 0 8px;font-size:22px;font-weight:800;}
+.slide p{margin:0;font-size:13px;opacity:.9;}
+.slider-dots{position:absolute;bottom:12px;left:0;right:0;display:flex;justify-content:center;gap:6px;z-index:3;}
+.slider-dots .dot{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.5);cursor:pointer;}
+.slider-dots .dot.active{background:#fff;width:20px;border-radius:5px;}
+
+.promo-marquee{margin:0 16px 14px;background:linear-gradient(100deg,var(--primary),var(--secondary));border-radius:14px;overflow:hidden;padding:10px 0;}
+.marquee-track{display:flex;white-space:nowrap;animation:marquee-scroll 18s linear infinite;}
+.marquee-track span{color:#fff;font-weight:700;font-size:12.5px;padding:0 26px;display:inline-flex;align-items:center;gap:8px;}
+@keyframes marquee-scroll{0%{transform:translateX(0);}100%{transform:translateX(-50%);}}
+
 .banner::before{content:'';position:absolute;inset:0;
   background:repeating-linear-gradient(115deg, rgba(227,194,133,.055) 0 2px, transparent 2px 34px);}
 .banner .eyebrow{position:relative;display:inline-flex;align-items:center;gap:6px;font-size:10.5px;letter-spacing:1.4px;font-weight:700;color:var(--accent);text-transform:uppercase;margin-bottom:10px;opacity:.9;}
@@ -126,6 +143,16 @@ button{font-family:inherit;}
 .banner p{margin:0;font-size:13px;line-height:1.6;position:relative;color:rgba(252,246,234,.82);max-width:78%;}
 .banner .deco{position:absolute;right:-6px;bottom:-10px;font-size:98px;opacity:.14;color:var(--accent);transform:rotate(-8deg);}
 .banner .deco-ring{position:absolute;right:20px;top:-30px;width:120px;height:120px;border-radius:50%;border:1px solid rgba(227,194,133,.25);}
+
+/* ---------- FLASH SALE PANEL (ໜ້າປະມູນ) ---------- */
+.flash-panel{margin:0 16px 8px;background:linear-gradient(100deg,#C0263F,#8B1E3F);border-radius:20px;padding:16px 14px;box-shadow:var(--shadow-lift);}
+.flash-head{display:flex;align-items:center;gap:10px;margin-bottom:12px;}
+.flash-title{color:#fff;font-weight:800;font-size:15px;display:flex;align-items:center;gap:8px;}
+.flash-timer{background:rgba(0,0,0,.25);color:#fff;font-size:12px;font-weight:700;padding:4px 10px;border-radius:8px;}
+.see-all-flash{margin-left:auto;color:#fff;font-size:11.5px;font-weight:700;opacity:.9;}
+.flash-scroll{display:flex;gap:12px;overflow-x:auto;padding-bottom:4px;}
+.flash-scroll .card-wrap{flex:0 0 150px;}
+.flash-scroll .card{background:#fff;}
 
 /* ---------- SECTION ---------- */
 .section{padding:6px 16px 4px;}
@@ -363,12 +390,6 @@ button{font-family:inherit;}
 </head>
 <body>
 
-<div id="initLoading">
-  <img class="init-logo" src="https://i.postimg.cc/853zyV8G/Tey.png" onerror="this.style.display='none'">
-  <div class="loading-spin"></div>
-  <div style="font-size:13px;color:var(--text-soft);">ກຳລັງໂຫຼດຂໍ້ມູນ...</div>
-</div>
-
 <!-- ================= SIDE NAV (Desktop dock) ================= -->
 <div class="sidenav" id="sidenav">
   <img class="side-logo" id="sideLogo" src="https://i.postimg.cc/853zyV8G/Tey.png" onerror="this.style.display='none'">
@@ -399,12 +420,12 @@ button{font-family:inherit;}
 
   <!-- ================= HOME PAGE ================= -->
   <div id="page-home" class="page">
-    <div class="banner gem-texture">
-      <div class="deco-ring"></div>
-      <div class="deco" id="bannerDecoIcon"><i class="fa-solid fa-gem"></i></div>
-      <div class="eyebrow">ຮ້ານເທ້ ພະເຄື່ອງ</div>
-      <h1 id="bannerTitle">ຍິນດີຕ້ອນຮັບ</h1>
-      <p id="bannerSub">ບໍລິການເຊົ່າ-ຈຳນຳ-ປະມູນ ຄົບວົງຈອນ ຫຼູຫຼາ ໄວ້ໃຈໄດ້</p>
+    <div class="banner-slider" id="bannerSlider">
+      <div class="slider-track" id="sliderTrack"></div>
+      <div class="slider-dots" id="sliderDots"></div>
+    </div>
+    <div class="promo-marquee">
+      <div class="marquee-track" id="marqueeTrack"></div>
     </div>
 
     <div class="section">
@@ -422,9 +443,15 @@ button{font-family:inherit;}
       <div id="homeLiveList"></div>
     </div>
 
-    <div class="section">
-      <div class="section-head"><h2><span class="ico-badge"><i class="fa-solid fa-gavel"></i></span> ກຳລັງປະມູນ</h2><span class="see-all" onclick="goPage('auction')">ເບິ່ງທັງໝົດ <i class="fa-solid fa-chevron-right"></i></span></div>
-      <div class="grid" id="homeAuctionGrid"></div>
+    <div class="section" style="padding-left:0;padding-right:0;">
+      <div class="flash-panel">
+        <div class="flash-head">
+          <div class="flash-title"><i class="fa-solid fa-gavel"></i> ກຳລັງປະມູນ</div>
+          <div class="flash-timer" id="flashGlobalTimer">⏱</div>
+          <span class="see-all-flash" onclick="goPage('auction')">ເບິ່ງທັງໝົດ <i class="fa-solid fa-chevron-right"></i></span>
+        </div>
+        <div class="flash-scroll" id="homeAuctionGrid"></div>
+      </div>
     </div>
 
     <div class="section">
@@ -563,6 +590,33 @@ let SETTINGS = null;
 let ADMIN_TOKEN = localStorage.getItem('admin_token') || null;
 let PRODUCTS = [], AUCTIONS = [], LIVES = [];
 let EDIT_CACHE = {}; // ເກັບ object ຊົ່ວຄາວສຳລັບແກ້ໄຂ (ກັນບັນຫາ quote ໃນ onclick)
+const BANNER_SLIDES = [
+  { title:'ຍິນດີຕ້ອນຮັບ', subtitle:'ບໍລິການເຊົ່າ-ຈຳນຳ-ປະມູນ ຄົບວົງຈອນ ຫຼູຫຼາ ໄວ້ໃຈໄດ້', imageUrl:'' },
+  { title:'ໂປຣໂມຊັນພິເສດ', subtitle:'ຈຳນຳງ່າຍ ດອກເບ້ຍຕ່ຳ ຮັບເງິນທັນທີ', imageUrl:'' },
+  { title:'ປະມູນຮ້ອນແຮງ', subtitle:'ພະເຄື່ອງແທ້ ລາຄາຄຸ້ມຄ່າ ປະມູນອອນລາຍ 24 ຊົ່ວໂມງ', imageUrl:'' }
+];
+const PROMO_ITEMS = ['🔥 ຈຳນຳດ່ວນພາຍໃນ 15 ນາທີ','💎 ພະເຄື່ອງແທ້ 100%','📦 ຮັບປະກັນຄຸນນະພາບ','🎥 Live ຂາຍທຸກວັນ'];
+
+let sliderIndex = 0, sliderTimer = null;
+function renderBannerSlider(){
+  document.getElementById('sliderTrack').innerHTML = BANNER_SLIDES.map(s =>
+    '<div class="slide">' + (s.imageUrl?'<img class="slide-bg" src="'+esc(s.imageUrl)+'">':'') +
+    '<div class="slide-overlay"></div><div class="slide-content"><h1>'+esc(s.title)+'</h1><p>'+esc(s.subtitle)+'</p></div></div>'
+  ).join('');
+  document.getElementById('sliderDots').innerHTML = BANNER_SLIDES.map((_,i)=>
+    '<div class="dot'+(i===0?' active':'')+'" onclick="gotoSlide('+i+')"></div>').join('');
+  if (sliderTimer) clearInterval(sliderTimer);
+  sliderTimer = setInterval(()=>gotoSlide((sliderIndex+1) % BANNER_SLIDES.length), 4000);
+}
+function gotoSlide(i){
+  sliderIndex = i;
+  document.getElementById('sliderTrack').style.transform = 'translateX(-'+(i*100)+'%)';
+  document.querySelectorAll('.slider-dots .dot').forEach((d,idx)=>d.classList.toggle('active', idx===i));
+}
+function renderMarquee(){
+  const html = PROMO_ITEMS.map(t=>'<span>'+esc(t)+'</span>').join('');
+  document.getElementById('marqueeTrack').innerHTML = html + html;
+}
 
 /*************************************************************
  * ເອີ້ນ API ຈິງຜ່ານ fetch() -> GAS Web App (JSON)
@@ -689,8 +743,13 @@ function applySettingsToUI(s) {
   applyTheme(s);
   document.getElementById('siteNameTxt').textContent = s.siteName || 'ຮ້ານເທ້ ພະເຄື່ອງ';
   document.getElementById('siteTagTxt').textContent = s.siteTagline || '';
-  document.getElementById('bannerTitle').textContent = (s.banner && s.banner.title) || 'ຍິນດີຕ້ອນຮັບ';
-  document.getElementById('bannerSub').textContent = (s.banner && s.banner.subtitle) || '';
+  // ອັບເດດ slide ທຳອິດຈາກ Admin banner settings
+  if (s.banner) {
+    BANNER_SLIDES[0].title = s.banner.title || BANNER_SLIDES[0].title;
+    BANNER_SLIDES[0].subtitle = s.banner.subtitle || BANNER_SLIDES[0].subtitle;
+    BANNER_SLIDES[0].imageUrl = s.banner.imageUrl || '';
+    renderBannerSlider();
+  }
   if (s.logoUrl) {
     document.getElementById('logoWrap').innerHTML = '<img src="' + esc(s.logoUrl) + '" onerror="this.parentNode.innerHTML=\'<div class=logo-fallback>ຮ້</div>\'">';
     const sideLogo = document.getElementById('sideLogo');
@@ -725,10 +784,6 @@ function applySettingsToUI(s) {
   }
   if (icons.search) {
     document.querySelectorAll('.searchbar > i').forEach(i => i.className = 'fa-solid ' + icons.search);
-  }
-  if (icons.bannerDeco) {
-    const bd = document.getElementById('bannerDecoIcon');
-    if (bd) bd.innerHTML = '<i class="fa-solid ' + esc(icons.bannerDeco) + '"></i>';
   }
 }
 
@@ -768,9 +823,21 @@ function renderHomePawn() {
   const list = PRODUCTS.filter(p => p.type === 'pawn').slice(0, 4);
   document.getElementById('homePawnGrid').innerHTML = list.map(productCardHtml).join('') || emptyHtml('gem', 'ຍັງບໍ່ມີສິນຄ້າຈຳນຳ');
 }
+
 function renderHomeAuction() {
-  const list = AUCTIONS.filter(a => !a.isEnded).slice(0, 2);
-  document.getElementById('homeAuctionGrid').innerHTML = list.map(auctionCardHtml).join('') || emptyHtml('gavel', 'ຍັງບໍ່ມີການປະມູນ');
+  const list = AUCTIONS.filter(a => !a.isEnded);
+  document.getElementById('homeAuctionGrid').innerHTML = list.slice(0,2).map(auctionCardHtml).join('') || emptyHtml('gavel', 'ຍັງບໍ່ມີການປະມູນ');
+  if (list.length) startFlashTimer(list[0].endTime); // ນັບຖອຍຫຼັງອັນທີ່ໃກ້ໝົດເວລາທີ່ສຸດ
+}
+function startFlashTimer(endTime) {
+  const el = document.getElementById('flashGlobalTimer');
+  if (!el) return;
+  setInterval(()=>{
+    const diff = new Date(endTime) - Date.now();
+    if (diff<=0){ el.textContent='ໝົດເວລາ'; return; }
+    const h=Math.floor(diff/3600000), m=Math.floor(diff%3600000/60000), s=Math.floor(diff%60000/1000);
+    el.textContent = String(h).padStart(2,'0')+':'+String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');
+  },1000);
 }
 function renderHomeLive() {
   const list = LIVES.filter(l => l.isActive === true || l.isActive === 'TRUE').slice(0, 1);
@@ -1508,6 +1575,8 @@ window.addEventListener('DOMContentLoaded', () => {
   const initial = (location.hash || '#home').replace('#', '') || 'home';
   if (initial !== 'home') goPage(initial, false);
 });
+renderBannerSlider();
+renderMarquee();
 </script>
 <script>
 if ('serviceWorker' in navigator) {
