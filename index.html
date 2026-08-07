@@ -424,10 +424,14 @@ button{font-family:inherit;}
 .admin-main{flex:1;padding:24px 30px;overflow-y:auto;}
 .admin-topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;}
 .admin-topbar h2{margin:0;font-size:20px;color:var(--text-dark);}
+.admin-menu-toggle{display:none;}
+.admin-sidebar-overlay{position:fixed;inset:0;background:rgba(74,54,24,.34);backdrop-filter:blur(2px);z-index:79;display:none;}
+.admin-sidebar-overlay.show{display:block;}
 @media(max-width:900px){
   .admin-sidebar{position:fixed;left:0;top:0;height:100%;transform:translateX(-100%);transition:.25s;z-index:80;}
-  .admin-sidebar.show{transform:translateX(0);}
+  .admin-sidebar.show{transform:translateX(0);box-shadow:10px 0 30px -10px rgba(59,46,34,.35);}
   .admin-main{padding:16px;}
+  .admin-menu-toggle{display:flex;}
 }
 </style>
 </head>
@@ -551,6 +555,7 @@ button{font-family:inherit;}
   <!-- ================= ADMIN FULL PAGE ================= -->
   <div id="page-admin" class="page" style="display:none;">
     <div class="admin-shell">
+      <div class="admin-sidebar-overlay" id="adminSidebarOverlay" onclick="closeAdminSidebar()"></div>
       <div class="admin-sidebar" id="adminSidebar">
         <div class="admin-sidebar-logo"><img id="adminSideLogo" src=""><span>Admin</span></div>
         <div class="admin-nav-item active" data-sec="dashboard" onclick="switchAdminSection('dashboard')"><i class="fa-solid fa-chart-line"></i><span>ພາບລວມ</span></div>
@@ -564,13 +569,16 @@ button{font-family:inherit;}
         <div class="admin-nav-item" data-sec="contacts" onclick="switchAdminSection('contacts')"><i class="fa-solid fa-address-book"></i><span>ຕິດຕໍ່</span></div>
         <div class="admin-nav-item" data-sec="theme" onclick="switchAdminSection('theme')"><i class="fa-solid fa-palette"></i><span>ປັບແຕ່ງ</span></div>
         <div class="admin-nav-item" data-sec="password" onclick="switchAdminSection('password')"><i class="fa-solid fa-key"></i><span>ລະຫັດຜ່ານ</span></div>
-        <div class="admin-nav-item" onclick="window.open('https://docs.google.com/spreadsheets/d/1Nw2vJAh5nFdcueQVA3zs4xNmkoYBZK-q944bEVl9VDI/edit','_blank')"><i class="fa-solid fa-table"></i><span>Sheet</span></div>
+        <div class="admin-nav-item" onclick="closeAdminSidebar(); window.open('https://docs.google.com/spreadsheets/d/1Nw2vJAh5nFdcueQVA3zs4xNmkoYBZK-q944bEVl9VDI/edit','_blank')"><i class="fa-solid fa-table"></i><span>Sheet</span></div>
         <div class="admin-sidebar-spacer"></div>
         <div class="admin-nav-item logout" onclick="adminLogout()"><i class="fa-solid fa-right-from-bracket"></i><span>ອອກຈາກລະບົບ</span></div>
       </div>
       <div class="admin-main">
         <div class="admin-topbar">
-          <h2 id="adminSectionTitle">ພາບລວມ</h2>
+          <div style="display:flex;align-items:center;gap:10px;min-width:0;">
+            <div class="back-btn admin-menu-toggle" id="adminMenuToggle" onclick="toggleAdminSidebar()"><i class="fa-solid fa-bars"></i></div>
+            <h2 id="adminSectionTitle">ພາບລວມ</h2>
+          </div>
           <div class="back-btn" onclick="goPage('home')"><i class="fa-solid fa-house"></i></div>
         </div>
         <div id="adminContent"></div>
@@ -1155,6 +1163,7 @@ function closeAdminModal() { switchAdminSection('dashboard'); }
 
 function switchAdminSection(name) {
   goPage('admin');
+  closeAdminSidebar();
   document.querySelectorAll('.admin-nav-item[data-sec]').forEach(n => n.classList.toggle('active', n.dataset.sec === name));
   const titles = { dashboard:'ພາບລວມ', products:'ຈັດການສິນຄ້າ', rentals:'ຄຳຂໍເຊົ່າ', pawns:'ຄຳຂໍຈຳນຳ',
     auctions:'ຈັດການປະມູນ', lives:'ຈັດການ Live', banner:'ຈັດການ Banner', marquee:'ຂໍ້ຄວາມເລື່ອນ',
@@ -1360,6 +1369,16 @@ function setAdminUiState(loggedIn) {
 }
 function openAdminDrawer() { document.getElementById('overlay').classList.add('show'); document.getElementById('adminDrawer').classList.add('show'); }
 function closeAdminDrawer() { document.getElementById('adminDrawer').classList.remove('show'); document.getElementById('overlay').classList.remove('show'); }
+function toggleAdminSidebar(){
+  document.getElementById('adminSidebar').classList.toggle('show');
+  document.getElementById('adminSidebarOverlay').classList.toggle('show');
+  document.body.style.overflow = document.getElementById('adminSidebar').classList.contains('show') ? 'hidden' : '';
+}
+function closeAdminSidebar(){
+  document.getElementById('adminSidebar').classList.remove('show');
+  document.getElementById('adminSidebarOverlay').classList.remove('show');
+  document.body.style.overflow = '';
+}
 function adminLogout() {
   callServer('adminLogoutServer', [ADMIN_TOKEN], () => {});
   ADMIN_TOKEN = null; localStorage.removeItem('admin_token'); closeAdminDrawer(); setAdminUiState(false);
