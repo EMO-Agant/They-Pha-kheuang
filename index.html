@@ -465,6 +465,22 @@ button{font-family:inherit;}
   .admin-main{padding:16px;}
   .admin-menu-toggle{display:flex;}
 }
+.fab-cart{
+  position:fixed;left:16px;bottom:98px;z-index:45;width:56px;height:56px;border-radius:50%;
+  background:linear-gradient(135deg,var(--rose),var(--rose-2));color:#fff;
+  display:none;align-items:center;justify-content:center;
+  box-shadow:0 16px 30px -10px rgba(169,69,93,.55);font-size:20px;border:2px solid #fff;cursor:pointer;
+}
+.fab-cart:active{transform:scale(.92);}
+@media (min-width:820px){ .fab-cart{ left:calc(50% - 260px + 16px); } }
+@media (min-width:1080px){ .fab-cart{ left:36px; } }
+@media (max-width:819px){ #cartBtn{ display:none; } }   // ← ເຊື່ອງໄອຄອນກະຕ່າອອກຈາກ topbar ໃນມືຖື ເພາະຍ້າຍໄປ fab ລຸ່ມແທນ
+ 
+.cart-line{display:flex;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line);}
+.cart-line .qty-btn{width:28px;height:28px;border-radius:9px;background:var(--bg-page);border:1px solid var(--line-strong);
+  display:inline-flex;align-items:center;justify-content:center;cursor:pointer;font-weight:800;color:var(--primary);}
+*/
+
 </style>
 </head>
 <body>
@@ -495,7 +511,7 @@ button{font-family:inherit;}
       </div>
     </div>
     <div class="top-actions">
-      <div class="icon-btn-top" onclick="openOrdersCart()" id="cartBtn" title="ຄຳສັ່ງຊື້ທັງໝົດ"><i class="fa-solid fa-cart-shopping"></i></div>
+      <div class="icon-btn-top" onclick="openCartDrawer()" id="cartBtn" title="ກະຕ່າສິນຄ້າ"><i class="fa-solid fa-cart-shopping"></i></div>
       <div class="icon-btn-top" onclick="openDrawer()" id="menuBtn"><i class="fa-solid fa-ellipsis-vertical"></i></div>
     </div>
   </div>
@@ -637,6 +653,9 @@ button{font-family:inherit;}
 
 <!-- floating contact button -->
 <div class="fab-contact" onclick="openContactModal()"><i class="fa-solid fa-phone" id="fabPhoneIcon"></i></div>
+<div class="fab-cart" id="fabCart" onclick="openCartDrawer()">
+  <i class="fa-solid fa-cart-shopping"></i>
+</div>
 
 <!-- ================= RIGHT DRAWER (3-DOT MENU) ================= -->
 <div class="overlay" id="overlay" onclick="closeAllOverlays()"></div>
@@ -715,12 +734,238 @@ let EDIT_CACHE = {}; // ເກັບ object ຊົ່ວຄາວສຳລັບ
 let BOOTSTRAP_DONE = false; // ກັນບໍ່ໃຫ້ restoreAdminSession() ຖືກເອີ້ນຊ້ຳຫຼາຍເທື່ອ
 
 /* ---- Admin: cache ຂໍ້ມູນທີ່ຕ້ອງໃຊ້ token (ບໍ່ໄດ້ຢູ່ໃນ bootstrap ສາທາລະນະ) ---- */
-let ADMIN_DATA_CACHE = { dashboard:null, rentals:null, pawns:null, contacts:null, banner:null, marquee:null, livecomments:null };
+let ADMIN_DATA_CACHE = { dashboard:null, rentals:null, pawns:null, contacts:null, banner:null, marquee:null, livecomments:null, orders:null };
 let ADMIN_ACTIVE_SECTION = null;   // ໜ້າ admin ທີ່ກຳລັງເປີດຢູ່ຕອນນີ້
 let ADMIN_VIEW_MODE = 'list';      // 'list' = ໜ້າລາຍການ, 'form' = ກຳລັງແກ້ໄຂ/ເພີ່ມຟອມ (ຢຸດ background refresh ຊົ່ວຄາວ)
 let ADMIN_POLL_TIMER = null;
 let ADMIN_AUCTION_TAB = 'manage';  // ← ເພີ່ມ: ແທັບໃນໜ້າ "ຈັດການປະມູນ" - 'manage' ຫຼື 'shipping'
 let ADMIN_ORDERS_TAB = 'all';      // ← ເພີ່ມ: ແທັບໃນໜ້າ "ຄຳສັ່ງຊື້ທັງໝົດ"
+
+/*************************************************************
+ * ກະຕ່າສິນຄ້າ (CART) - ໃໝ່
+ *************************************************************/
+const CART_KEY = 'shop_cart_v1';
+let CART = [];
+let SLIP_BASE64 = null;
+ 
+function loadCart_() { try { CART = JSON.parse(localStorage.getItem(CART_KEY) || '[]'); } catch (e) { CART = []; } }
+function saveCart_() { localStorage.setItem(CART_KEY, JSON.stringify(CART)); updateCartUI(); }
+ 
+function addToCart(product) {
+  const unitPrice = product.type === 'rent' ? (Number(product.rentPricePerDay) || 0) : (Number(product.pawnValue) || 0);
+  const existing = CART.find(c => c.productId === product.id);
+  if (existing) { existing.qty += 1; }
+  else {
+    CART.push({
+      cartId: 'c' + Date.now() + Math.floor(Math.random() * 999),
+      productId: product.id, name: product.name, image: product.imageUrl || '',
+      price: unitPrice, qty: 1, type: product.type, category: product.category || ''
+    });
+  }
+  saveCart_();
+  showToast('ເພີ່ມ "' + product.name + '" ໃສ່ກະຕ່າແລ້ວ 🛒', 'ok');
+}
+function addToCartById(id) { const p = PRODUCTS.find(x => x.id === id); if (p) addToCart(p); else showToast('ບໍ່ພົບສິນຄ້ານີ້', 'err'); }
+function removeFromCart(cartId) { CART = CART.filter(c => c.cartId !== cartId); saveCart_(); renderCartDrawer(); }
+function changeCartQty(cartId, delta) {
+  const item = CART.find(c => c.cartId === cartId); if (!item) return;
+  item.qty = Math.max(1, item.qty + delta); saveCart_(); renderCartDrawer();
+}
+function cartCount() { return CART.reduce((s, c) => s + c.qty, 0); }
+function cartSubtotal() { return CART.reduce((s, c) => s + c.price * c.qty, 0); }
+function updateCartUI() {
+  const n = cartCount();
+  setBadgeCount('cartBtn', n);
+  setBadgeCount('fabCart', n);
+  const fab = document.getElementById('fabCart');
+  if (fab) fab.style.display = n > 0 ? 'flex' : 'none';
+}
+ 
+/*************************************************************
+ * ໜ້າກະຕ່າ (ຄືຮູບ 1 ສ່ວນທຳອິດ)
+ *************************************************************/
+function openCartDrawer() {
+  if (!CART.length) { showToast('ກະຕ່າຍັງບໍ່ມີສິນຄ້າ, ໄປເລືອກສິນຄ້າແລ້ວກົດ "ສັ່ງຊື້" ກ່ອນເດີ້', 'err'); return; }
+  renderCartDrawer();
+}
+function renderCartDrawer() {
+  const subtotal = cartSubtotal();
+  let html = '<h3><i class="fa-solid fa-cart-shopping"></i> ກະຕ່າສິນຄ້າ (' + cartCount() + ')</h3>';
+  html += CART.map(c => {
+    const img = c.image
+      ? '<img src="' + esc(c.image) + '" style="width:56px;height:56px;border-radius:11px;object-fit:cover;flex:0 0 auto;">'
+      : '<div style="width:56px;height:56px;border-radius:11px;background:var(--bg-page);display:flex;align-items:center;justify-content:center;color:var(--secondary);flex:0 0 auto;"><i class="fa-solid fa-image"></i></div>';
+    return '<div class="cart-line">' + img +
+      '<div style="flex:1;min-width:0;">' +
+      '<div style="font-weight:700;font-size:13px;">' + esc(c.name) + '</div>' +
+      '<div style="font-size:11px;color:var(--text-soft);">' + (c.type === 'rent' ? 'ໃຫ້ເຊົ່າ' : 'ຮັບຈຳນຳ') + ' • ' + esc(c.category || '') + '</div>' +
+      '<div style="display:flex;align-items:center;gap:8px;margin-top:6px;">' +
+      '<span class="qty-btn" onclick="changeCartQty(\'' + c.cartId + '\',-1)">-</span>' +
+      '<span style="font-size:12.5px;font-weight:700;min-width:16px;text-align:center;">' + c.qty + '</span>' +
+      '<span class="qty-btn" onclick="changeCartQty(\'' + c.cartId + '\',1)">+</span>' +
+      '<span style="margin-left:auto;font-weight:800;color:var(--primary);font-size:13px;">' + fmt(c.price * c.qty) + '</span>' +
+      '</div></div>' +
+      '<button class="icon-btn" style="color:#C0392B;flex:0 0 auto;" onclick="removeFromCart(\'' + c.cartId + '\')"><i class="fa-solid fa-trash"></i></button>' +
+      '</div>';
+  }).join('');
+  html += '<div style="display:flex;justify-content:space-between;margin-top:14px;font-size:15px;font-weight:800;">' +
+    '<span>ຍອດລວມ</span><span style="color:var(--primary);">' + fmt(subtotal) + '</span></div>';
+  html += '<button class="btn" style="margin-top:16px;" onclick="openCheckoutModal()"><i class="fa-solid fa-truck"></i> ດຳເນີນການສັ່ງຊື້</button>';
+  openModal(html);
+}
+ 
+/*************************************************************
+ * ໜ້າຢືນຢັນສັ່ງຊື້ (ຄືຮູບ 1 ສ່ວນຟອມ)
+ *************************************************************/
+const LAO_PROVINCES = ['ນະຄອນຫຼວງວຽງຈັນ','ຜົ້ງສາລີ','ຫຼວງນ້ຳທາ','ອຸດົມໄຊ','ບໍ່ແກ້ວ','ຫຼວງພະບາງ','ຫົວພັນ',
+  'ໄຊຍະບູລີ','ຊຽງຂວາງ','ວຽງຈັນ','ບໍລິຄຳໄຊ','ຄຳມ່ວນ','ສະຫວັນນະເຂດ','ສາລະວັນ','ເຊກອງ','ຈຳປາສັກ','ອັດຕະປື','ໄຊສົມບູນ'];
+ 
+function openCheckoutModal() {
+  const subtotal = cartSubtotal();
+  const bank = (SETTINGS && SETTINGS.bankInfo) || {};
+  openModal(
+    '<h3><i class="fa-solid fa-truck"></i> ຂໍ້ມູນຈັດສົ່ງ</h3>' +
+    '<div style="background:var(--bg-page);border-radius:12px;padding:10px 12px;margin-bottom:12px;font-size:12.5px;">' +
+    'ລາຍການ ' + cartCount() + ' ລາຍການ • ຍອດລວມ <b style="color:var(--primary);">' + fmt(subtotal) + '</b></div>' +
+    '<div class="field"><label>ຊື່ ແລະ ນາມສະກຸນ</label><input id="co_name"></div>' +
+    '<div class="field"><label>ເບີໂທ</label><input id="co_phone" placeholder="020 xxxxxxxx"></div>' +
+    '<div class="field"><label>ແຂວງ</label><select id="co_province"><option value="">-- ເລືອກແຂວງ --</option>' +
+    LAO_PROVINCES.map(p => '<option value="' + p + '">' + p + '</option>').join('') + '</select></div>' +
+    '<div class="field"><label>ເມືອງ</label><input id="co_district" placeholder="ຊື່ເມືອງ"></div>' +
+    '<div class="field"><label>ບ້ານ / ຫຼັກໝາຍ</label><input id="co_village" placeholder="ບ້ານ, ຖະໜົນ, ຫຼັກໝາຍໃກ້ຄຽງ..."></div>' +
+    '<div class="field"><label>ວິທີຮັບເຄື່ອງ</label><select id="co_delivery">' +
+    '<option value="ຮ່ວຍລົດ">ຮ່ວຍລົດ (ໃນເມືອງ)</option><option value="ລົດຂົນສົ່ງ">ລົດຂົນສົ່ງ (ຕ່າງແຂວງ)</option>' +
+    '<option value="ມາຮັບເອງ">ມາຮັບເອງທີ່ຮ້ານ</option><option value="EMS">EMS ໄປສະນີ</option></select></div>' +
+    '<div class="field"><label>ຊ່ອງທາງຊຳລະເງິນ</label><select id="co_payment">' +
+    '<option value="ໂອນຜ່ານທະນາຄານ/QR">ໂອນຜ່ານທະນາຄານ / QR</option><option value="ຈ່າຍປາຍທາງ">ຈ່າຍປາຍທາງ (COD)</option></select></div>' +
+    (bank.qrImage ? '<div style="text-align:center;margin:10px 0;"><img src="' + esc(bank.qrImage) + '" style="width:100%;max-width:220px;border-radius:12px;">' +
+      '<div style="font-size:12px;margin-top:6px;">' + esc(bank.bankName || '') + '<br>' + esc(bank.accountName || '') + ' • ' + esc(bank.accountNumber || '') + '</div></div>' : '') +
+    '<div class="field"><label>ອັບໂຫລດຮູບ Slip ໂອນເງິນ (ຖ້າມີ)</label>' +
+    '<input type="file" id="co_slip" accept="image/*" onchange="previewSlip(this)">' +
+    '<img id="co_slipprev" class="img-preview" style="display:none;"></div>' +
+    '<div class="field"><label>ໝາຍເຫດ (ບໍ່ບັງຄັບ)</label><textarea id="co_note"></textarea></div>' +
+    '<button class="btn" id="co_submit" onclick="submitOrder()"><i class="fa-solid fa-check"></i> ຢືນຢັນສັ່ງຊື້</button>' +
+    '<button class="btn secondary" style="margin-top:8px;" onclick="renderCartDrawer()">← ກັບຄືນໄປກະຕ່າ</button>'
+  );
+}
+function previewSlip(input) {
+  const file = input.files[0]; if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function (e) {
+    SLIP_BASE64 = e.target.result;
+    const img = document.getElementById('co_slipprev');
+    img.src = SLIP_BASE64; img.style.display = 'block';
+  };
+  reader.readAsDataURL(file);
+}
+function submitOrder() {
+  const name = val('co_name'), phone = val('co_phone'),
+    province = document.getElementById('co_province').value,
+    district = val('co_district'), village = val('co_village'),
+    delivery = document.getElementById('co_delivery').value,
+    payment = document.getElementById('co_payment').value,
+    note = val('co_note');
+  if (!name || !phone || !province || !district) { showToast('ກະລຸນາປ້ອນຂໍ້ມູນຈັດສົ່ງໃຫ້ຄົບ', 'err'); return; }
+  setBtnLoading('co_submit', true);
+  function proceed(slipUrl) {
+    const subtotal = cartSubtotal();
+    const order = {
+      customerName: name, phone: phone, province: province, district: district, village: village,
+      deliveryMethod: delivery, paymentMethod: payment, slipUrl: slipUrl || '',
+      items: JSON.stringify(CART.map(c => ({ name: c.name, type: c.type, qty: c.qty, price: c.price }))),
+      subtotal: subtotal, discount: 0, deliveryFee: 0, total: subtotal, note: note
+    };
+    callServer('createOrder', [order], (r) => {
+      setBtnLoading('co_submit', false);
+      if (r.success) {
+        CART = []; saveCart_(); SLIP_BASE64 = null;
+        showToast('ສັ່ງຊື້ສຳເລັດ! ພະນັກງານຈະຕິດຕໍ່ກັບຄືນ ✅', 'ok');
+        closeModal();
+      } else showToast(r.message || 'ຜິດພາດ', 'err');
+    });
+  }
+  if (SLIP_BASE64) {
+    callServer('uploadSlipImage', [SLIP_BASE64, 'slip_' + Date.now() + '.jpg'], (r) => {
+      if (r && r.success) proceed(r.url);
+      else { setBtnLoading('co_submit', false); showToast('ອັບໂຫລດ Slip ບໍ່ສຳເລັດ, ລອງໃໝ່ ຫຼື ຂ້າມການອັບໂຫລດ', 'err'); }
+    });
+  } else proceed('');
+}
+ 
+/*************************************************************
+ * Admin ORDERS - ຄືຮູບ 2 (ແທນທີ່ຟັງຊັນ adminOrders + renderOrdersAdmin ອັນເກົ່າທັງໝົດ)
+ *************************************************************/
+const ORDER_STATUS_LIST = ['ໃໝ່','ຢືນຢັນແລ້ວ','ກຳລັງກຽມ','ຈັດຊຸດ','ຈັດສົ່ງ','ສຳເລັດ','ຍົກເລີກ'];
+ 
+function adminOrders(forceRefresh) {
+  ADMIN_VIEW_MODE = 'list';
+  if (ADMIN_DATA_CACHE.orders && !forceRefresh) { renderOrdersAdmin(ADMIN_DATA_CACHE.orders); return; }
+  if (!ADMIN_DATA_CACHE.orders) showAdminLoadingOnce_();
+  callServer('getOrders', [ADMIN_TOKEN], (list) => {
+    if (!Array.isArray(list)) return showToast((list && list.message) || 'ຜິດພາດ', 'err');
+    ADMIN_DATA_CACHE.orders = list;
+    if (ADMIN_ACTIVE_SECTION === 'orders') renderOrdersAdmin(list);
+  });
+}
+function setOrdersTab(t) { ADMIN_ORDERS_TAB = t; renderOrdersAdmin(ADMIN_DATA_CACHE.orders || []); }
+function renderOrdersAdmin(list) {
+  list = list || [];
+  const q = (document.getElementById('ord_search')?.value || '').toLowerCase().trim();
+  let filtered = ADMIN_ORDERS_TAB === 'all' ? list : list.filter(o => o.status === ADMIN_ORDERS_TAB);
+  if (q) filtered = filtered.filter(o => (o.id + o.customerName + o.phone).toLowerCase().includes(q));
+  let html = '<h3><i class="fa-solid fa-cart-shopping"></i> ຄຳສັ່ງຊື້ທັງໝົດ</h3>' +
+    '<div class="searchbar" style="margin-bottom:10px;"><i class="fa-solid fa-magnifying-glass"></i>' +
+    '<input id="ord_search" placeholder="ຄົ້ນຫາ ເລກອໍເດີ້ / ຊື່ / ເບີໂທ..." oninput="renderOrdersAdmin(ADMIN_DATA_CACHE.orders)"></div>' +
+    '<div class="order-tabbar">' +
+    '<div class="otbtn' + (ADMIN_ORDERS_TAB === 'all' ? ' active' : '') + '" onclick="setOrdersTab(\'all\')">ທັງໝົດ (' + list.length + ')</div>' +
+    ORDER_STATUS_LIST.map(s => '<div class="otbtn' + (ADMIN_ORDERS_TAB === s ? ' active' : '') + '" onclick="setOrdersTab(\'' + s + '\')">' +
+      s + ' (' + list.filter(o => o.status === s).length + ')</div>').join('') +
+    '</div>';
+  html += filtered.map(o => {
+    let items = []; try { items = JSON.parse(o.items || '[]'); } catch (e) { }
+    const itemsSummary = items.map(i => esc(i.name) + ' x' + i.qty).join(', ');
+    return '<div class="order-item">' +
+      '<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;">' +
+      '<div><div class="name" style="font-weight:800;">' + esc(o.id) + '</div>' +
+      '<div class="sub">👤 ' + esc(o.customerName) + ' | <a href="tel:' + esc(o.phone) + '" style="color:var(--primary);font-weight:700;">' + esc(o.phone) + ' <i class="fa-solid fa-phone"></i></a></div>' +
+      '<div class="sub">📦 ' + itemsSummary + '</div>' +
+      '<div class="sub">📍 ' + esc(o.village || '') + ', ' + esc(o.district || '') + ', ' + esc(o.province || '') + '</div>' +
+      '<div class="sub">💰 ' + fmt(o.total) + ' | 🚚 ' + esc(o.deliveryMethod || '') + ' | 💳 ' + esc(o.paymentMethod || '') + '</div>' +
+      '<div class="sub">🕐 ' + new Date(o.createdAt).toLocaleString('lo-LA') + '</div></div>' +
+      (o.slipUrl ? '<img src="' + esc(o.slipUrl) + '" style="width:64px;height:64px;object-fit:cover;border-radius:10px;cursor:pointer;flex:0 0 auto;" onclick="window.open(\'' + esc(o.slipUrl) + '\',\'_blank\')">' : '') +
+      '</div>' +
+      '<div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:10px;">' +
+      '<select data-act="ordstatus" data-id="' + esc(o.id) + '" style="flex:1;padding:8px 10px;border-radius:10px;border:1px solid var(--line-strong);font-size:12px;background:#fff;">' +
+      ORDER_STATUS_LIST.map(s => '<option value="' + s + '" ' + (o.status === s ? 'selected' : '') + '>' + s + '</option>').join('') + '</select>' +
+      '<button class="icon-btn" onclick="printOrder(\'' + esc(o.id) + '\')"><i class="fa-solid fa-print"></i></button>' +
+      '<button class="icon-btn" style="color:#C0392B;" data-act="orddel" data-id="' + esc(o.id) + '"><i class="fa-solid fa-trash"></i></button>' +
+      '</div></div>';
+  }).join('') || '<p style="opacity:.65;font-size:13px;">ຍັງບໍ່ມີຄຳສັ່ງຊື້</p>';
+  html += '<button class="btn secondary" style="margin-top:10px;" onclick="closeAdminModal()">ປິດ</button>';
+  openAdminModal(html);
+  document.querySelectorAll('[data-act="ordstatus"]').forEach(sel => sel.onchange = () => {
+    callServer('updateOrderStatus', [ADMIN_TOKEN, sel.dataset.id, sel.value], (r) => {
+      if (r.success) {
+        showToast('ອັບເດດສະຖານະແລ້ວ', 'ok');
+        const o = ADMIN_DATA_CACHE.orders.find(x => x.id === sel.dataset.id); if (o) o.status = sel.value;
+      } else showToast(r.message || 'ຜິດພາດ', 'err');
+    });
+  });
+  document.querySelectorAll('[data-act="orddel"]').forEach(b => b.onclick = () => {
+    if (!confirm('ຢືນຢັນລຶບຄຳສັ່ງຊື້ນີ້?')) return;
+    callServer('deleteOrder', [ADMIN_TOKEN, b.dataset.id], (r) => { if (r.success) { showToast('ລຶບແລ້ວ', 'ok'); adminOrders(true); } });
+  });
+}
+function printOrder(id) {
+  const o = (ADMIN_DATA_CACHE.orders || []).find(x => x.id === id); if (!o) return;
+  let items = []; try { items = JSON.parse(o.items || '[]'); } catch (e) { }
+  const w = window.open('', '_blank');
+  w.document.write('<h2>ໃບສັ່ງຊື້ ' + o.id + '</h2><p>ລູກຄ້າ: ' + o.customerName + ' (' + o.phone + ')</p>' +
+    '<p>ທີ່ຢູ່: ' + (o.village || '') + ', ' + (o.district || '') + ', ' + (o.province || '') + '</p>' +
+    '<ul>' + items.map(i => '<li>' + i.name + ' x' + i.qty + ' = ' + (i.price * i.qty).toLocaleString() + ' ກີບ</li>').join('') + '</ul>' +
+    '<h3>ລວມ: ' + Number(o.total).toLocaleString() + ' ກີບ</h3>');
+  w.document.close(); w.print();
+}
 
 function bannerSlides(){ return BANNERS; }
 function promoItems(){ return MARQUEE_ITEMS.map(m => m.text); }
@@ -834,6 +1079,12 @@ const ARG_MAP = {
   saveMarqueeItem: (a) => ({ token: a[0], item: a[1] }),
   deleteMarqueeItem: (a) => ({ token: a[0], id: a[1] }),
   reorderMarqueeItems: (a) => ({ token: a[0], order: a[1] })
+  
+  createOrder: (a) => ({ order: a[0] }),
+  getOrders: (a) => ({ token: a[0] }),
+  updateOrderStatus: (a) => ({ token: a[0], id: a[1], status: a[2] }),
+  deleteOrder: (a) => ({ token: a[0], id: a[1] }),
+  uploadSlipImage: (a) => ({ base64: a[0], fileName: a[1] }),
 };
 
 // ຄົງໂຄງສ້າງການເອີ້ນແບບເດີມ (callServer(fn, args, onSuccess, onError)) ໄວ້
@@ -1115,10 +1366,11 @@ function productCardHtml(p) {
   const ribbon = p.type === 'rent' ? '<span class="ribbon rent">ໃຫ້ເຊົ່າ</span>' : '<span class="ribbon pawn">ຮັບຈຳນຳ</span>';
   const price = p.type === 'rent' ? fmt(p.rentPricePerDay) + ' /ວັນ' : fmt(p.pawnValue);
   const img = p.imageUrl ? '<img class="img" src="' + esc(p.imageUrl) + '" loading="lazy" onerror="this.style.display=\'none\'">' : '<div class="img"><i class="fa-solid fa-image"></i></div>';
-  const action = p.type === 'rent' ? 'openRentRequestModal(\'' + p.id + '\')' : 'openPawnRequestModal(\'' + p.id + '\')';
-  return '<div class="card-wrap"><div class="card" onclick="' + action + '">'
+  return '<div class="card-wrap"><div class="card">'
     + ribbon + img
-    + '<div class="body"><p class="name">' + esc(p.name) + '</p><p class="price">' + price + '</p><p class="meta">' + esc(p.category || '') + '</p></div></div></div>';
+    + '<div class="body"><p class="name">' + esc(p.name) + '</p><p class="price">' + price + '</p><p class="meta">' + esc(p.category || '') + '</p>'
+    + '<button class="btn small" style="width:100%;margin-top:8px;" onclick="event.stopPropagation();addToCartById(\'' + p.id + '\')"><i class="fa-solid fa-cart-plus"></i> ສັ່ງຊື້</button>'
+    + '</div></div></div>';
 }
 function auctionCardHtml(a) {
   const img = a.imageUrl ? '<img class="img" src="' + esc(a.imageUrl) + '" loading="lazy">' : '<div class="img"><i class="fa-solid fa-gavel"></i></div>';
@@ -2435,9 +2687,9 @@ function setBtnLoading(btnId, loading) {
  * - ຕັ້ງເວລາອັບເດດອັດຕະໂນມັດເປັນໄລຍະ ເພື່ອໃຫ້ເຫັນລາຍການ/ການປະມູນໃໝ່ ໂດຍບໍ່ຕ້ອງກົດຣີເຟຣດ
  *************************************************************/
 window.addEventListener('DOMContentLoaded', () => {
+  loadCart_(); updateCartUI();
   const cached = loadBootstrapCache_();
   if (cached) {
-    applyBootstrapData(cached);
     BOOTSTRAP_DONE = true;
     restoreAdminSession();
   }
