@@ -314,6 +314,15 @@ button{font-family:inherit;}
 .field textarea{resize:vertical;min-height:70px;}
 .field .hint{font-size:10.5px;color:var(--text-soft);margin-top:4px;}
 .img-preview{width:100%;aspect-ratio:16/9;border-radius:13px;object-fit:cover;background:#F8EFDC;margin-top:8px;display:none;}
+.upload-dropzone{
+  border:2px dashed var(--line-strong); border-radius:var(--radius-md); background:var(--bg-page);
+  padding:28px 16px; text-align:center; cursor:pointer; transition:.18s; margin-top:8px;
+}
+.upload-dropzone:hover, .upload-dropzone.dragover{ border-color:var(--secondary); background:rgba(212,175,55,.10); }
+.upload-dropzone i{ font-size:30px; color:var(--secondary); margin-bottom:8px; display:block; }
+.upload-dropzone .udz-text{ font-size:12.5px; font-weight:700; color:var(--text-dark); }
+.upload-dropzone .udz-sub{ font-size:10.5px; color:var(--text-soft); margin-top:3px; }
+.upload-dropzone input[type=file]{ display:none; }
 .btn{
   display:inline-flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:14px;border:none;
   border-radius:15px;font-weight:700;font-size:14px;cursor:pointer;color:#fff;min-height:49px;
@@ -1838,15 +1847,30 @@ function editProductForm(p) {
     '<div class="field"><label style="display:flex;align-items:center;gap:8px;cursor:pointer;"><input type="checkbox" id="pf_featured" ' + (String(p.featured) === 'true' ? 'checked' : '') + ' style="width:auto;"> ⭐ ສິນຄ້າແນະນຳ (Featured)</label></div>' +
     '<div class="field"><label style="display:flex;align-items:center;gap:8px;cursor:pointer;"><input type="checkbox" id="pf_flash" ' + (String(p.flashSale) === 'true' ? 'checked' : '') + ' style="width:auto;"> 🔥 ຂຶ້ນປ້າຍ FLASH SALE</label></div>' +
     '<div class="field"><label>ຮູບພາບ</label>' +
+    '<div class="upload-dropzone" id="pf_dropzone" onclick="document.getElementById(\'pf_imgfile\').click()">' +
+    '<i class="fa-solid fa-cloud-arrow-up"></i>' +
+    '<div class="udz-text">ກົດເພື່ອເລືອກຮູບ (ບໍ່ບັງຄັບ)</div>' +
+    '<div class="udz-sub">ຫຼືລາກໄຟລ໌ຮູບມາວາງບ່ອນນີ້</div>' +
     '<input type="file" id="pf_imgfile" accept="image/*" onchange="uploadProductImageFile(this)">' +
+    '</div>' +
     '<input type="hidden" id="pf_img" value="' + esc(p.imageUrl || '') + '">' +
-    '<img id="pf_imgprev" class="img-preview" src="' + esc(p.imageUrl || '') + '" style="display:' + (p.imageUrl ? 'block' : 'none') + ';">' +
+    '<img id="pf_imgprev" class="img-preview" src="' + esc(p.imageUrl || '') + '" style="display:' + (p.imageUrl ? 'block' : 'none') + ';margin-top:10px;">' +
     '<div id="pf_imgstatus" style="font-size:11px;color:var(--text-soft);margin-top:4px;"></div></div>' +
     '<div class="field"><label>ລາຍລະອຽດ</label><textarea id="pf_desc">' + esc(p.description || '') + '</textarea></div>' +
     '<button class="btn" id="pf_save"><i class="fa-solid fa-check"></i> ບັນທຶກ</button>' +
     '<button class="btn secondary" style="margin-top:8px;" onclick="adminProducts()">ກັບຄືນ</button>'
   );
   document.getElementById('pf_save').onclick = () => saveProductForm(p.id || '');
+  const dz = document.getElementById('pf_dropzone');
+  dz.addEventListener('dragover', (e) => { e.preventDefault(); dz.classList.add('dragover'); });
+  dz.addEventListener('dragleave', () => dz.classList.remove('dragover'));
+  dz.addEventListener('drop', (e) => {
+    e.preventDefault(); dz.classList.remove('dragover');
+    if (e.dataTransfer.files[0]) {
+      document.getElementById('pf_imgfile').files = e.dataTransfer.files;
+      uploadProductImageFile(document.getElementById('pf_imgfile'));
+    }
+  });
 }
 function previewImg(inputId, imgId) {
   const url = val(inputId); const img = document.getElementById(imgId);
@@ -1857,7 +1881,7 @@ function uploadProductImageFile(input) {
   const file = input.files[0];
   if (!file) return;
   const statusEl = document.getElementById('pf_imgstatus');
-  statusEl.textContent = 'ກຳລັງອັບໂຫຼດຮູບ...';
+  statusEl.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> ກຳລັງອັບໂຫຼດຮູບ...';
   const reader = new FileReader();
   reader.onload = function() {
     const base64 = reader.result.split(',')[1];
