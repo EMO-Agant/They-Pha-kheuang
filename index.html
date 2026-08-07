@@ -465,6 +465,7 @@ button{font-family:inherit;}
   .admin-main{padding:16px;}
   .admin-menu-toggle{display:flex;}
 }
+
 .fab-cart{
   position:fixed;left:16px;bottom:98px;z-index:45;width:56px;height:56px;border-radius:50%;
   background:linear-gradient(135deg,var(--rose),var(--rose-2));color:#fff;
@@ -479,8 +480,6 @@ button{font-family:inherit;}
 .cart-line{display:flex;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line);}
 .cart-line .qty-btn{width:28px;height:28px;border-radius:9px;background:var(--bg-page);border:1px solid var(--line-strong);
   display:inline-flex;align-items:center;justify-content:center;cursor:pointer;font-weight:800;color:var(--primary);}
-*/
-
 </style>
 </head>
 <body>
@@ -1070,6 +1069,12 @@ const ARG_MAP = {
   updateAuctionStatus: (a) => ({ token: a[0], id: a[1], status: a[2] }),
   changeAdminPassword: (a) => ({ token: a[0], oldPassword: a[1], newPassword: a[2] }),
 
+  createOrder: (a) => ({ order: a[0] }),
+  getOrders: (a) => ({ token: a[0] }),
+  updateOrderStatus: (a) => ({ token: a[0], id: a[1], status: a[2] }),
+  deleteOrder: (a) => ({ token: a[0], id: a[1] }),
+  uploadSlipImage: (a) => ({ base64: a[0], fileName: a[1] }),
+
   getBanners: () => ({}),
   saveBanner: (a) => ({ token: a[0], banner: a[1] }),
   deleteBanner: (a) => ({ token: a[0], id: a[1] }),
@@ -1079,12 +1084,6 @@ const ARG_MAP = {
   saveMarqueeItem: (a) => ({ token: a[0], item: a[1] }),
   deleteMarqueeItem: (a) => ({ token: a[0], id: a[1] }),
   reorderMarqueeItems: (a) => ({ token: a[0], order: a[1] })
-  
-  createOrder: (a) => ({ order: a[0] }),
-  getOrders: (a) => ({ token: a[0] }),
-  updateOrderStatus: (a) => ({ token: a[0], id: a[1], status: a[2] }),
-  deleteOrder: (a) => ({ token: a[0], id: a[1] }),
-  uploadSlipImage: (a) => ({ base64: a[0], fileName: a[1] }),
 };
 
 // ຄົງໂຄງສ້າງການເອີ້ນແບບເດີມ (callServer(fn, args, onSuccess, onError)) ໄວ້
@@ -1181,7 +1180,6 @@ function applyBootstrapData(data) {
   renderRentGrid(); renderPawnGrid(); renderHomeRent(); renderHomePawn();
   renderAuctionList(); renderHomeAuction();
   renderLiveList(); renderHomeLive();
-  if (ADMIN_TOKEN) refreshOrdersBadge();
   // ຖ້າ admin ກຳລັງເປີດໜ້າ ສິນຄ້າ/ປະມູນ/Live ຢູ່ (ໜ້າລາຍການ, ບໍ່ແມ່ນຟອມ) -> ອັບເດດໃຫ້ອັດຕະໂນມັດ ເພາະຂໍ້ມູນ 3 ຢ່າງນີ້ມາຈາກ bootstrap ຊຸດດຽວກັນ
   if (document.getElementById('page-admin') && document.getElementById('page-admin').style.display !== 'none' && ADMIN_VIEW_MODE === 'list') {
     if (ADMIN_ACTIVE_SECTION === 'products') adminProducts();
@@ -1655,54 +1653,6 @@ function buildOrdersList_() {
   }));
   return auctionOrders.concat(rentalOrders, pawnOrders).sort((a, b) => new Date(b.date) - new Date(a.date));
 }
-function adminOrders(forceRefresh) {
-  ADMIN_VIEW_MODE = 'list';
-  const needFetch = forceRefresh || !ADMIN_DATA_CACHE.rentals || !ADMIN_DATA_CACHE.pawns;
-  if (!needFetch) { renderOrdersAdmin(); return; }
-  if (!ADMIN_DATA_CACHE.rentals && !ADMIN_DATA_CACHE.pawns) showAdminLoadingOnce_();
-  callServer('getRentals', [ADMIN_TOKEN], (rentals) => {
-    if (Array.isArray(rentals)) ADMIN_DATA_CACHE.rentals = rentals;
-    callServer('getPawns', [ADMIN_TOKEN], (pawns) => {
-      if (Array.isArray(pawns)) ADMIN_DATA_CACHE.pawns = pawns;
-      if (ADMIN_ACTIVE_SECTION === 'orders') renderOrdersAdmin();
-      refreshOrdersBadge();
-    });
-  });
-}
-function renderOrdersAdmin() {
-  const all = buildOrdersList_();
-  const filtered = ADMIN_ORDERS_TAB === 'all' ? all : all.filter(o => o.type === ADMIN_ORDERS_TAB);
-  let html = '<h3><i class="fa-solid fa-cart-shopping"></i> ຄຳສັ່ງຊື້ທັງໝົດ</h3>' +
-    '<p style="font-size:11.5px;color:var(--text-soft);margin:-6px 0 14px;">ລວມ ປະມູນສຳເລັດ, ຄຳຂໍເຊົ່າ ແລະ ຄຳຂໍຈຳນຳ ໄວ້ບ່ອນດຽວ ເພື່ອຄວາມສະດວກໃນການຈັດສົ່ງ</p>' +
-    '<div class="order-tabbar">' +
-    ['all','auction','rent','pawn'].map(t => '<div class="otbtn' + (ADMIN_ORDERS_TAB === t ? ' active' : '') + '" onclick="setOrdersTab(\'' + t + '\')">' +
-      (t === 'all' ? 'ທັງໝົດ' : orderTypeLabel_(t)) + ' (' + (t === 'all' ? all.length : all.filter(o => o.type === t).length) + ')</div>').join('') +
-    '</div>';
-  html += filtered.map(o => {
-    const dateStr = o.date ? new Date(o.date).toLocaleString('lo-LA') : '';
-    const statusColor = (o.status === 'ຈັດສົ່ງແລ້ວ' || o.status === 'ອະນຸມັດແລ້ວ') ? 'rgba(47,169,104,.18);color:#1E7A4C' :
-      (o.status === 'ປະຕິເສດ' ? 'rgba(192,57,43,.14);color:#C0392B' : 'rgba(212,175,55,.20);color:#7A5220');
-    return '<div class="order-item">' +
-      '<span class="otype ' + o.type + '">' + orderTypeLabel_(o.type) + '</span>' +
-      '<div class="name" style="font-weight:700;font-size:13.5px;">' + esc(o.title || '') + '</div>' +
-      '<div class="sub" style="font-size:11.5px;color:var(--text-soft);margin-top:3px;">👤 ' + esc(o.customerName || '-') +
-      (o.phone ? ' | <a href="tel:' + esc(o.phone) + '" style="color:var(--primary);font-weight:700;">' + esc(o.phone) + ' <i class="fa-solid fa-phone"></i></a>' : '') + '</div>' +
-      '<div class="sub" style="font-size:11.5px;margin-top:2px;">💰 ' + fmt(o.price) + ' | 🕐 ' + esc(dateStr) + '</div>' +
-      '<div style="display:flex;align-items:center;justify-content:space-between;margin-top:8px;">' +
-      '<span class="status-tag" style="background:' + statusColor + ';">' + esc(o.status) + '</span>' +
-      (o.type === 'auction' && o.status === 'ລໍຖ້າຈັດສົ່ງ' ? '<button class="btn small" data-act="shipauction" data-id="' + esc(o.id) + '">ໝາຍວ່າຈັດສົ່ງແລ້ວ</button>' : '') +
-      '</div></div>';
-  }).join('') || '<p style="opacity:.65;font-size:13px;">ຍັງບໍ່ມີຄຳສັ່ງຊື້</p>';
-  html += '<button class="btn secondary" style="margin-top:10px;" onclick="closeAdminModal()">ປິດ</button>';
-  openAdminModal(html);
-  document.querySelectorAll('[data-act="shipauction"]').forEach(b => b.onclick = () => {
-    callServer('updateAuctionStatus', [ADMIN_TOKEN, b.dataset.id, 'ຈັດສົ່ງແລ້ວ'], (r) => {
-      if (r.success) { showToast('ອັບເດດແລ້ວ', 'ok'); const au = AUCTIONS.find(a => a.id === b.dataset.id); if (au) au.status = 'ຈັດສົ່ງແລ້ວ'; renderOrdersAdmin(); refreshOrdersBadge(); }
-      else showToast(r.message || 'ຜິດພາດ', 'err');
-    });
-  });
-}
-function setOrdersTab(t) { ADMIN_ORDERS_TAB = t; renderOrdersAdmin(); }
 
 /*************************************************************
  * CONTACT MODAL
