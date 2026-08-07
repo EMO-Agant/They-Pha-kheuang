@@ -549,7 +549,7 @@ button{font-family:inherit;}
     </div>
 
     <div class="section">
-      <div class="section-head"><h2><span class="ico-badge"><i class="fa-solid fa-box-open"></i></span> ສິນຄ້າໃຫ້ເຊົ່າ</h2><span class="see-all" onclick="goPage('rent')">ເບິ່ງທັງໝົດ <i class="fa-solid fa-chevron-right"></i></span></div>
+      <div class="section-head"><h2><span class="ico-badge"><i class="fa-solid fa-shop"></i></span> ໂຊສິນຄ້າ</h2><span class="see-all" onclick="goPage('rent')">ເບິ່ງທັງໝົດ <i class="fa-solid fa-chevron-right"></i></span></div>
       <div class="grid" id="homeRentGrid"></div>
     </div>
 
@@ -563,7 +563,7 @@ button{font-family:inherit;}
   <div id="page-rent" class="page" style="display:none;">
     <div class="page-subheader">
       <div class="back-btn" onclick="goPage('home')"><i class="fa-solid fa-arrow-left"></i></div>
-      <h2><i class="fa-solid fa-box-open"></i> ສິນຄ້າໃຫ້ເຊົ່າ</h2>
+      <h2><i class="fa-solid fa-shop"></i> ໂຊສິນຄ້າ</h2>
     </div>
     <div class="section" style="padding-top:6px;">
       <div class="searchbar"><i class="fa-solid fa-magnifying-glass"></i><input id="rentSearch" placeholder="ຄົ້ນຫາສິນຄ້າ..." oninput="renderRentGrid()"></div>
@@ -616,6 +616,7 @@ button{font-family:inherit;}
         <div class="admin-nav-item active" data-sec="dashboard" onclick="switchAdminSection('dashboard')"><i class="fa-solid fa-chart-line"></i><span>ພາບລວມ</span></div>
         <div class="admin-nav-item" data-sec="orders" onclick="switchAdminSection('orders')"><i class="fa-solid fa-cart-shopping"></i><span>ຄຳສັ່ງຊື້ທັງໝົດ</span></div>
         <div class="admin-nav-item" data-sec="products" onclick="switchAdminSection('products')"><i class="fa-solid fa-box"></i><span>ສິນຄ້າ</span></div>
+        <div class="admin-nav-item" data-sec="categories" onclick="switchAdminSection('categories')"><i class="fa-solid fa-tags"></i><span>ໝວດໝູ່ສິນຄ້າ</span></div>
         <div class="admin-nav-item" data-sec="rentals" onclick="switchAdminSection('rentals')"><i class="fa-solid fa-key"></i><span>ຄຳຂໍເຊົ່າ</span></div>
         <div class="admin-nav-item" data-sec="pawns" onclick="switchAdminSection('pawns')"><i class="fa-solid fa-hand-holding-dollar"></i><span>ຄຳຂໍຈຳນຳ</span></div>
         <div class="admin-nav-item" data-sec="auctions" onclick="switchAdminSection('auctions')"><i class="fa-solid fa-gavel"></i><span>ປະມູນ</span></div>
@@ -686,6 +687,7 @@ button{font-family:inherit;}
     <div class="drawer-item" onclick="showAdminSection('dashboard')"><i class="fa-solid fa-chart-line"></i> ພາບລວມ Dashboard</div>
     <div class="drawer-item" onclick="showAdminSection('orders')"><i class="fa-solid fa-cart-shopping"></i> ຄຳສັ່ງຊື້ທັງໝົດ</div>
     <div class="drawer-item" onclick="showAdminSection('products')"><i class="fa-solid fa-box"></i> ຈັດການສິນຄ້າ</div>
+    <div class="drawer-item" onclick="showAdminSection('categories')"><i class="fa-solid fa-tags"></i> ຈັດການໝວດໝູ່ສິນຄ້າ</div>
     <div class="drawer-item" onclick="showAdminSection('rentals')"><i class="fa-solid fa-key"></i> ຄຳຂໍເຊົ່າ</div>
     <div class="drawer-item" onclick="showAdminSection('pawns')"><i class="fa-solid fa-hand-holding-dollar"></i> ຄຳຂໍຈຳນຳ</div>
     <div class="drawer-item" onclick="showAdminSection('auctions')"><i class="fa-solid fa-gavel"></i> ຈັດການປະມູນ</div>
@@ -732,12 +734,12 @@ const API_URL = 'https://script.google.com/macros/s/AKfycbwmg5i5SrZVE5hlpSSm_Lnd
  *************************************************************/
 let SETTINGS = null;
 let ADMIN_TOKEN = localStorage.getItem('admin_token') || null;
-let PRODUCTS = [], AUCTIONS = [], LIVES = [], BANNERS = [], MARQUEE_ITEMS = [];
+let PRODUCTS = [], AUCTIONS = [], LIVES = [], BANNERS = [], MARQUEE_ITEMS = [], CATEGORIES = [];
 let EDIT_CACHE = {}; // ເກັບ object ຊົ່ວຄາວສຳລັບແກ້ໄຂ (ກັນບັນຫາ quote ໃນ onclick)
 let BOOTSTRAP_DONE = false; // ກັນບໍ່ໃຫ້ restoreAdminSession() ຖືກເອີ້ນຊ້ຳຫຼາຍເທື່ອ
 
 /* ---- Admin: cache ຂໍ້ມູນທີ່ຕ້ອງໃຊ້ token (ບໍ່ໄດ້ຢູ່ໃນ bootstrap ສາທາລະນະ) ---- */
-let ADMIN_DATA_CACHE = { dashboard:null, rentals:null, pawns:null, contacts:null, banner:null, marquee:null, livecomments:null };
+let ADMIN_DATA_CACHE = { dashboard:null, rentals:null, pawns:null, contacts:null, banner:null, marquee:null, livecomments:null, categories:null };
 let ADMIN_ACTIVE_SECTION = null;   // ໜ້າ admin ທີ່ກຳລັງເປີດຢູ່ຕອນນີ້
 let ADMIN_VIEW_MODE = 'list';      // 'list' = ໜ້າລາຍການ, 'form' = ກຳລັງແກ້ໄຂ/ເພີ່ມຟອມ (ຢຸດ background refresh ຊົ່ວຄາວ)
 let ADMIN_POLL_TIMER = null;
@@ -855,7 +857,12 @@ const ARG_MAP = {
   getMarqueeItems: () => ({}),
   saveMarqueeItem: (a) => ({ token: a[0], item: a[1] }),
   deleteMarqueeItem: (a) => ({ token: a[0], id: a[1] }),
-  reorderMarqueeItems: (a) => ({ token: a[0], order: a[1] })
+  reorderMarqueeItems: (a) => ({ token: a[0], order: a[1] }),
+
+  getCategoriesAdmin: () => ({}),
+  saveCategory: (a) => ({ token: a[0], category: a[1] }),
+  deleteCategory: (a) => ({ token: a[0], id: a[1] }),
+  reorderCategories: (a) => ({ token: a[0], order: a[1] })
 };
 
 // ຄົງໂຄງສ້າງການເອີ້ນແບບເດີມ (callServer(fn, args, onSuccess, onError)) ໄວ້
@@ -948,6 +955,7 @@ function applyBootstrapData(data) {
   LIVES = data.lives || [];
   BANNERS = data.banners || [];
   MARQUEE_ITEMS = data.marquee || [];
+  CATEGORIES = data.categories || [];
   applySettingsToUI(SETTINGS);
   renderRentGrid(); renderPawnGrid(); renderHomeRent(); renderHomePawn();
   renderAuctionList(); renderHomeAuction();
@@ -1062,8 +1070,12 @@ function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, m => ({ 
  * RENDER: HOME
  *************************************************************/
 function renderHomeRent() {
-  const list = PRODUCTS.filter(p => p.type === 'rent' && p.status !== 'Inactive').slice(0, 4);
-  document.getElementById('homeRentGrid').innerHTML = list.map(productCardHtml).join('') || emptyHtml('box-open', 'ຍັງບໍ່ມີສິນຄ້າໃຫ້ເຊົ່າ');
+  let list = PRODUCTS.filter(p => p.status !== 'Inactive');
+  list = list.slice().sort((a, b) =>
+    (String(b.featured) === 'true') - (String(a.featured) === 'true') ||
+    new Date(b.createdAt) - new Date(a.createdAt)
+  ).slice(0, 4);
+  document.getElementById('homeRentGrid').innerHTML = list.map(productCardHtml).join('') || emptyHtml('shop', 'ຍັງບໍ່ມີສິນຄ້າ');
 }
 function renderHomePawn() {
   const list = PRODUCTS.filter(p => p.type === 'pawn' && p.status !== 'Inactive').slice(0, 4);
@@ -1096,18 +1108,16 @@ function renderHomeLive() {
  *************************************************************/
 function renderRentGrid() {
   const q = (document.getElementById('rentSearch')?.value || '').toLowerCase().trim();
-  const cats = Array.from(new Set(PRODUCTS.filter(p => p.type === 'rent').map(p => p.category).filter(Boolean)));
   const filterBar = document.getElementById('rentCatFilter');
-  if (filterBar && !filterBar.dataset.built) {
-    filterBar.dataset.built = '1';
-    filterBar.innerHTML = '<div class="pill active" data-cat="" onclick="setRentCat(this)">ທັງໝົດ</div>' +
-      cats.map(c => '<div class="pill" data-cat="' + esc(c) + '" onclick="setRentCat(this)">' + esc(c) + '</div>').join('');
+  if (filterBar) {
+    filterBar.innerHTML = '<div class="pill active" data-cat="" onclick="setRentCat(this)"><i class="fa-solid fa-border-all"></i> ທັງໝົດ</div>' +
+      CATEGORIES.map(c => '<div class="pill" data-cat="' + esc(c.name) + '" onclick="setRentCat(this)">' + iconHtml(c.icon) + ' ' + esc(c.name) + '</div>').join('');
   }
   const activeCat = filterBar?.querySelector('.pill.active')?.dataset.cat || '';
-  let list = PRODUCTS.filter(p => p.type === 'rent');
+  let list = PRODUCTS.filter(p => p.status !== 'Inactive');
   if (activeCat) list = list.filter(p => p.category === activeCat);
   if (q) list = list.filter(p => (p.name || '').toLowerCase().includes(q));
-  document.getElementById('rentGrid').innerHTML = list.map(productCardHtml).join('') || emptyHtml('box-open', 'ບໍ່ພົບສິນຄ້າທີ່ຄົ້ນຫາ');
+  document.getElementById('rentGrid').innerHTML = list.map(productCardHtml).join('') || emptyHtml('shop', 'ບໍ່ພົບສິນຄ້າທີ່ຄົ້ນຫາ');
 }
 function setRentCat(el) {
   document.querySelectorAll('#rentCatFilter .pill').forEach(p => p.classList.remove('active'));
@@ -1336,13 +1346,13 @@ function switchAdminSection(name) {
   goPage('admin');
   closeAdminSidebar();
   document.querySelectorAll('.admin-nav-item[data-sec]').forEach(n => n.classList.toggle('active', n.dataset.sec === name));
-  const titles = { dashboard:'ພາບລວມ', orders:'ຄຳສັ່ງຊື້ທັງໝົດ', products:'ຈັດການສິນຄ້າ', rentals:'ຄຳຂໍເຊົ່າ', pawns:'ຄຳຂໍຈຳນຳ',
+  const titles = { dashboard:'ພາບລວມ', orders:'ຄຳສັ່ງຊື້ທັງໝົດ', products:'ຈັດການສິນຄ້າ', categories:'ຈັດການໝວດໝູ່ສິນຄ້າ', rentals:'ຄຳຂໍເຊົ່າ', pawns:'ຄຳຂໍຈຳນຳ',
     auctions:'ຈັດການປະມູນ', lives:'ຈັດການ Live', livecomments:'ຄອມເມັ້ນ Live', banner:'ຈັດການ Banner', marquee:'ຂໍ້ຄວາມເລື່ອນ',
     contacts:'ຂໍ້ຄວາມຕິດຕໍ່', theme:'ປັບແຕ່ງໜ້າຕາ', password:'ປ່ຽນລະຫັດຜ່ານ' };
   document.getElementById('adminSectionTitle').textContent = titles[name] || 'Admin';
   ADMIN_ACTIVE_SECTION = name;
   ADMIN_VIEW_MODE = 'list';
-  const map = { dashboard: adminDashboard, orders: adminOrders, products: adminProducts, rentals: adminRentals, pawns: adminPawns,
+  const map = { dashboard: adminDashboard, orders: adminOrders, products: adminProducts, categories: adminCategories, rentals: adminRentals, pawns: adminPawns,
     auctions: adminAuctions, lives: adminLives, livecomments: adminLiveComments, banner: adminBanner, marquee: adminMarquee,
     contacts: adminContacts, theme: adminTheme, password: adminPasswordForm };
   (map[name] || adminDashboard)();
@@ -1704,6 +1714,7 @@ function showAdminSection(section) {
   if (section === 'dashboard') return adminDashboard();
   if (section === 'orders') return adminOrders();
   if (section === 'products') return adminProducts();
+  if (section === 'categories') return adminCategories();
   if (section === 'rentals') return adminRentals();
   if (section === 'pawns') return adminPawns();
   if (section === 'auctions') return adminAuctions();
@@ -1815,7 +1826,7 @@ function editProductForm(p) {
   openAdminModal(
     '<h3><i class="fa-solid fa-box"></i> ' + (p.id ? 'ແກ້ໄຂ' : 'ເພີ່ມ') + 'ສິນຄ້າ</h3>' +
     '<div class="field"><label>ຊື່ສິນຄ້າ</label><input id="pf_name" value="' + esc(p.name || '') + '"></div>' +
-    '<div class="field"><label>ໝວດໝູ່ (ຢ່າພິມ rent/pawn ບ່ອນນີ້ — ໃຫ້ໃສ່ຊື່ໝວດຈິງ ເຊັ່ນ "ພະຄຳ")</label><input id="pf_category" value="' + esc(p.category || '') + '"></div>' +
+    '<div class="field"><label>ໝວດໝູ່</label><select id="pf_category">' + categoryOptionsHtml(p.category) + '</select></div>' +
     '<div class="field"><label>ປະເພດ (ຕ້ອງເລືອກໃຫ້ຖືກ ບໍ່ດັ່ງນັ້ນຈະບໍ່ຂຶ້ນໜ້າຫຼັກ)</label><select id="pf_type"><option value="rent" ' + (p.type === 'rent' ? 'selected' : '') + '>ໃຫ້ເຊົ່າ</option><option value="pawn" ' + (p.type === 'pawn' ? 'selected' : '') + '>ຮັບຈຳນຳ</option></select></div>' +
     '<div class="row2"><div class="field"><label>ລາຄາເຊົ່າ/ວັນ</label><input type="number" id="pf_rent" value="' + (p.rentPricePerDay || '') + '"></div>' +
     '<div class="field"><label>ມູນຄ່າຈຳນຳ</label><input type="number" id="pf_pawn" value="' + (p.pawnValue || '') + '"></div></div>' +
@@ -1844,9 +1855,6 @@ function saveProductForm(id) {
     flashSale: document.getElementById('pf_flash').checked
   };
   if (!product.name) { showToast('ກະລຸນາປ້ອນຊື່ສິນຄ້າ', 'err'); return; }
-  if (val('pf_category').toLowerCase() === 'rent' || val('pf_category').toLowerCase() === 'pawn') {
-    showToast('ຊ່ອງ "ໝວດໝູ່" ບໍ່ຄວນເປັນ rent/pawn — ໃຫ້ໃຊ້ Dropdown "ປະເພດ" ແທນ', 'err'); return;
-  }
   setBtnLoading('pf_save', true);
   callServer('saveProduct', [ADMIN_TOKEN, product], (r) => {
     setBtnLoading('pf_save', false);
@@ -1856,6 +1864,100 @@ function saveProductForm(id) {
 function deleteProductConfirm(id) {
   if (!confirm('ຢືນຢັນລຶບສິນຄ້ານີ້?')) return;
   callServer('deleteProduct', [ADMIN_TOKEN, id], (r) => { if (r.success) { showToast('ລຶບແລ້ວ', 'ok'); adminProducts(); loadAllData(); } });
+}
+
+/* ---- Categories management (ໝວດໝູ່ສິນຄ້າ) - cache-first ຄືແບບ Banner/Marquee ---- */
+function adminCategories(forceRefresh) {
+  ADMIN_VIEW_MODE = 'list';
+  if (ADMIN_DATA_CACHE.categories && !forceRefresh) { EDIT_CACHE.categoryList = ADMIN_DATA_CACHE.categories; renderCategoriesAdminList(); return; }
+  if (!ADMIN_DATA_CACHE.categories) showAdminLoadingOnce_();
+  callServer('getCategoriesAdmin', [], (list) => {
+    if (!Array.isArray(list)) return showToast((list && list.message) || 'ຜິດພາດ', 'err');
+    ADMIN_DATA_CACHE.categories = list;
+    EDIT_CACHE.categoryList = list;
+    if (ADMIN_ACTIVE_SECTION === 'categories') renderCategoriesAdminList();
+  });
+}
+function renderCategoriesAdminList() {
+  const list = EDIT_CACHE.categoryList || [];
+  let html = '<h3><i class="fa-solid fa-tags"></i> ຈັດການໝວດໝູ່ສິນຄ້າ</h3>' +
+    '<p style="font-size:11.5px;color:var(--text-soft);margin:-6px 0 14px;">ໝວດໝູ່ນີ້ຈະຂຶ້ນໃຫ້ເລືອກຕອນເພີ່ມ/ແກ້ໄຂສິນຄ້າ ແລະ ໃຊ້ເປັນຕົວກອງໃນໜ້າໂຊສິນຄ້າ</p>' +
+    '<button class="btn small" onclick="editCategoryForm()" style="margin-bottom:14px;"><i class="fa-solid fa-plus"></i> ເພີ່ມໝວດໝູ່ໃໝ່</button>';
+  html += list.map((c, idx) =>
+    '<div class="admin-list-item" style="display:flex;align-items:center;gap:12px;">' +
+    '<div class="icon-preview" style="width:42px;height:42px;font-size:18px;">' + iconHtml(c.icon) + '</div>' +
+    '<div style="flex:1;min-width:0;">' +
+    '<div class="name">' + esc(c.name) + '</div>' +
+    '<div class="sub">' + (c.status === 'inactive' ? 'ປິດຢູ່ (ບໍ່ສະແດງ)' : 'ເປີດໃຊ້') + '</div>' +
+    '</div>' +
+    '<div style="display:flex;gap:6px;flex:0 0 auto;">' +
+    '<button class="icon-btn up" data-act="cup" data-idx="' + idx + '"><i class="fa-solid fa-arrow-up"></i></button>' +
+    '<button class="icon-btn down" data-act="cdown" data-idx="' + idx + '"><i class="fa-solid fa-arrow-down"></i></button>' +
+    '<button class="icon-btn" data-act="cedit" data-idx="' + idx + '"><i class="fa-solid fa-pen"></i></button>' +
+    '<button class="icon-btn" data-act="cdel" data-id="' + esc(c.id) + '" style="color:#C0392B;"><i class="fa-solid fa-trash"></i></button>' +
+    '</div></div>'
+  ).join('') || '<p style="opacity:.65;font-size:13px;">ຍັງບໍ່ມີໝວດໝູ່, ກົດ "ເພີ່ມໝວດໝູ່ໃໝ່" ຂ້າງເທິງ</p>';
+  html += '<button class="btn secondary" style="margin-top:10px;" onclick="closeAdminModal()">ປິດ</button>';
+  openAdminModal(html);
+  document.querySelectorAll('#adminContent [data-act="cedit"]').forEach(b => b.onclick = () => editCategoryForm(EDIT_CACHE.categoryList[Number(b.dataset.idx)]));
+  document.querySelectorAll('#adminContent [data-act="cdel"]').forEach(b => b.onclick = () => deleteCategoryConfirm(b.dataset.id));
+  document.querySelectorAll('#adminContent [data-act="cup"]').forEach(b => b.onclick = () => moveCategoryItem(Number(b.dataset.idx), -1));
+  document.querySelectorAll('#adminContent [data-act="cdown"]').forEach(b => b.onclick = () => moveCategoryItem(Number(b.dataset.idx), 1));
+}
+function editCategoryForm(c) {
+  ADMIN_VIEW_MODE = 'form';
+  c = c || {};
+  const ic = c.icon || 'fa-circle';
+  openAdminModal(
+    '<h3><i class="fa-solid fa-tags"></i> ' + (c.id ? 'ແກ້ໄຂ' : 'ເພີ່ມ') + 'ໝວດໝູ່</h3>' +
+    '<div class="icon-edit-row">' +
+      '<div class="icon-preview" id="prev_cat">' + iconHtml(ic) + '</div>' +
+      '<div class="icon-fields" style="grid-template-columns:1fr;">' +
+        '<input id="cf_icon" placeholder="fa-gem ຫຼື 💎" value="' + esc(ic) + '" oninput="updateIconPreview(\'cf_icon\',\'prev_cat\')">' +
+      '</div>' +
+      '<button type="button" class="icon-pick-btn" onclick="openIconPicker(\'cf_icon\',\'prev_cat\',this)"><i class="fa-solid fa-icons"></i></button>' +
+    '</div>' +
+    '<div class="field"><label>ຊື່ໝວດໝູ່</label><input id="cf_name" value="' + esc(c.name || '') + '" placeholder="ເຊັ່ນ: ພະຄຳ, ແຫວນ, ພະຫຼັງ"></div>' +
+    '<div class="field"><label>ສະຖານະ</label><select id="cf_status"><option value="active" ' + (c.status !== 'inactive' ? 'selected' : '') + '>ເປີດໃຊ້ (ສະແດງ)</option><option value="inactive" ' + (c.status === 'inactive' ? 'selected' : '') + '>ປິດ (ເຊື່ອງໄວ້)</option></select></div>' +
+    '<button class="btn" id="cf_save"><i class="fa-solid fa-check"></i> ບັນທຶກ</button>' +
+    '<button class="btn secondary" style="margin-top:8px;" onclick="adminCategories()">ກັບຄືນ</button>'
+  );
+  document.getElementById('cf_save').onclick = () => saveCategoryForm(c.id || '');
+}
+function saveCategoryForm(id) {
+  const cat = { id: id || undefined, name: val('cf_name'), icon: val('cf_icon') || 'fa-circle', status: document.getElementById('cf_status').value };
+  if (!cat.name) { showToast('ກະລຸນາປ້ອນຊື່ໝວດໝູ່', 'err'); return; }
+  setBtnLoading('cf_save', true);
+  callServer('saveCategory', [ADMIN_TOKEN, cat], (r) => {
+    setBtnLoading('cf_save', false);
+    if (!r.success) { showToast(r.message || 'ຜິດພາດ', 'err'); return; }
+    showToast('ບັນທຶກສຳເລັດ ✅', 'ok');
+    ADMIN_VIEW_MODE = 'list';
+    adminCategories(true);
+    refreshHomeCategories();
+  });
+}
+function deleteCategoryConfirm(id) {
+  if (!confirm('ຢືນຢັນລຶບໝວດໝູ່ນີ້? (ສິນຄ້າໃນໝວດນີ້ຈະບໍ່ຖືກລຶບ ແຕ່ຈະບໍ່ມີໝວດໝູ່ອີກຕໍ່ໄປ)')) return;
+  callServer('deleteCategory', [ADMIN_TOKEN, id], (r) => {
+    if (r.success) { showToast('ລຶບແລ້ວ', 'ok'); adminCategories(true); refreshHomeCategories(); }
+    else showToast(r.message || 'ລຶບບໍ່ສຳເລັດ', 'err');
+  });
+}
+function moveCategoryItem(idx, dir) {
+  const list = EDIT_CACHE.categoryList; const to = idx + dir;
+  if (!list || to < 0 || to >= list.length) return;
+  const tmp = list[idx]; list[idx] = list[to]; list[to] = tmp;
+  ADMIN_DATA_CACHE.categories = list;
+  renderCategoriesAdminList();
+  callServer('reorderCategories', [ADMIN_TOKEN, list.map(c => c.id)], (r) => { if (r.success) refreshHomeCategories(); });
+}
+function refreshHomeCategories() {
+  callServer('getCategoriesAdmin', [], (list) => { if (Array.isArray(list)) { CATEGORIES = list.filter(c => c.status !== 'inactive'); renderRentGrid(); } });
+}
+function categoryOptionsHtml(selected) {
+  if (!CATEGORIES.length) return '<option value="">— ຍັງບໍ່ມີໝວດໝູ່, ໄປສ້າງກ່ອນທີ່ "ໝວດໝູ່ສິນຄ້າ" —</option>';
+  return CATEGORIES.map(c => '<option value="' + esc(c.name) + '" ' + (c.name === selected ? 'selected' : '') + '>' + esc(c.name) + '</option>').join('');
 }
 
 /* ---- Rentals / Pawns approval (cache-first, ອັບເດດເມື່ອອະນຸມັດ/ປະຕິເສດ ຫຼື ມີຄຳຂໍໃໝ່ເທົ່ານັ້ນ) ---- */
