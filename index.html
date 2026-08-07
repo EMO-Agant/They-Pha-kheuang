@@ -564,6 +564,7 @@ button{font-family:inherit;}
         <div class="admin-nav-item" data-sec="pawns" onclick="switchAdminSection('pawns')"><i class="fa-solid fa-hand-holding-dollar"></i><span>ຄຳຂໍຈຳນຳ</span></div>
         <div class="admin-nav-item" data-sec="auctions" onclick="switchAdminSection('auctions')"><i class="fa-solid fa-gavel"></i><span>ປະມູນ</span></div>
         <div class="admin-nav-item" data-sec="lives" onclick="switchAdminSection('lives')"><i class="fa-solid fa-video"></i><span>Live</span></div>
+        <div class="admin-nav-item" data-sec="livecomments" onclick="switchAdminSection('livecomments')"><i class="fa-solid fa-comments"></i><span>ຄອມເມັ້ນ Live</span></div>
         <div class="admin-nav-item" data-sec="banner" onclick="switchAdminSection('banner')"><i class="fa-solid fa-images"></i><span>Banner</span></div>
         <div class="admin-nav-item" data-sec="marquee" onclick="switchAdminSection('marquee')"><i class="fa-solid fa-scroll"></i><span>ຂໍ້ຄວາມເລື່ອນ</span></div>
         <div class="admin-nav-item" data-sec="contacts" onclick="switchAdminSection('contacts')"><i class="fa-solid fa-address-book"></i><span>ຕິດຕໍ່</span></div>
@@ -629,6 +630,7 @@ button{font-family:inherit;}
     <div class="drawer-item" onclick="showAdminSection('pawns')"><i class="fa-solid fa-hand-holding-dollar"></i> ຄຳຂໍຈຳນຳ</div>
     <div class="drawer-item" onclick="showAdminSection('auctions')"><i class="fa-solid fa-gavel"></i> ຈັດການປະມູນ</div>
     <div class="drawer-item" onclick="showAdminSection('lives')"><i class="fa-solid fa-video"></i> ຈັດການ Live</div>
+    <div class="drawer-item" onclick="showAdminSection('livecomments')"><i class="fa-solid fa-comments"></i> ຄອມເມັ້ນ Live</div>
     <div class="drawer-item" onclick="showAdminSection('banner')"><i class="fa-solid fa-images"></i> ຈັດການ Banner</div>
     <div class="drawer-item" onclick="showAdminSection('marquee')"><i class="fa-solid fa-scroll"></i> ຂໍ້ຄວາມເລື່ອນ</div>
     <div class="drawer-item" onclick="showAdminSection('contacts')"><i class="fa-solid fa-address-book"></i> ຂໍ້ຄວາມຕິດຕໍ່</div>
@@ -768,6 +770,10 @@ const ARG_MAP = {
   deleteProduct: (a) => ({ token: a[0], id: a[1] }),
   deleteAuction: (a) => ({ token: a[0], id: a[1] }),
   deleteLiveStream: (a) => ({ token: a[0], id: a[1] }),
+  submitLiveComment: (a) => ({ comment: a[0] }),
+  getLiveComments: (a) => ({ liveId: a[0] }),
+  updateLiveCommentStatus: (a) => ({ token: a[0], id: a[1], status: a[2] }),
+  deleteLiveComment: (a) => ({ token: a[0], id: a[1] }),
   updateRentalStatus: (a) => ({ token: a[0], id: a[1], status: a[2] }),
   updatePawnStatus: (a) => ({ token: a[0], id: a[1], status: a[2] }),
   changeAdminPassword: (a) => ({ token: a[0], oldPassword: a[1], newPassword: a[2] }),
@@ -1005,6 +1011,7 @@ function startFlashTimer(endTime) {
 function renderHomeLive() {
   const list = LIVES.filter(l => l.isActive === true || l.isActive === 'TRUE').slice(0, 1);
   document.getElementById('homeLiveList').innerHTML = list.map(liveCardHtml).join('') || emptyHtml('video-slash', 'ຕອນນີ້ບໍ່ມີການ Live');
+  list.forEach(l => loadLiveComments(l.id));
 }
 
 /*************************************************************
@@ -1080,7 +1087,53 @@ function liveCardHtml(l) {
   return '<div class="live-card"><div class="live-frame-wrap">' +
     (active ? '<div class="live-tag"><span class="dot"></span> LIVE</div>' : '') +
     '<iframe src="' + esc(l.embedUrl) + '" allowfullscreen scrolling="no" frameborder="0"></iframe>' +
-    '</div><div class="live-body"><p class="name" style="font-size:14.5px;margin:0 0 4px;">' + esc(l.title) + '</p><p class="meta" style="opacity:.75;font-size:12px;">' + esc(l.description || '') + '</p></div></div>';
+    '</div><div class="live-body"><p class="name" style="font-size:14.5px;margin:0 0 4px;">' + esc(l.title) + '</p><p class="meta" style="opacity:.75;font-size:12px;">' + esc(l.description || '') + '</p>' +
+    liveCommentBoxHtml(l.id) +
+    '</div></div>';
+}
+function liveCommentBoxHtml(liveId) {
+  return '<div style="margin-top:12px;border-top:1px solid var(--line);padding-top:12px;">' +
+    '<div style="display:flex;align-items:center;gap:6px;margin-bottom:8px;"><i class="fa-solid fa-comments" style="color:var(--primary);"></i><b style="font-size:12.5px;">ຄອມເມັ້ນ / ສອບຖາມ ລະຫວ່າງ Live</b></div>' +
+    '<div id="lcfeed-' + liveId + '" style="max-height:160px;overflow-y:auto;display:flex;flex-direction:column;gap:8px;margin-bottom:10px;"></div>' +
+    '<div class="row2">' +
+    '<input id="lcname-' + liveId + '" placeholder="ຊື່ຂອງທ່ານ" style="padding:9px 11px;border-radius:11px;border:1px solid var(--line-strong);font-size:12.5px;">' +
+    '<input id="lcphone-' + liveId + '" placeholder="ເບີໂທ (ຢາກໃຫ້ຕິດຕໍ່ກັບ)" style="padding:9px 11px;border-radius:11px;border:1px solid var(--line-strong);font-size:12.5px;">' +
+    '</div>' +
+    '<div style="display:flex;gap:8px;margin-top:8px;">' +
+    '<input id="lcmsg-' + liveId + '" placeholder="ພິມຄອມເມັ້ນ ຫຼື ຖາມລາຄາ..." style="flex:1;padding:10px 12px;border-radius:11px;border:1px solid var(--line-strong);font-size:13px;">' +
+    '<button class="btn small" onclick="submitLiveCommentForm(\'' + liveId + '\')"><i class="fa-solid fa-paper-plane"></i></button>' +
+    '</div></div>';
+}
+function liveCommentItemHtml(c) {
+  return '<div style="background:var(--bg-page);border-radius:10px;padding:8px 10px;font-size:12px;">' +
+    '<b style="color:var(--primary);">' + esc(c.name) + '</b> <span style="opacity:.55;font-size:10px;">' + new Date(c.createdAt).toLocaleTimeString('lo-LA') + '</span>' +
+    '<div>' + esc(c.message) + '</div></div>';
+}
+function submitLiveCommentForm(liveId) {
+  const name = val('lcname-' + liveId), phone = val('lcphone-' + liveId), msg = val('lcmsg-' + liveId);
+  if (!name || !msg) { showToast('ກະລຸນາປ້ອນຊື່ ແລະ ຂໍ້ຄວາມ', 'err'); return; }
+  const live = LIVES.find(l => l.id === liveId);
+  callServer('submitLiveComment', [{ liveId: liveId, liveTitle: live ? live.title : '', name: name, phone: phone, message: msg }], (r) => {
+    if (r.success) { document.getElementById('lcmsg-' + liveId).value = ''; loadLiveComments(liveId); }
+    else showToast(r.message || 'ຜິດພາດ', 'err');
+  });
+}
+const LIVE_COMMENT_TIMERS = {};
+function loadLiveComments(liveId) {
+  callServer('getLiveComments', [liveId], (list) => {
+    if (!Array.isArray(list)) return;
+    const feed = document.getElementById('lcfeed-' + liveId);
+    if (!feed) return;
+    feed.innerHTML = list.slice(0, 30).reverse().map(liveCommentItemHtml).join('') || '<div style="opacity:.5;font-size:11.5px;text-align:center;">ຍັງບໍ່ມີຄອມເມັ້ນ, ເປັນຄົນທຳອິດເລີຍ!</div>';
+    feed.scrollTop = feed.scrollHeight;
+  });
+}
+function startLiveCommentPolling() {
+  LIVES.forEach(l => {
+    loadLiveComments(l.id);
+    if (LIVE_COMMENT_TIMERS[l.id]) clearInterval(LIVE_COMMENT_TIMERS[l.id]);
+    LIVE_COMMENT_TIMERS[l.id] = setInterval(() => loadLiveComments(l.id), 6000);
+  });
 }
 
 /*************************************************************
@@ -1166,14 +1219,14 @@ function switchAdminSection(name) {
   closeAdminSidebar();
   document.querySelectorAll('.admin-nav-item[data-sec]').forEach(n => n.classList.toggle('active', n.dataset.sec === name));
   const titles = { dashboard:'ພາບລວມ', products:'ຈັດການສິນຄ້າ', rentals:'ຄຳຂໍເຊົ່າ', pawns:'ຄຳຂໍຈຳນຳ',
-    auctions:'ຈັດການປະມູນ', lives:'ຈັດການ Live', banner:'ຈັດການ Banner', marquee:'ຂໍ້ຄວາມເລື່ອນ',
+    auctions:'ຈັດການປະມູນ', lives:'ຈັດການ Live', livecomments:'ຄອມເມັ້ນ Live', banner:'ຈັດການ Banner', marquee:'ຂໍ້ຄວາມເລື່ອນ',
     contacts:'ຂໍ້ຄວາມຕິດຕໍ່', theme:'ປັບແຕ່ງໜ້າຕາ', password:'ປ່ຽນລະຫັດຜ່ານ' };
   document.getElementById('adminSectionTitle').textContent = titles[name] || 'Admin';
   // ສະແດງ loading ຊົ່ວຄາວ ພາຍໃນຫນ້າ admin ທັນທີ ເພື່ອບໍ່ໃຫ້ຮູ້ສຶກວ່າໜ້າວ່າງເປົ່າ/ຄ້າງ ຂະນະລໍຖ້າຂໍ້ມູນຈາກເຊີບເວີ
   document.getElementById('adminContent').innerHTML =
     '<div class="admin-inline-loading"><div class="loading-spin"></div><p>ກຳລັງໂຫຼດ...</p></div>';
   const map = { dashboard: adminDashboard, products: adminProducts, rentals: adminRentals, pawns: adminPawns,
-    auctions: adminAuctions, lives: adminLives, banner: adminBanner, marquee: adminMarquee,
+    auctions: adminAuctions, lives: adminLives, livecomments: adminLiveComments, banner: adminBanner, marquee: adminMarquee,
     contacts: adminContacts, theme: adminTheme, password: adminPasswordForm };
   (map[name] || adminDashboard)();
 }
@@ -1395,6 +1448,7 @@ function showAdminSection(section) {
   if (section === 'pawns') return adminPawns();
   if (section === 'auctions') return adminAuctions();
   if (section === 'lives') return adminLives();
+  if (section === 'livecomments') return adminLiveComments();
   if (section === 'banner') return adminBanner();
   if (section === 'marquee') return adminMarquee();
   if (section === 'contacts') return adminContacts();
@@ -1598,6 +1652,29 @@ function adminLives() {
     document.querySelectorAll('[data-act="ldel"]').forEach(b => b.onclick = () => deleteLiveConfirm(b.dataset.id));
   });
 }
+
+function adminLiveComments() {
+  callServer('getLiveComments', [''], (list) => {
+    if (!Array.isArray(list)) return showToast((list && list.message) || 'ຜິດພາດ', 'err');
+    let html = '<h3><i class="fa-solid fa-comments"></i> ຄອມເມັ້ນ / ຄຳຖາມຈາກ Live</h3>' +
+      '<p style="font-size:11.5px;color:var(--text-soft);margin:-6px 0 14px;">ລ້າສຸດກ່ອນ, ກົດເບີໂທເພື່ອໂທຫາລູກຄ້າໄດ້ທັນທີ</p>';
+    html += list.map(c =>
+      '<div class="admin-list-item"><div class="top"><div>' +
+      '<div class="name">' + esc(c.name) + (c.phone ? ' - <a href="tel:' + esc(c.phone) + '" style="color:var(--primary);">' + esc(c.phone) + ' <i class="fa-solid fa-phone"></i></a>' : '') + '</div>' +
+      '<div class="sub">🎥 ' + esc(c.liveTitle || '') + ' | ' + new Date(c.createdAt).toLocaleString('lo-LA') + '</div>' +
+      '<div style="margin-top:6px;font-size:13px;">' + esc(c.message) + '</div></div>' +
+      '<span class="status-tag" style="background:' + (c.status === 'ຕິດຕໍ່ແລ້ວ' ? 'rgba(47,169,104,.18);color:#1E7A4C' : 'rgba(212,175,55,.20);color:#7A5220') + ';">' + esc(c.status) + '</span></div>' +
+      '<div style="display:flex;gap:8px;margin-top:8px;">' +
+      '<button class="btn small" data-act="lcok" data-id="' + esc(c.id) + '">ໝາຍວ່າຕິດຕໍ່ແລ້ວ</button>' +
+      '<button class="btn small danger" data-act="lcdel" data-id="' + esc(c.id) + '">ລຶບ</button></div></div>'
+    ).join('') || '<p style="opacity:.65;font-size:13px;">ຍັງບໍ່ມີຄອມເມັ້ນ</p>';
+    html += '<button class="btn secondary" style="margin-top:10px;" onclick="closeAdminModal()">ປິດ</button>';
+    openAdminModal(html);
+    document.querySelectorAll('[data-act="lcok"]').forEach(b => b.onclick = () => callServer('updateLiveCommentStatus', [ADMIN_TOKEN, b.dataset.id, 'ຕິດຕໍ່ແລ້ວ'], () => { showToast('ອັບເດດແລ້ວ', 'ok'); adminLiveComments(); }));
+    document.querySelectorAll('[data-act="lcdel"]').forEach(b => b.onclick = () => { if (!confirm('ລຶບຄອມເມັ້ນນີ້?')) return; callServer('deleteLiveComment', [ADMIN_TOKEN, b.dataset.id], () => { showToast('ລຶບແລ້ວ', 'ok'); adminLiveComments(); }); });
+  });
+}
+
 function editLiveForm(l) {
   l = l || {};
   openAdminModal(
