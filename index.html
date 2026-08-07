@@ -1146,7 +1146,7 @@ function emptyHtml(icon, text) { return '<div class="empty"><i class="fa-solid f
 
 function productCardHtml(p) {
   const ribbon = p.type === 'rent' ? '<span class="ribbon rent">ໃຫ້ເຊົ່າ</span>' : '<span class="ribbon pawn">ຮັບຈຳນຳ</span>';
-  const price = p.type === 'rent' ? fmt(p.rentPricePerDay) + ' /ວັນ' : fmt(p.pawnValue);
+  const price = p.cashPrice ? fmt(p.cashPrice) : (p.type === 'rent' ? fmt(p.rentPricePerDay) + ' /ວັນ' : fmt(p.pawnValue));
   const img = p.imageUrl ? '<img class="img" src="' + esc(p.imageUrl) + '" loading="lazy" onerror="this.style.display=\'none\'">' : '<div class="img"><i class="fa-solid fa-image"></i></div>';
   const action = p.type === 'rent' ? 'openRentRequestModal(\'' + p.id + '\')' : 'openPawnRequestModal(\'' + p.id + '\')';
   return '<div class="card-wrap"><div class="card" onclick="' + action + '">'
@@ -1766,7 +1766,7 @@ function adminProducts() {
       ? '<img src="' + esc(p.imageUrl) + '" class="ptbl-img" onerror="this.outerHTML=\'<div class=&quot;ptbl-img ptbl-noimg&quot;><i class=&quot;fa-solid fa-image&quot;></i></div>\'">'
       : '<div class="ptbl-img ptbl-noimg"><i class="fa-solid fa-image"></i></div>';
     const typeTag = p.type === 'rent' ? '<span class="ptbl-tag rent">ໃຫ້ເຊົ່າ</span>' : '<span class="ptbl-tag pawn">ຈຳນຳ</span>';
-    const price = p.type === 'rent' ? fmt(p.rentPricePerDay) + '/ວັນ' : fmt(p.pawnValue);
+    const price = p.cashPrice ? fmt(p.cashPrice) : (p.type === 'rent' ? fmt(p.rentPricePerDay) + '/ວັນ' : fmt(p.pawnValue));
     const stock = (p.stock !== undefined && p.stock !== '') ? p.stock : 1;
     const featured = String(p.featured) === 'true';
     const flash = String(p.flashSale) === 'true';
@@ -1831,6 +1831,8 @@ function editProductForm(p) {
     '<div class="field"><label>ປະເພດ (ຕ້ອງເລືອກໃຫ້ຖືກ ບໍ່ດັ່ງນັ້ນຈະບໍ່ຂຶ້ນໜ້າຫຼັກ)</label><select id="pf_type"><option value="rent" ' + (p.type === 'rent' ? 'selected' : '') + '>ໃຫ້ເຊົ່າ</option><option value="pawn" ' + (p.type === 'pawn' ? 'selected' : '') + '>ຮັບຈຳນຳ</option></select></div>' +
     '<div class="row2"><div class="field"><label>ລາຄາເຊົ່າ/ວັນ</label><input type="number" id="pf_rent" value="' + (p.rentPricePerDay || '') + '"></div>' +
     '<div class="field"><label>ມູນຄ່າຈຳນຳ</label><input type="number" id="pf_pawn" value="' + (p.pawnValue || '') + '"></div></div>' +
+    '<div class="field"><label>💵 ລາຄາຈ່າຍສົດ (ບໍ່ບັງຄັບ - ໃສ່ໄດ້ທຸກໝວດ)</label><input type="number" id="pf_cash" value="' + (p.cashPrice || '') + '">' +
+    '<div class="hint">ຖ້າໃສ່ລາຄານີ້ໄວ້ ຈະສະແດງລາຄານີ້ແທນລາຄາເຊົ່າ/ຈຳນຳ ຢູ່ໜ້າຮ້ານທັນທີ</div></div>' +
     '<div class="row2"><div class="field"><label>ສະຕ໊ອກ (ຈຳນວນ)</label><input type="number" id="pf_stock" value="' + (p.stock !== undefined ? p.stock : 1) + '"></div>' +
     '<div class="field"><label>ສະຖານະ</label><select id="pf_status"><option value="Active" ' + (p.status !== 'Inactive' ? 'selected' : '') + '>Active (ສະແດງໜ້າຮ້ານ)</option><option value="Inactive" ' + (p.status === 'Inactive' ? 'selected' : '') + '>Inactive (ເຊື່ອງໄວ້)</option></select></div></div>' +
     '<div class="field"><label style="display:flex;align-items:center;gap:8px;cursor:pointer;"><input type="checkbox" id="pf_featured" ' + (String(p.featured) === 'true' ? 'checked' : '') + ' style="width:auto;"> ⭐ ສິນຄ້າແນະນຳ (Featured)</label></div>' +
@@ -1876,7 +1878,7 @@ function uploadProductImageFile(input) {
 function saveProductForm(id) {
   const product = {
     id: id || undefined, name: val('pf_name'), category: val('pf_category'), type: document.getElementById('pf_type').value,
-    rentPricePerDay: val('pf_rent'), pawnValue: val('pf_pawn'), imageUrl: val('pf_img'), description: val('pf_desc'),
+    rentPricePerDay: val('pf_rent'), pawnValue: val('pf_pawn'), cashPrice: val('pf_cash'), imageUrl: val('pf_img'), description: val('pf_desc'),
     stock: val('pf_stock') || 1,
     status: document.getElementById('pf_status').value,
     featured: document.getElementById('pf_featured').checked,
