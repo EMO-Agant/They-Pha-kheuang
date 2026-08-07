@@ -1051,6 +1051,7 @@ function renderAuctionList() {
 function renderLiveList() {
   if (!LIVES.length) { document.getElementById('liveList').innerHTML = emptyHtml('video-slash', 'ຕອນນີ້ບໍ່ມີການ Live'); return; }
   document.getElementById('liveList').innerHTML = LIVES.map(liveCardHtml).join('');
+  startLiveCommentPolling();   // ← ເພີ່ມແຖວນີ້ (ໂຫຼດ + ຣີເຟຣດຄອມເມັ້ນທຸກ Live ອັດຕະໂນມັດ ທຸກ 6 ວິນາທີ)
 }
 
 function emptyHtml(icon, text) { return '<div class="empty"><i class="fa-solid fa-' + icon + '"></i>' + text + '</div>'; }
