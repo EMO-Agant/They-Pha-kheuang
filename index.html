@@ -346,6 +346,28 @@ button{font-family:inherit;}
 .icon-btn:active{transform:scale(.92);}
 .icon-btn.up,.icon-btn.down{color:var(--primary);}
 
+/* ---- Product table (ໜ້າ ຈັດການສິນຄ້າ) ---- */
+.ptbl{width:100%;border-collapse:collapse;font-size:12.5px;}
+.ptbl th{text-align:left;padding:10px 8px;background:var(--bg-page);color:var(--text-soft);font-weight:700;font-size:11px;white-space:nowrap;border-bottom:2px solid var(--line-strong);}
+.ptbl td{padding:9px 8px;border-bottom:1px solid var(--line);vertical-align:middle;}
+.ptbl-img{width:46px;height:46px;border-radius:10px;object-fit:cover;background:var(--bg-page);}
+.ptbl-noimg{display:flex;align-items:center;justify-content:center;color:var(--secondary);font-size:16px;}
+.ptbl-name{font-weight:700;color:var(--text-dark);white-space:nowrap;}
+.ptbl-sub{display:flex;gap:6px;align-items:center;margin-top:3px;}
+.ptbl-cat{color:var(--text-soft);font-size:11px;}
+.ptbl-tag{font-size:9.5px;font-weight:800;padding:2px 7px;border-radius:999px;text-transform:uppercase;}
+.ptbl-tag.rent{background:rgba(62,139,84,.14);color:#2E6B3E;}
+.ptbl-tag.pawn{background:rgba(212,175,55,.18);color:#7A5220;}
+.ptbl-price{font-weight:800;color:var(--primary);white-space:nowrap;}
+.ptbl-star{cursor:pointer;font-size:15px;}
+.ptbl-badge{display:inline-flex;align-items:center;gap:4px;font-size:10.5px;font-weight:700;padding:4px 9px;border-radius:999px;cursor:pointer;white-space:nowrap;}
+.ptbl-badge.flash{background:rgba(169,69,93,.14);color:var(--rose-2);}
+.ptbl-badge.off{background:var(--bg-page);color:var(--text-soft);}
+.ptbl-badge.active{background:rgba(47,169,104,.16);color:#1E7A4C;}
+.ptbl-badge.inactive{background:rgba(192,57,43,.12);color:#C0392B;}
+.ptbl-actions{white-space:nowrap;}
+.ptbl-actions .icon-btn{margin-right:4px;}
+
 .color-swatch-row{display:flex;gap:10px;flex-wrap:wrap;}
 .swatch-item{display:flex;flex-direction:column;align-items:center;gap:5px;font-size:9.5px;color:var(--text-soft);}
 .swatch-item input[type=color]{width:46px;height:46px;border-radius:13px;border:1px solid var(--line-strong);background:none;cursor:pointer;}
@@ -1040,11 +1062,11 @@ function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, m => ({ 
  * RENDER: HOME
  *************************************************************/
 function renderHomeRent() {
-  const list = PRODUCTS.filter(p => p.type === 'rent').slice(0, 4);
+  const list = PRODUCTS.filter(p => p.type === 'rent' && p.status !== 'Inactive').slice(0, 4);
   document.getElementById('homeRentGrid').innerHTML = list.map(productCardHtml).join('') || emptyHtml('box-open', 'ຍັງບໍ່ມີສິນຄ້າໃຫ້ເຊົ່າ');
 }
 function renderHomePawn() {
-  const list = PRODUCTS.filter(p => p.type === 'pawn').slice(0, 4);
+  const list = PRODUCTS.filter(p => p.type === 'pawn' && p.status !== 'Inactive').slice(0, 4);
   document.getElementById('homePawnGrid').innerHTML = list.map(productCardHtml).join('') || emptyHtml('gem', 'ຍັງບໍ່ມີສິນຄ້າຈຳນຳ');
 }
 
@@ -1727,16 +1749,65 @@ function dashCard(icon, label, v) {
 function adminProducts() {
   ADMIN_VIEW_MODE = 'list';
   EDIT_CACHE.products = PRODUCTS;
-  let html = '<h3><i class="fa-solid fa-box"></i> ຈັດການສິນຄ້າ</h3><button class="btn small" onclick="editProductForm()" style="margin-bottom:12px;"><i class="fa-solid fa-plus"></i> ເພີ່ມສິນຄ້າໃໝ່</button>';
-  html += PRODUCTS.map((p, idx) =>
-    '<div class="admin-list-item"><div class="top"><div><div class="name">' + esc(p.name) + '</div><div class="sub">' + (p.type === 'rent' ? 'ໃຫ້ເຊົ່າ' : 'ຈຳນຳ') + ' • ' + esc(p.category || '') + '</div></div>' +
-    '<div style="display:flex;gap:6px;"><button class="icon-btn" data-act="edit" data-idx="' + idx + '"><i class="fa-solid fa-pen"></i></button>' +
-    '<button class="icon-btn" data-act="del" data-id="' + esc(p.id) + '"><i class="fa-solid fa-trash"></i></button></div></div></div>'
-  ).join('') || '<p style="opacity:.65;font-size:13px;">ຍັງບໍ່ມີສິນຄ້າ</p>';
-  html += '<button class="btn secondary" style="margin-top:10px;" onclick="closeAdminModal()">ປິດ</button>';
+  const rows = PRODUCTS.map((p, idx) => {
+    const img = p.imageUrl
+      ? '<img src="' + esc(p.imageUrl) + '" class="ptbl-img" onerror="this.outerHTML=\'<div class=&quot;ptbl-img ptbl-noimg&quot;><i class=&quot;fa-solid fa-image&quot;></i></div>\'">'
+      : '<div class="ptbl-img ptbl-noimg"><i class="fa-solid fa-image"></i></div>';
+    const typeTag = p.type === 'rent' ? '<span class="ptbl-tag rent">ໃຫ້ເຊົ່າ</span>' : '<span class="ptbl-tag pawn">ຈຳນຳ</span>';
+    const price = p.type === 'rent' ? fmt(p.rentPricePerDay) + '/ວັນ' : fmt(p.pawnValue);
+    const stock = (p.stock !== undefined && p.stock !== '') ? p.stock : 1;
+    const featured = String(p.featured) === 'true';
+    const flash = String(p.flashSale) === 'true';
+    const active = p.status !== 'Inactive';
+    return '<tr>' +
+      '<td>' + img + '</td>' +
+      '<td><div class="ptbl-name">' + esc(p.name) + '</div><div class="ptbl-sub">' + typeTag + '<span class="ptbl-cat">' + esc(p.category || '') + '</span></div></td>' +
+      '<td class="ptbl-price">' + price + '</td>' +
+      '<td>' + esc(String(stock)) + '</td>' +
+      '<td><span class="ptbl-star" data-act="pfeat" data-idx="' + idx + '"><i class="fa-' + (featured ? 'solid' : 'regular') + ' fa-star" style="color:' + (featured ? '#D4AF37' : '#c9bfa8') + ';"></i></span></td>' +
+      '<td><span class="ptbl-badge ' + (flash ? 'flash' : 'off') + '" data-act="pflash" data-idx="' + idx + '">' + (flash ? '<i class="fa-solid fa-fire"></i> ດຳເນີນ' : '−') + '</span></td>' +
+      '<td><span class="ptbl-badge ' + (active ? 'active' : 'inactive') + '" data-act="pstatus" data-idx="' + idx + '">' + (active ? 'Active' : 'Inactive') + '</span></td>' +
+      '<td class="ptbl-actions"><button class="icon-btn" data-act="edit" data-idx="' + idx + '"><i class="fa-solid fa-pen"></i></button>' +
+      '<button class="icon-btn" data-act="del" data-id="' + esc(p.id) + '"><i class="fa-solid fa-trash"></i></button></td>' +
+    '</tr>';
+  }).join('');
+
+  let html = '<h3><i class="fa-solid fa-box"></i> ຈັດການສິນຄ້າ</h3>' +
+    '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:8px;">' +
+    '<div style="font-size:12px;color:var(--text-soft);">ລາຍການສິນຄ້າທັງໝົດ (' + PRODUCTS.length + ')</div>' +
+    '<button class="btn small" onclick="editProductForm()"><i class="fa-solid fa-plus"></i> ເພີ່ມສິນຄ້າໃໝ່</button></div>' +
+    '<div style="overflow-x:auto;border:1px solid var(--line);border-radius:14px;"><table class="ptbl"><thead><tr>' +
+    '<th>ຮູບ</th><th>ຊື່</th><th>ລາຄາ</th><th>ສະຕ໊ອກ</th><th>ແນະນຳ</th><th>FLASH</th><th>ສະຖານະ</th><th>ຈັດການ</th>' +
+    '</tr></thead><tbody>' + (rows || '<tr><td colspan="8" style="text-align:center;padding:26px;opacity:.6;">ຍັງບໍ່ມີສິນຄ້າ</td></tr>') + '</tbody></table></div>' +
+    '<button class="btn secondary" style="margin-top:14px;" onclick="closeAdminModal()">ປິດ</button>';
+
   openAdminModal(html);
   document.querySelectorAll('#adminContent [data-act="edit"]').forEach(b => b.onclick = () => editProductForm(EDIT_CACHE.products[Number(b.dataset.idx)]));
   document.querySelectorAll('#adminContent [data-act="del"]').forEach(b => b.onclick = () => deleteProductConfirm(b.dataset.id));
+  document.querySelectorAll('#adminContent [data-act="pfeat"]').forEach(b => b.onclick = () => toggleProductField(Number(b.dataset.idx), 'featured'));
+  document.querySelectorAll('#adminContent [data-act="pflash"]').forEach(b => b.onclick = () => toggleProductField(Number(b.dataset.idx), 'flashSale'));
+  document.querySelectorAll('#adminContent [data-act="pstatus"]').forEach(b => b.onclick = () => toggleProductStatus(Number(b.dataset.idx)));
+}
+
+// ★ ໃໝ່: toggle ດາວແນະນຳ / FLASH ໂດຍບໍ່ຕ້ອງເປີດຟອມ
+function toggleProductField(idx, field) {
+  const p = EDIT_CACHE.products[idx];
+  const cur = String(p[field]) === 'true';
+  const updated = Object.assign({}, p, { [field]: !cur });
+  callServer('saveProduct', [ADMIN_TOKEN, updated], (r) => {
+    if (r.success) { p[field] = String(!cur); showToast('ອັບເດດແລ້ວ', 'ok'); adminProducts(); loadAllData(); }
+    else showToast(r.message || 'ຜິດພາດ', 'err');
+  });
+}
+// ★ ໃໝ່: toggle Active/Inactive
+function toggleProductStatus(idx) {
+  const p = EDIT_CACHE.products[idx];
+  const newStatus = p.status === 'Inactive' ? 'Active' : 'Inactive';
+  const updated = Object.assign({}, p, { status: newStatus });
+  callServer('saveProduct', [ADMIN_TOKEN, updated], (r) => {
+    if (r.success) { p.status = newStatus; showToast('ອັບເດດແລ້ວ', 'ok'); adminProducts(); loadAllData(); }
+    else showToast(r.message || 'ຜິດພາດ', 'err');
+  });
 }
 function editProductForm(p) {
   ADMIN_VIEW_MODE = 'form';
@@ -1744,10 +1815,14 @@ function editProductForm(p) {
   openAdminModal(
     '<h3><i class="fa-solid fa-box"></i> ' + (p.id ? 'ແກ້ໄຂ' : 'ເພີ່ມ') + 'ສິນຄ້າ</h3>' +
     '<div class="field"><label>ຊື່ສິນຄ້າ</label><input id="pf_name" value="' + esc(p.name || '') + '"></div>' +
-    '<div class="field"><label>ໝວດໝູ່</label><input id="pf_category" value="' + esc(p.category || '') + '"></div>' +
-    '<div class="field"><label>ປະເພດ</label><select id="pf_type"><option value="rent" ' + (p.type === 'rent' ? 'selected' : '') + '>ໃຫ້ເຊົ່າ</option><option value="pawn" ' + (p.type === 'pawn' ? 'selected' : '') + '>ຮັບຈຳນຳ</option></select></div>' +
+    '<div class="field"><label>ໝວດໝູ່ (ຢ່າພິມ rent/pawn ບ່ອນນີ້ — ໃຫ້ໃສ່ຊື່ໝວດຈິງ ເຊັ່ນ "ພະຄຳ")</label><input id="pf_category" value="' + esc(p.category || '') + '"></div>' +
+    '<div class="field"><label>ປະເພດ (ຕ້ອງເລືອກໃຫ້ຖືກ ບໍ່ດັ່ງນັ້ນຈະບໍ່ຂຶ້ນໜ້າຫຼັກ)</label><select id="pf_type"><option value="rent" ' + (p.type === 'rent' ? 'selected' : '') + '>ໃຫ້ເຊົ່າ</option><option value="pawn" ' + (p.type === 'pawn' ? 'selected' : '') + '>ຮັບຈຳນຳ</option></select></div>' +
     '<div class="row2"><div class="field"><label>ລາຄາເຊົ່າ/ວັນ</label><input type="number" id="pf_rent" value="' + (p.rentPricePerDay || '') + '"></div>' +
     '<div class="field"><label>ມູນຄ່າຈຳນຳ</label><input type="number" id="pf_pawn" value="' + (p.pawnValue || '') + '"></div></div>' +
+    '<div class="row2"><div class="field"><label>ສະຕ໊ອກ (ຈຳນວນ)</label><input type="number" id="pf_stock" value="' + (p.stock !== undefined ? p.stock : 1) + '"></div>' +
+    '<div class="field"><label>ສະຖານະ</label><select id="pf_status"><option value="Active" ' + (p.status !== 'Inactive' ? 'selected' : '') + '>Active (ສະແດງໜ້າຮ້ານ)</option><option value="Inactive" ' + (p.status === 'Inactive' ? 'selected' : '') + '>Inactive (ເຊື່ອງໄວ້)</option></select></div></div>' +
+    '<div class="field"><label style="display:flex;align-items:center;gap:8px;cursor:pointer;"><input type="checkbox" id="pf_featured" ' + (String(p.featured) === 'true' ? 'checked' : '') + ' style="width:auto;"> ⭐ ສິນຄ້າແນະນຳ (Featured)</label></div>' +
+    '<div class="field"><label style="display:flex;align-items:center;gap:8px;cursor:pointer;"><input type="checkbox" id="pf_flash" ' + (String(p.flashSale) === 'true' ? 'checked' : '') + ' style="width:auto;"> 🔥 ຂຶ້ນປ້າຍ FLASH SALE</label></div>' +
     '<div class="field"><label>ຮູບພາບ (URL)</label><input id="pf_img" value="' + esc(p.imageUrl || '') + '" oninput="previewImg(\'pf_img\',\'pf_imgprev\')"><img id="pf_imgprev" class="img-preview" src="' + esc(p.imageUrl || '') + '" style="display:' + (p.imageUrl ? 'block' : 'none') + ';"></div>' +
     '<div class="field"><label>ລາຍລະອຽດ</label><textarea id="pf_desc">' + esc(p.description || '') + '</textarea></div>' +
     '<button class="btn" id="pf_save"><i class="fa-solid fa-check"></i> ບັນທຶກ</button>' +
@@ -1763,9 +1838,15 @@ function saveProductForm(id) {
   const product = {
     id: id || undefined, name: val('pf_name'), category: val('pf_category'), type: document.getElementById('pf_type').value,
     rentPricePerDay: val('pf_rent'), pawnValue: val('pf_pawn'), imageUrl: val('pf_img'), description: val('pf_desc'),
-    status: document.getElementById('pf_type').value === 'rent' ? 'ພ້ອມເຊົ່າ' : 'ຮັບຈຳນຳ', stock: 1
+    stock: val('pf_stock') || 1,
+    status: document.getElementById('pf_status').value,
+    featured: document.getElementById('pf_featured').checked,
+    flashSale: document.getElementById('pf_flash').checked
   };
   if (!product.name) { showToast('ກະລຸນາປ້ອນຊື່ສິນຄ້າ', 'err'); return; }
+  if (val('pf_category').toLowerCase() === 'rent' || val('pf_category').toLowerCase() === 'pawn') {
+    showToast('ຊ່ອງ "ໝວດໝູ່" ບໍ່ຄວນເປັນ rent/pawn — ໃຫ້ໃຊ້ Dropdown "ປະເພດ" ແທນ', 'err'); return;
+  }
   setBtnLoading('pf_save', true);
   callServer('saveProduct', [ADMIN_TOKEN, product], (r) => {
     setBtnLoading('pf_save', false);
