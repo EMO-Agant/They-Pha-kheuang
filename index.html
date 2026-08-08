@@ -318,6 +318,36 @@ button{font-family:inherit;}
   border:2px dashed var(--line-strong); border-radius:var(--radius-md); background:var(--bg-page);
   padding:28px 16px; text-align:center; cursor:pointer; transition:.18s; margin-top:8px;
 }
+
+/* ---- ປຸ່ມ + / stepper ຈຳນວນ ເທິງ card ---- */
+.qty-add-btn{position:absolute;right:8px;bottom:8px;width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--grad-from),var(--grad-to));color:#fff;border:none;display:flex;align-items:center;justify-content:center;font-size:16px;box-shadow:var(--shadow-gold);cursor:pointer;z-index:3;}
+.qty-add-btn:active{transform:scale(.9);}
+.qty-stepper{position:absolute;right:8px;bottom:8px;display:flex;align-items:center;gap:6px;background:#fff;border-radius:999px;padding:4px 6px;box-shadow:var(--shadow-gold);z-index:3;}
+.qty-stepper button{width:26px;height:26px;border-radius:50%;border:none;background:var(--bg-page);color:var(--primary);font-weight:800;cursor:pointer;}
+.qty-stepper span{min-width:18px;text-align:center;font-weight:800;font-size:12.5px;}
+
+/* ---- ໜ້າລາຍລະອຽດສິນຄ້າ (gallery) ---- */
+.pd-gallery-main{width:100%;aspect-ratio:1/1;border-radius:16px;overflow:hidden;background:var(--bg-page);cursor:zoom-in;}
+.pd-gallery-main img{width:100%;height:100%;object-fit:cover;}
+.pd-thumbs{display:flex;gap:8px;margin-top:10px;overflow-x:auto;}
+.pd-thumbs img{width:56px;height:56px;border-radius:10px;object-fit:cover;border:2px solid transparent;cursor:pointer;flex:0 0 auto;}
+.pd-thumbs img.active{border-color:var(--secondary);}
+.pd-lightbox{position:fixed;inset:0;background:rgba(20,14,8,.92);z-index:400;display:none;align-items:center;justify-content:center;}
+.pd-lightbox.show{display:flex;}
+.pd-lightbox img{max-width:94vw;max-height:88vh;object-fit:contain;transition:transform .25s;touch-action:pinch-zoom;}
+.pd-lightbox img.zoomed{transform:scale(2);cursor:zoom-out;}
+.pd-lightbox .pd-lb-close{position:absolute;top:18px;right:18px;width:42px;height:42px;border-radius:50%;background:rgba(255,255,255,.15);color:#fff;display:flex;align-items:center;justify-content:center;font-size:18px;cursor:pointer;}
+
+/* ---- ກະຕ່າສິນຄ້າ / Checkout ---- */
+.cart-item{display:flex;gap:10px;background:#fff;border:1px solid var(--line);border-radius:14px;padding:10px;margin-bottom:10px;}
+.cart-item img{width:60px;height:60px;border-radius:10px;object-fit:cover;background:var(--bg-page);flex:0 0 auto;}
+.cart-item .ci-name{font-weight:700;font-size:13px;}
+.cart-item .ci-price{color:var(--primary);font-weight:800;font-size:12.5px;margin-top:2px;}
+.cart-summary-row{display:flex;justify-content:space-between;font-size:13px;padding:5px 0;color:var(--text-soft);}
+.cart-summary-row b{color:var(--text-dark);}
+.delivery-opt{display:flex;align-items:center;gap:10px;padding:11px;border:1px solid var(--line-strong);border-radius:13px;margin-bottom:8px;cursor:pointer;}
+.delivery-opt.active{border-color:var(--secondary);background:rgba(212,175,55,.08);}
+
 .upload-dropzone:hover, .upload-dropzone.dragover{ border-color:var(--secondary); background:rgba(212,175,55,.10); }
 .upload-dropzone i{ font-size:30px; color:var(--secondary); margin-bottom:8px; display:block; }
 .upload-dropzone .udz-text{ font-size:12.5px; font-weight:700; color:var(--text-dark); }
@@ -526,7 +556,7 @@ button{font-family:inherit;}
       </div>
     </div>
     <div class="top-actions">
-      <div class="icon-btn-top" onclick="openOrdersCart()" id="cartBtn" title="ຄຳສັ່ງຊື້ທັງໝົດ"><i class="fa-solid fa-cart-shopping"></i></div>
+      <div class="icon-btn-top" onclick="openCartDrawer()" id="cartBtn" title="ກະຕ່າສິນຄ້າ"><i class="fa-solid fa-cart-shopping"></i></div>
       <div class="icon-btn-top" onclick="openDrawer()" id="menuBtn"><i class="fa-solid fa-ellipsis-vertical"></i></div>
     </div>
   </div>
@@ -712,6 +742,13 @@ button{font-family:inherit;}
     <div class="drawer-item" onclick="adminLogout()" style="color:#C0392B;"><i class="fa-solid fa-right-from-bracket" style="color:#C0392B;"></i> ອອກຈາກລະບົບ</div>
   </div>
 </div>
+<div class="drawer" id="cartDrawer">
+  <div class="drawer-head">
+    <h3><i class="fa-solid fa-cart-shopping"></i> ກະຕ່າສິນຄ້າ</h3>
+    <div class="drawer-close" onclick="closeCartDrawer()"><i class="fa-solid fa-xmark"></i></div>
+  </div>
+  <div class="drawer-body" id="cartDrawerBody"></div>
+</div>
 
 <!-- ================= GENERIC MODAL CENTER ================= -->
 <div class="modal-center" id="modalCenter">
@@ -742,6 +779,30 @@ const API_URL = 'https://script.google.com/macros/s/AKfycbwmg5i5SrZVE5hlpSSm_Lnd
  * ຕົວແປລວມ / STATE
  *************************************************************/
 let SETTINGS = null;
+let CART = [];
+const CART_KEY = 'thae_cart_v1';
+function loadCart_(){ try{ CART = JSON.parse(localStorage.getItem(CART_KEY)||'[]'); }catch(e){ CART=[]; } }
+function saveCart_(){ localStorage.setItem(CART_KEY, JSON.stringify(CART)); updateCartBadge(); }
+function cartQtyOf(productId){ const it = CART.find(c=>c.productId===productId); return it?it.qty:0; }
+function addToCart(productId, delta){
+  delta = delta || 1;
+  const p = PRODUCTS.find(x=>x.id===productId);
+  if(!p) return;
+  let it = CART.find(c=>c.productId===productId);
+  if(!it){ it = { productId:productId, name:p.name, price:Number(p.cashPrice||p.rentPricePerDay||p.pawnValue||0), imageUrl:p.imageUrl, type:p.type, qty:0 }; CART.push(it); }
+  it.qty += delta;
+  if(it.qty<=0) CART = CART.filter(c=>c.productId!==productId);
+  saveCart_();
+  refreshProductGridsUI();
+}
+function updateCartBadge(){
+  setBadgeCount('cartBtn', CART.reduce((s,c)=>s+c.qty,0));
+}
+function refreshProductGridsUI(){
+  renderHomeRent(); renderHomePawn(); renderRentGrid(); renderPawnGrid();
+  renderProductDetailQty();
+  if (document.getElementById('cartDrawer').classList.contains('show')) renderCartDrawerContent();
+}
 let ADMIN_TOKEN = localStorage.getItem('admin_token') || null;
 let PRODUCTS = [], AUCTIONS = [], LIVES = [], BANNERS = [], MARQUEE_ITEMS = [], CATEGORIES = [];
 let EDIT_CACHE = {}; // ເກັບ object ຊົ່ວຄາວສຳລັບແກ້ໄຂ (ກັນບັນຫາ quote ໃນ onclick)
@@ -858,6 +919,8 @@ const ARG_MAP = {
   updateAuctionStatus: (a) => ({ token: a[0], id: a[1], status: a[2] }),
   changeAdminPassword: (a) => ({ token: a[0], oldPassword: a[1], newPassword: a[2] }),
   uploadImage: (a) => ({ token: a[0], base64: a[1], filename: a[2], mimeType: a[3] }),
+  createOrder: (a) => ({ order: a[0] }),
+  applyCoupon: (a) => ({ code: a[0], subtotal: a[1] }),
 
   getBanners: () => ({}),
   saveBanner: (a) => ({ token: a[0], banner: a[1] }),
@@ -1157,11 +1220,176 @@ function productCardHtml(p) {
   const ribbon = p.type === 'rent' ? '<span class="ribbon rent">ໃຫ້ເຊົ່າ</span>' : '<span class="ribbon pawn">ຮັບຈຳນຳ</span>';
   const price = p.cashPrice ? fmt(p.cashPrice) : (p.type === 'rent' ? fmt(p.rentPricePerDay) + ' /ວັນ' : fmt(p.pawnValue));
   const img = p.imageUrl ? '<img class="img" src="' + esc(p.imageUrl) + '" loading="lazy" onerror="this.style.display=\'none\'">' : '<div class="img"><i class="fa-solid fa-image"></i></div>';
-  const action = p.type === 'rent' ? 'openRentRequestModal(\'' + p.id + '\')' : 'openPawnRequestModal(\'' + p.id + '\')';
-  return '<div class="card-wrap"><div class="card" onclick="' + action + '">'
-    + ribbon + img
+  const qty = cartQtyOf(p.id);
+  const qtyHtml = qty > 0
+    ? '<div class="qty-stepper" onclick="event.stopPropagation()"><button onclick="addToCart(\''+p.id+'\',-1)">−</button><span>'+qty+'</span><button onclick="addToCart(\''+p.id+'\',1)">+</button></div>'
+    : '<button class="qty-add-btn" onclick="event.stopPropagation();addToCart(\''+p.id+'\',1)"><i class="fa-solid fa-plus"></i></button>';
+  return '<div class="card-wrap"><div class="card" onclick="openProductDetail(\'' + p.id + '\')">'
+    + ribbon + '<div style="position:relative;">' + img + qtyHtml + '</div>'
     + '<div class="body"><p class="name">' + esc(p.name) + '</p><p class="price">' + price + '</p><p class="meta">' + esc(p.category || '') + '</p></div></div></div>';
 }
+
+function openProductDetail(id) {
+  const p = PRODUCTS.find(x=>x.id===id);
+  if(!p) return;
+  let images = [];
+  try { images = p.images ? JSON.parse(p.images) : []; } catch(e){ images = []; }
+  if (!images.length && p.imageUrl) images = [p.imageUrl];
+  if (!images.length) images = [''];
+  const price = p.cashPrice ? fmt(p.cashPrice) : (p.type === 'rent' ? fmt(p.rentPricePerDay) + ' /ວັນ' : fmt(p.pawnValue));
+  const thumbs = images.map((im,i)=>'<img src="'+esc(im)+'" class="'+(i===0?'active':'')+'" onclick="pdSetMain('+i+')">').join('');
+  window.__PD_IMAGES = images;
+  window.__PD_PRODUCT_ID = id;
+  openModal(
+    '<div class="pd-gallery-main" id="pd_main" onclick="openLightbox()"><img id="pd_main_img" src="'+esc(images[0])+'" onerror="this.style.opacity=.2"></div>' +
+    (images.length>1 ? '<div class="pd-thumbs" id="pd_thumbs">'+thumbs+'</div>' : '') +
+    '<h3 style="margin-top:14px;">' + esc(p.name) + '</h3>' +
+    '<p class="price" style="font-size:19px;">' + price + '</p>' +
+    '<p style="font-size:12.5px;color:var(--text-soft);margin:6px 0 14px;">' + esc(p.description||'') + '</p>' +
+    '<div id="pd_qty_wrap" style="min-height:34px;margin-bottom:14px;"></div>' +
+    (p.type==='rent'
+      ? '<button class="btn secondary" style="margin-bottom:8px;" onclick="closeModal();openRentRequestModal(\''+p.id+'\')"><i class="fa-solid fa-box-open"></i> ຂໍເຊົ່າ (ຕິດຕໍ່ໂດຍກົງ)</button>'
+      : '<button class="btn secondary" style="margin-bottom:8px;" onclick="closeModal();openPawnRequestModal(\''+p.id+'\')"><i class="fa-solid fa-gem"></i> ຂໍຈຳນຳ (ຕິດຕໍ່ໂດຍກົງ)</button>') +
+    '<button class="btn gold" onclick="addToCart(\''+p.id+'\',1);showToast(\'ເພີ່ມໃສ່ກະຕ່າແລ້ວ 🛒\',\'ok\')"><i class="fa-solid fa-cart-plus"></i> ເພີ່ມໃສ່ກະຕ່າ</button>'
+  );
+  renderProductDetailQty();
+}
+function pdSetMain(i){
+  const images = window.__PD_IMAGES||[];
+  document.getElementById('pd_main_img').src = images[i];
+  document.querySelectorAll('#pd_thumbs img').forEach((im,idx)=>im.classList.toggle('active', idx===i));
+}
+function renderProductDetailQty(){
+  const wrap = document.getElementById('pd_qty_wrap');
+  const pid = window.__PD_PRODUCT_ID;
+  if (!wrap || !pid) return;
+  const qty = cartQtyOf(pid);
+  wrap.innerHTML = qty > 0
+    ? '<div class="qty-stepper" style="position:static;display:inline-flex;"><button onclick="addToCart(\''+pid+'\',-1)">−</button><span>'+qty+'</span><button onclick="addToCart(\''+pid+'\',1)">+</button></div> <span style="font-size:12px;color:var(--text-soft);">ຢູ່ໃນກະຕ່າແລ້ວ</span>'
+    : '';
+}
+function openLightbox(){
+  const img = document.getElementById('pd_main_img');
+  if (!img || !img.src) return;
+  let box = document.getElementById('pdLightbox');
+  if (!box) {
+    box = document.createElement('div'); box.id='pdLightbox'; box.className='pd-lightbox';
+    box.innerHTML = '<div class="pd-lb-close" onclick="closeLightbox()"><i class="fa-solid fa-xmark"></i></div><img id="pdLbImg">';
+    document.body.appendChild(box);
+    box.addEventListener('click', (e)=>{ if(e.target.id==='pdLbImg'){ e.target.classList.toggle('zoomed'); } else if(e.target===box){ closeLightbox(); } });
+  }
+  document.getElementById('pdLbImg').src = img.src;
+  document.getElementById('pdLbImg').classList.remove('zoomed');
+  box.classList.add('show');
+}
+function closeLightbox(){ document.getElementById('pdLightbox')?.classList.remove('show'); }
+
+function openCartDrawer(){
+  closeDrawer();
+  document.getElementById('overlay').classList.add('show');
+  document.getElementById('cartDrawer').classList.add('show');
+  CHECKOUT_STEP = 'cart';
+  renderCartDrawerContent();
+}
+function closeCartDrawer(){ document.getElementById('cartDrawer').classList.remove('show'); document.getElementById('overlay').classList.remove('show'); }
+
+let CHECKOUT_STEP = 'cart';
+let CHECKOUT_COUPON = null, CHECKOUT_DISCOUNT = 0;
+
+function renderCartDrawerContent(){
+  const body = document.getElementById('cartDrawerBody');
+  if (!body) return;
+  if (CHECKOUT_STEP === 'checkout') return renderCheckoutForm();
+  if (!CART.length) { body.innerHTML = emptyHtml('cart-shopping','ກະຕ່າຍັງບໍ່ມີສິນຄ້າ, ໄປເລືອກສິນຄ້າກ່ອນເດີ້'); return; }
+  const subtotal = CART.reduce((s,c)=>s+c.price*c.qty,0);
+  let html = CART.map(c =>
+    '<div class="cart-item">' +
+    (c.imageUrl?'<img src="'+esc(c.imageUrl)+'">':'<div class="cart-item"><i class="fa-solid fa-image"></i></div>') +
+    '<div style="flex:1;"><div class="ci-name">'+esc(c.name)+'</div><div class="ci-price">'+fmt(c.price)+'</div>' +
+    '<div class="qty-stepper" style="position:static;display:inline-flex;margin-top:6px;"><button onclick="addToCart(\''+c.productId+'\',-1)">−</button><span>'+c.qty+'</span><button onclick="addToCart(\''+c.productId+'\',1)">+</button></div>' +
+    '</div></div>'
+  ).join('');
+  html += '<div class="cart-summary-row"><span>ລວມສິນຄ້າ</span><b>'+fmt(subtotal)+'</b></div>';
+  html += '<button class="btn gold" style="margin-top:10px;" onclick="CHECKOUT_STEP=\'checkout\';renderCartDrawerContent()"><i class="fa-solid fa-truck"></i> ໄປໜ້າຈັດສົ່ງ / ຢືນຢັນສັ່ງຊື້</button>';
+  body.innerHTML = html;
+}
+function renderCheckoutForm(){
+  const body = document.getElementById('cartDrawerBody');
+  const subtotal = CART.reduce((s,c)=>s+c.price*c.qty,0);
+  const methods = (SETTINGS && SETTINGS.deliveryMethods) || [];
+  const deliveryHtml = methods.map((m,i)=>
+    '<div class="delivery-opt' + (i===0?' active':'') + '" data-fee="'+m.fee+'" data-key="'+esc(m.key)+'" onclick="selectDelivery(this)">' +
+    '<i class="fa-solid '+esc(m.icon||'fa-truck')+'"></i><div style="flex:1;"><b>'+esc(m.label)+'</b><div style="font-size:11px;color:var(--text-soft);">'+fmt(m.fee)+'</div></div></div>'
+  ).join('');
+  body.innerHTML =
+    '<button class="btn secondary small" style="margin-bottom:12px;" onclick="CHECKOUT_STEP=\'cart\';renderCartDrawerContent()"><i class="fa-solid fa-arrow-left"></i> ກັບຄືນກະຕ່າ</button>' +
+    '<div class="field"><label>ຊື່ຜູ້ຮັບ</label><input id="co_name"></div>' +
+    '<div class="field"><label>ເບີໂທ</label><input id="co_phone"></div>' +
+    '<div class="row2"><div class="field"><label>ແຂວງ</label><input id="co_province"></div><div class="field"><label>ເມືອງ</label><input id="co_district"></div></div>' +
+    '<div class="row2"><div class="field"><label>ບ້ານ</label><input id="co_village"></div><div class="field"><label>ຮ້ານ/ບ້ານເລກທີ່</label><input id="co_address"></div></div>' +
+    '<div class="field"><label>ວິທີຈັດສົ່ງ</label>' + deliveryHtml + '</div>' +
+    '<div class="field"><label>ລະຫັດຄູປອງ (ບໍ່ບັງຄັບ)</label><div style="display:flex;gap:8px;"><input id="co_coupon" style="flex:1;"><button class="btn small" onclick="applyCouponForm()">ໃຊ້</button></div><div id="co_coupon_msg" style="font-size:11.5px;margin-top:4px;"></div></div>' +
+    '<div class="field"><label>ໝາຍເຫດ (ບໍ່ບັງຄັບ)</label><textarea id="co_note"></textarea></div>' +
+    '<div style="border-top:1px solid var(--line);margin-top:6px;padding-top:10px;">' +
+    '<div class="cart-summary-row"><span>ລວມສິນຄ້າ</span><span>'+fmt(subtotal)+'</span></div>' +
+    '<div class="cart-summary-row"><span>ຄ່າຈັດສົ່ງ</span><span id="co_fee_txt">'+fmt(methods[0]?methods[0].fee:0)+'</span></div>' +
+    '<div class="cart-summary-row" id="co_discount_row" style="display:none;"><span>ສ່ວນຫຼຸດ</span><span id="co_discount_txt">-0 ກີບ</span></div>' +
+    '<div class="cart-summary-row" style="font-size:15px;"><span>ລວມທັງໝົດ</span><b id="co_total_txt">'+fmt(subtotal + (methods[0]?methods[0].fee:0))+'</b></div>' +
+    '</div>' +
+    '<button class="btn" id="co_submit" style="margin-top:12px;" onclick="submitCheckout()"><i class="fa-solid fa-check"></i> ຢືນຢັນສັ່ງຊື້</button>';
+}
+function selectDelivery(el){
+  document.querySelectorAll('.delivery-opt').forEach(d=>d.classList.remove('active'));
+  el.classList.add('active');
+  recalcCheckoutTotal();
+}
+function applyCouponForm(){
+  const code = val('co_coupon');
+  const subtotal = CART.reduce((s,c)=>s+c.price*c.qty,0);
+  if (!code) return;
+  callServer('applyCoupon', [code, subtotal], (r) => {
+    const msg = document.getElementById('co_coupon_msg');
+    if (r.success) { CHECKOUT_COUPON = code; CHECKOUT_DISCOUNT = r.discount; msg.textContent = 'ໃຊ້ຄູປອງສຳເລັດ ✅'; msg.style.color='#1E7A4C'; }
+    else { CHECKOUT_COUPON = null; CHECKOUT_DISCOUNT = 0; msg.textContent = r.message || 'ຄູປອງບໍ່ຖືກຕ້ອງ'; msg.style.color='#C0392B'; }
+    recalcCheckoutTotal();
+  });
+}
+function recalcCheckoutTotal(){
+  const subtotal = CART.reduce((s,c)=>s+c.price*c.qty,0);
+  const activeD = document.querySelector('.delivery-opt.active');
+  const fee = activeD ? Number(activeD.dataset.fee)||0 : 0;
+  document.getElementById('co_fee_txt').textContent = fmt(fee);
+  const discRow = document.getElementById('co_discount_row');
+  if (CHECKOUT_DISCOUNT > 0) { discRow.style.display='flex'; document.getElementById('co_discount_txt').textContent = '-'+fmt(CHECKOUT_DISCOUNT); }
+  else discRow.style.display='none';
+  document.getElementById('co_total_txt').textContent = fmt(Math.max(0, subtotal + fee - CHECKOUT_DISCOUNT));
+}
+function submitCheckout(){
+  const name=val('co_name'), phone=val('co_phone');
+  if (!name || !phone) { showToast('ກະລຸນາປ້ອນຊື່ ແລະ ເບີໂທ','err'); return; }
+  const activeD = document.querySelector('.delivery-opt.active');
+  if (!activeD) { showToast('ກະລຸນາເລືອກວິທີຈັດສົ່ງ','err'); return; }
+  const subtotal = CART.reduce((s,c)=>s+c.price*c.qty,0);
+  const fee = Number(activeD.dataset.fee)||0;
+  const order = {
+    items: CART.map(c=>({productId:c.productId,name:c.name,price:c.price,qty:c.qty,type:c.type})),
+    customerName:name, phone:phone,
+    province:val('co_province'), district:val('co_district'), village:val('co_village'), address:val('co_address'),
+    deliveryMethod:activeD.dataset.key, deliveryFee:fee, paymentMethod:'transfer',
+    couponCode: CHECKOUT_COUPON||'', discount: CHECKOUT_DISCOUNT||0,
+    subtotal: subtotal, total: Math.max(0, subtotal+fee-(CHECKOUT_DISCOUNT||0)), note: val('co_note')
+  };
+  setBtnLoading('co_submit', true);
+  callServer('createOrder', [order], (r) => {
+    setBtnLoading('co_submit', false);
+    if (r.success) {
+      showToast('ສັ່ງຊື້ສຳເລັດ! ລະຫັດ: '+r.order.orderCode+' 🎉','ok');
+      CART = []; saveCart_(); CHECKOUT_COUPON=null; CHECKOUT_DISCOUNT=0; CHECKOUT_STEP='cart';
+      closeCartDrawer(); refreshProductGridsUI();
+    } else showToast(r.message || 'ຜິດພາດ','err');
+  });
+}
+
 function auctionCardHtml(a) {
   const img = a.imageUrl ? '<img class="img" src="' + esc(a.imageUrl) + '" loading="lazy">' : '<div class="img"><i class="fa-solid fa-gavel"></i></div>';
   return '<div class="card-wrap"><div class="card" onclick="openAuctionDetail(\'' + a.id + '\')"><span class="ribbon auction">ປະມູນ</span>' + img
@@ -1416,7 +1644,6 @@ function refreshOrdersBadge() {
       const rPending = Array.isArray(rentals) ? rentals.filter(r => r.status === 'ລໍຖ້າຢືນຢັນ').length : 0;
       const pPending = Array.isArray(pawns) ? pawns.filter(p => p.status === 'ລໍຖ້າຢືນຢັນ').length : 0;
       const aPending = AUCTIONS.filter(a => a.isEnded && a.winnerName && a.status !== 'ຈັດສົ່ງແລ້ວ').length;
-      setBadgeCount('cartBtn', rPending + pPending + aPending);
     }, () => {});
   }, () => {});
 }
@@ -1854,6 +2081,12 @@ function editProductForm(p) {
     '<input type="file" id="pf_imgfile" accept="image/*" onchange="uploadProductImageFile(this)">' +
     '</div>' +
     '<input type="hidden" id="pf_img" value="' + esc(p.imageUrl || '') + '">' +
+    '<div class="field"><label>ຮູບເພີ່ມເຕີມ (ເລືອກຫຼາຍຮູບພ້ອມກັນໄດ້)</label>' +
+    '<div class="upload-dropzone" onclick="document.getElementById(\'pf_imgfiles\').click()">' +
+    '<i class="fa-solid fa-images"></i><div class="udz-text">ກົດເພື່ອເລືອກຮູບ (ຫຼາຍໃບ)</div>' +
+    '<input type="file" id="pf_imgfiles" accept="image/*" multiple onchange="uploadMultiProductImages(this)">' +
+    '</div><div id="pf_gallery" style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;"></div>' +
+    '<input type="hidden" id="pf_images_data" value=\'' + esc(p.images||'[]') + '\'></div>' +
     '<img id="pf_imgprev" class="img-preview" src="' + esc(p.imageUrl || '') + '" style="display:' + (p.imageUrl ? 'block' : 'none') + ';margin-top:10px;">' +
     '<div id="pf_imgstatus" style="font-size:11px;color:var(--text-soft);margin-top:4px;"></div></div>' +
     '<div class="field"><label>ລາຍລະອຽດ</label><textarea id="pf_desc">' + esc(p.description || '') + '</textarea></div>' +
@@ -1871,6 +2104,7 @@ function editProductForm(p) {
       uploadProductImageFile(document.getElementById('pf_imgfile'));
     }
   });
+  renderPfGallery();
 }
 function previewImg(inputId, imgId) {
   const url = val(inputId); const img = document.getElementById(imgId);
@@ -1899,10 +2133,44 @@ function uploadProductImageFile(input) {
   reader.readAsDataURL(file);
 }
 
+function renderPfGallery(){
+  let arr = []; try{ arr = JSON.parse(val('pf_images_data')||'[]'); }catch(e){ arr=[]; }
+  document.getElementById('pf_gallery').innerHTML = arr.map((u,i)=>
+    '<div style="position:relative;"><img src="'+esc(u)+'" style="width:64px;height:64px;object-fit:cover;border-radius:10px;">' +
+    '<div onclick="removePfImage('+i+')" style="position:absolute;top:-6px;right:-6px;width:20px;height:20px;background:#C0392B;color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;cursor:pointer;"><i class="fa-solid fa-xmark"></i></div></div>'
+  ).join('');
+}
+function removePfImage(i){
+  let arr = JSON.parse(val('pf_images_data')||'[]'); arr.splice(i,1);
+  document.getElementById('pf_images_data').value = JSON.stringify(arr); renderPfGallery();
+}
+function uploadMultiProductImages(input){
+  const files = Array.from(input.files||[]);
+  if (!files.length) return;
+  let arr = []; try{ arr = JSON.parse(val('pf_images_data')||'[]'); }catch(e){}
+  let remaining = files.length;
+  files.forEach(file=>{
+    const reader = new FileReader();
+    reader.onload = function(){
+      const base64 = reader.result.split(',')[1];
+      callServer('uploadImage', [ADMIN_TOKEN, base64, file.name, file.type], (r)=>{
+        if (r.success) {
+          arr.push(r.url);
+          document.getElementById('pf_images_data').value = JSON.stringify(arr); renderPfGallery();
+          if (!val('pf_img')) { document.getElementById('pf_img').value = r.url; document.getElementById('pf_imgprev').src = r.url; document.getElementById('pf_imgprev').style.display='block'; }
+        }
+        remaining--; if (remaining===0) showToast('ອັບໂຫລດຮູບທັງໝົດແລ້ວ ✅','ok');
+      });
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
 function saveProductForm(id) {
   const product = {
     id: id || undefined, name: val('pf_name'), category: val('pf_category'), type: document.getElementById('pf_type').value,
     rentPricePerDay: val('pf_rent'), pawnValue: val('pf_pawn'), cashPrice: val('pf_cash'), imageUrl: val('pf_img'), description: val('pf_desc'),
+    images: val('pf_images_data'),
     stock: val('pf_stock') || 1,
     status: document.getElementById('pf_status').value,
     featured: document.getElementById('pf_featured').checked,
@@ -2672,6 +2940,7 @@ function setBtnLoading(btnId, loading) {
  * - ຕັ້ງເວລາອັບເດດອັດຕະໂນມັດເປັນໄລຍະ ເພື່ອໃຫ້ເຫັນລາຍການ/ການປະມູນໃໝ່ ໂດຍບໍ່ຕ້ອງກົດຣີເຟຣດ
  *************************************************************/
 window.addEventListener('DOMContentLoaded', () => {
+  loadCart_();
   const cached = loadBootstrapCache_();
   if (cached) {
     applyBootstrapData(cached);
