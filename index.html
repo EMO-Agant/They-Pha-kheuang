@@ -1339,6 +1339,16 @@ function openCartDrawer(){
 }
 function closeCartDrawer(){ document.getElementById('cartDrawer').classList.remove('show'); document.getElementById('overlay').classList.remove('show'); }
 
+// ★ ໃໝ່: ຂໍ້ມູນແຂວງ-ເມືອງ (ຂະຫຍາຍເພີ່ມໄດ້ຕາມຕ້ອງການ)
+const LAO_PROVINCES = {
+  'ນະຄອນຫຼວງວຽງຈັນ': ['ຈັນທະບູລີ','ສີສັດຕະນາກ','ໄຊເສດຖາ','ສີໂຄດຕະບອງ','ຫາດຊາຍຟອງ','ນາຊາຍທອງ','ໄຊທານີ','ປາກງື່ມ','ສັງທອງ','ໝອກໄຂ່'],
+  'ວຽງຈັນ': ['ໂພນໂຮງ','ວັງວຽງ','ແກ້ວອຸດົມ','ກາສີ','ຫີນເຫີບ','ຊະນະຄາມ','ແມດ','ຝັ້ງ','ທຸລະຄົມ'],
+  'ຫຼວງພະບາງ': ['ຫຼວງພະບາງ','ຊຽງເງິນ','ນານ','ປາກອູ','ນຳບາກ','ງອຍ','ປາກແຊງ','ໂພນທອງ','ຈອມເພັດ','ວຽງຄຳ','ພູຄູນ','ຫົງສາ'],
+  'ຈຳປາສັກ': ['ປາກເຊ','ບາຈຽງຈະເລີນສຸກ','ໂພນທອງ','ຊະນະສົມບູນ','ໂຂງ','ມູນລະປະໂມກ','ປະທຸມພອນ','ສຸຂຸມາ','ວາປີ','ປາກຊ່ອງ'],
+  'ສະຫວັນນະເຂດ': ['ໄກສອນພົມວິຫານ','ອຸທຸມພອນ','ອາດສະພັງທອງ','ພິນ','ເຊໂປນ','ນອງ','ຈຳພອນ','ຫາດ','ວິລະບູລີ','ອາດສະພັງ','ຈານທະບູລີ','ຕະໂປນ','ສອງຄອນ'],
+  // ... ເພີ່ມແຂວງອື່ນໆ ຕາມຕ້ອງການ (ບໍລິຄຳໄຊ, ຄຳມ່ວນ, ສາລະວັນ, ອື່ນໆ)
+};
+
 let CHECKOUT_STEP = 'cart';
 let CHECKOUT_COUPON = null, CHECKOUT_DISCOUNT = 0;
 
@@ -1363,19 +1373,61 @@ function renderCheckoutForm(){
   const body = document.getElementById('cartDrawerBody');
   const subtotal = CART.reduce((s,c)=>s+c.price*c.qty,0);
   const methods = (SETTINGS && SETTINGS.deliveryMethods) || [];
+  const payment = (SETTINGS && SETTINGS.payment) || {};
   const deliveryHtml = methods.map((m,i)=>
     '<div class="delivery-opt' + (i===0?' active':'') + '" data-fee="'+m.fee+'" data-key="'+esc(m.key)+'" onclick="selectDelivery(this)">' +
-    '<i class="fa-solid '+esc(m.icon||'fa-truck')+'"></i><div style="flex:1;"><b>'+esc(m.label)+'</b><div style="font-size:11px;color:var(--text-soft);">'+fmt(m.fee)+'</div></div></div>'
+    '<i class="fa-solid '+esc(m.icon||'fa-truck')+'"></i><div style="flex:1;"><b>'+esc(m.label)+'</b><div style="font-size:11px;color:var(--text-soft);">'+(Number(m.fee)>0?fmt(m.fee):'ຟຣີ')+'</div></div></div>'
   ).join('');
+  const provinceOptions = '<option value="">— ເລືອກແຂວງ —</option>' +
+    Object.keys(LAO_PROVINCES).map(p=>'<option value="'+esc(p)+'">'+esc(p)+'</option>').join('');
+
   body.innerHTML =
     '<button class="btn secondary small" style="margin-bottom:12px;" onclick="CHECKOUT_STEP=\'cart\';renderCartDrawerContent()"><i class="fa-solid fa-arrow-left"></i> ກັບຄືນກະຕ່າ</button>' +
-    '<div class="field"><label>ຊື່ຜູ້ຮັບ</label><input id="co_name"></div>' +
-    '<div class="field"><label>ເບີໂທ</label><input id="co_phone"></div>' +
-    '<div class="row2"><div class="field"><label>ແຂວງ</label><input id="co_province"></div><div class="field"><label>ເມືອງ</label><input id="co_district"></div></div>' +
-    '<div class="row2"><div class="field"><label>ບ້ານ</label><input id="co_village"></div><div class="field"><label>ຮ້ານ/ບ້ານເລກທີ່</label><input id="co_address"></div></div>' +
-    '<div class="field"><label>ວິທີຈັດສົ່ງ</label>' + deliveryHtml + '</div>' +
+
+    '<div class="section-divider"><span>ວິທີຮັບເຄື່ອງ</span></div>' +
+    '<div class="field">' + deliveryHtml + '</div>' +
+    '<div class="field" id="co_pickup_wrap" style="display:none;"><label>ສາຂາ / ຈຸດຮັບ</label><input id="co_pickup" placeholder="ລະບຸສາຂາ (ຖ້າມີ)"></div>' +
+
+    '<div class="section-divider"><span>ຂໍ້ມູນຜູ້ສັ່ງ</span></div>' +
+    '<div class="field"><label>ຊື່ ແລະ ນາມສະກຸນ</label><input id="co_name" placeholder="ໃສ່ຊື່"></div>' +
+    '<div class="field"><label>ເບີໂທ</label><div style="display:flex;gap:8px;">' +
+    '<div style="display:flex;align-items:center;gap:6px;padding:0 12px;border:1px solid var(--line-strong);border-radius:13px;background:#fff;font-weight:700;">🇱🇦 +856</div>' +
+    '<input id="co_phone" style="flex:1;" placeholder="20xxxxxxxx" maxlength="10"></div></div>' +
+
+    '<div class="section-divider"><span>ທີ່ຢູ່ຈັດສົ່ງ</span></div>' +
+    '<div class="row2">' +
+    '<div class="field"><label>ແຂວງ</label><select id="co_province" onchange="onProvinceChange()">'+provinceOptions+'</select></div>' +
+    '<div class="field"><label>ເມືອງ</label><select id="co_district"><option value="">— ເລືອກແຂວງກ່ອນ —</option></select></div>' +
+    '</div>' +
+    '<div class="row2">' +
+    '<div class="field"><label>ບ້ານ</label><input id="co_village"></div>' +
+    '<div class="field"><label>ຮ້ານ/ບ້ານເລກທີ່</label><input id="co_address"></div>' +
+    '</div>' +
+
+    '<div class="section-divider"><span>ວິທີຊຳລະເງິນ</span></div>' +
+    '<div class="field"><select id="co_paymethod" onchange="onPayMethodChange()">' +
+    '<option value="transfer">ໂອນຜ່ານທະນາຄານ / QR</option>' +
+    '<option value="cod">ຈ່າຍປາຍທາງ (COD)</option>' +
+    '</select></div>' +
+    '<div id="co_bank_block" style="display:none;background:var(--bg-page);border-radius:14px;padding:14px;margin-bottom:14px;">' +
+    '<div style="font-size:12.5px;line-height:1.8;">' +
+    '<b>' + esc(payment.bankName||'') + '</b><br>' +
+    'ຊື່ບັນຊີ: ' + esc(payment.accountName||'') + '<br>' +
+    'ເລກບັນຊີ: ' + esc(payment.accountNumber||'') + '</div>' +
+    (payment.qrImage ? '<img src="'+esc(payment.qrImage)+'" style="width:100%;border-radius:12px;margin-top:10px;">' : '') +
+    '</div>' +
+    '<div class="field" id="co_slip_wrap" style="display:none;"><label>ອັບໂຫຼດຮູບ Slip ໂອນເງິນ</label>' +
+    '<div class="upload-dropzone" onclick="document.getElementById(\'co_slipfile\').click()">' +
+    '<i class="fa-solid fa-cloud-arrow-up"></i><div class="udz-text">ກົດເພື່ອເລືອກຮູບ Slip</div>' +
+    '<input type="file" id="co_slipfile" accept="image/*" onchange="uploadSlipFile(this)"></div>' +
+    '<img id="co_slippreview" class="img-preview" style="display:none;">' +
+    '<div id="co_slipstatus" style="font-size:11px;color:var(--text-soft);margin-top:4px;"></div>' +
+    '<input type="hidden" id="co_slipurl" value=""></div>' +
+
+    '<div class="section-divider"><span>ຄູປອງ / ໝາຍເຫດ</span></div>' +
     '<div class="field"><label>ລະຫັດຄູປອງ (ບໍ່ບັງຄັບ)</label><div style="display:flex;gap:8px;"><input id="co_coupon" style="flex:1;"><button class="btn small" onclick="applyCouponForm()">ໃຊ້</button></div><div id="co_coupon_msg" style="font-size:11.5px;margin-top:4px;"></div></div>' +
     '<div class="field"><label>ໝາຍເຫດ (ບໍ່ບັງຄັບ)</label><textarea id="co_note"></textarea></div>' +
+
     '<div style="border-top:1px solid var(--line);margin-top:6px;padding-top:10px;">' +
     '<div class="cart-summary-row"><span>ລວມສິນຄ້າ</span><span>'+fmt(subtotal)+'</span></div>' +
     '<div class="cart-summary-row"><span>ຄ່າຈັດສົ່ງ</span><span id="co_fee_txt">'+fmt(methods[0]?methods[0].fee:0)+'</span></div>' +
@@ -1383,10 +1435,50 @@ function renderCheckoutForm(){
     '<div class="cart-summary-row" style="font-size:15px;"><span>ລວມທັງໝົດ</span><b id="co_total_txt">'+fmt(subtotal + (methods[0]?methods[0].fee:0))+'</b></div>' +
     '</div>' +
     '<button class="btn" id="co_submit" style="margin-top:12px;" onclick="submitCheckout()"><i class="fa-solid fa-check"></i> ຢືນຢັນສັ່ງຊື້</button>';
+
+  onPayMethodChange();
 }
+
+// ★ ໃໝ່: ເມືອງປ່ຽນຕາມແຂວງ (cascade dropdown)
+function onProvinceChange(){
+  const prov = val('co_province');
+  const sel = document.getElementById('co_district');
+  const districts = LAO_PROVINCES[prov] || [];
+  sel.innerHTML = districts.length
+    ? '<option value="">— ເລືອກເມືອງ —</option>' + districts.map(d=>'<option value="'+esc(d)+'">'+esc(d)+'</option>').join('')
+    : '<option value="">— ເລືອກແຂວງກ່ອນ —</option>';
+}
+// ★ ໃໝ່: ສະແດງ/ເຊື່ອງ Block ທະນາຄານ+ອັບໂຫຼດ slip ຕາມວິທີຊຳລະ
+function onPayMethodChange(){
+  const isTransfer = val('co_paymethod') === 'transfer' || document.getElementById('co_paymethod').value === 'transfer';
+  document.getElementById('co_bank_block').style.display = isTransfer ? 'block' : 'none';
+  document.getElementById('co_slip_wrap').style.display = isTransfer ? 'block' : 'none';
+}
+// ★ ໃໝ່: ອັບໂຫຼດ slip (ໃຊ້ action ໃໝ່ທີ່ບໍ່ຕ້ອງ token)
+function uploadSlipFile(input){
+  const file = input.files[0];
+  if (!file) return;
+  const statusEl = document.getElementById('co_slipstatus');
+  statusEl.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> ກຳລັງອັບໂຫຼດ...';
+  const reader = new FileReader();
+  reader.onload = function(){
+    const base64 = reader.result.split(',')[1];
+    apiCall('uploadOrderSlip', { base64: base64, filename: file.name, mimeType: file.type }).then(r=>{
+      if (r.success) {
+        document.getElementById('co_slipurl').value = r.url;
+        document.getElementById('co_slippreview').src = r.url;
+        document.getElementById('co_slippreview').style.display='block';
+        statusEl.textContent = 'ອັບໂຫຼດ Slip ສຳເລັດ ✅';
+      } else statusEl.textContent = 'ຜິດພາດ: ' + (r.message||'');
+    });
+  };
+  reader.readAsDataURL(file);
+}
+
 function selectDelivery(el){
   document.querySelectorAll('.delivery-opt').forEach(d=>d.classList.remove('active'));
   el.classList.add('active');
+  document.getElementById('co_pickup_wrap').style.display = (el.dataset.key === 'pickup') ? 'block' : 'none';
   recalcCheckoutTotal();
 }
 function applyCouponForm(){
@@ -1415,13 +1507,17 @@ function submitCheckout(){
   if (!name || !phone) { showToast('ກະລຸນາປ້ອນຊື່ ແລະ ເບີໂທ','err'); return; }
   const activeD = document.querySelector('.delivery-opt.active');
   if (!activeD) { showToast('ກະລຸນາເລືອກວິທີຈັດສົ່ງ','err'); return; }
+  const payMethod = document.getElementById('co_paymethod').value;
+  if (payMethod === 'transfer' && !val('co_slipurl')) {
+    showToast('ກະລຸນາອັບໂຫຼດຮູບ Slip ໂອນເງິນກ່ອນ','err'); return;
+  }
   const subtotal = CART.reduce((s,c)=>s+c.price*c.qty,0);
   const fee = Number(activeD.dataset.fee)||0;
   const order = {
     items: CART.map(c=>({productId:c.productId,name:c.name,price:c.price,qty:c.qty,type:c.type})),
-    customerName:name, phone:phone,
+    customerName:name, phone:'+856'+phone,
     province:val('co_province'), district:val('co_district'), village:val('co_village'), address:val('co_address'),
-    deliveryMethod:activeD.dataset.key, deliveryFee:fee, paymentMethod:'transfer',
+    deliveryMethod:activeD.dataset.key, deliveryFee:fee, paymentMethod:payMethod, slipImage: val('co_slipurl'),
     couponCode: CHECKOUT_COUPON||'', discount: CHECKOUT_DISCOUNT||0,
     subtotal: subtotal, total: Math.max(0, subtotal+fee-(CHECKOUT_DISCOUNT||0)), note: val('co_note')
   };
