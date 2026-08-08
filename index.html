@@ -244,6 +244,7 @@ button{font-family:inherit;}
 .order-item .otype.auction{background:rgba(169,69,93,.14);color:var(--rose-2);}
 .order-item .otype.rent{background:rgba(62,139,84,.14);color:#2E6B3E;}
 .order-item .otype.pawn{background:rgba(212,175,55,.18);color:#7A5220;}
+.order-item .otype.cart{background:rgba(156,107,46,.16);color:var(--primary);}
 
 /* ---------- BOTTOM NAV (mobile) ---------- */
 .bottomnav{
@@ -809,7 +810,7 @@ let EDIT_CACHE = {}; // ເກັບ object ຊົ່ວຄາວສຳລັບ
 let BOOTSTRAP_DONE = false; // ກັນບໍ່ໃຫ້ restoreAdminSession() ຖືກເອີ້ນຊ້ຳຫຼາຍເທື່ອ
 
 /* ---- Admin: cache ຂໍ້ມູນທີ່ຕ້ອງໃຊ້ token (ບໍ່ໄດ້ຢູ່ໃນ bootstrap ສາທາລະນະ) ---- */
-let ADMIN_DATA_CACHE = { dashboard:null, rentals:null, pawns:null, contacts:null, banner:null, marquee:null, livecomments:null, categories:null };
+let ADMIN_DATA_CACHE = { dashboard:null, rentals:null, pawns:null, contacts:null, banner:null, marquee:null, livecomments:null, categories:null, orders:null };
 let ADMIN_ACTIVE_SECTION = null;   // ໜ້າ admin ທີ່ກຳລັງເປີດຢູ່ຕອນນີ້
 let ADMIN_VIEW_MODE = 'list';      // 'list' = ໜ້າລາຍການ, 'form' = ກຳລັງແກ້ໄຂ/ເພີ່ມຟອມ (ຢຸດ background refresh ຊົ່ວຄາວ)
 let ADMIN_POLL_TIMER = null;
@@ -1797,7 +1798,9 @@ function setBadgeCount(btnId, count) {
   if (!badge) { badge = document.createElement('span'); badge.className = 'badge-count'; btn.appendChild(badge); }
   badge.textContent = count > 99 ? '99+' : count;
 }
-function orderTypeLabel_(type) { return type === 'auction' ? 'ປະມູນສຳເລັດ' : (type === 'rent' ? 'ໃຫ້ເຊົ່າ' : 'ຈຳນຳ'); }
+function orderTypeLabel_(type) {
+  return type === 'auction' ? 'ປະມູນສຳເລັດ' : (type === 'rent' ? 'ໃຫ້ເຊົ່າ' : (type === 'pawn' ? 'ຈຳນຳ' : 'ສັ່ງຊື້ (ກະຕ່າ)'));
+}
 function buildOrdersList_() {
   const auctionOrders = AUCTIONS.filter(a => a.winnerName).map(a => ({
     type: 'auction', title: a.productName, customerName: a.winnerName, phone: a.winnerPhone,
@@ -1812,41 +1815,73 @@ function buildOrdersList_() {
     type: 'pawn', title: p.productName, customerName: p.customerName, phone: p.phone,
     price: p.pawnAmount, date: p.createdAt, status: p.status, id: p.id, raw: p
   }));
-  return auctionOrders.concat(rentalOrders, pawnOrders).sort((a, b) => new Date(b.date) - new Date(a.date));
+  // ★ ໃໝ່: ຄຳສັ່ງຊື້ຈາກກະຕ່າ (Orders sheet)
+  const cartOrders = (ADMIN_DATA_CACHE.orders || []).map(o => {
+    const itemsArr = Array.isArray(o.items) ? o.items : [];
+    const itemsTitle = itemsArr.length
+      ? itemsArr.map(it => it.name + ' x' + it.qty).join(', ')
+      : (o.orderCode || '');
+    return {
+      type: 'cart', title: itemsTitle, customerName: o.customerName, phone: o.phone,
+      price: o.total, date: o.createdAt, status: o.status, id: o.id, raw: o
+    };
+  });
+  return auctionOrders.concat(rentalOrders, pawnOrders, cartOrders).sort((a, b) => new Date(b.date) - new Date(a.date));
 }
+
 function adminOrders(forceRefresh) {
   ADMIN_VIEW_MODE = 'list';
-  const needFetch = forceRefresh || !ADMIN_DATA_CACHE.rentals || !ADMIN_DATA_CACHE.pawns;
+  const needFetch = forceRefresh || !ADMIN_DATA_CACHE.rentals || !ADMIN_DATA_CACHE.pawns || !ADMIN_DATA_CACHE.orders;
   if (!needFetch) { renderOrdersAdmin(); return; }
-  if (!ADMIN_DATA_CACHE.rentals && !ADMIN_DATA_CACHE.pawns) showAdminLoadingOnce_();
+  if (!ADMIN_DATA_CACHE.rentals && !ADMIN_DATA_CACHE.pawns && !ADMIN_DATA_CACHE.orders) showAdminLoadingOnce_();
   callServer('getRentals', [ADMIN_TOKEN], (rentals) => {
     if (Array.isArray(rentals)) ADMIN_DATA_CACHE.rentals = rentals;
     callServer('getPawns', [ADMIN_TOKEN], (pawns) => {
       if (Array.isArray(pawns)) ADMIN_DATA_CACHE.pawns = pawns;
-      if (ADMIN_ACTIVE_SECTION === 'orders') renderOrdersAdmin();
-      refreshOrdersBadge();
+      callServer('getOrders', [ADMIN_TOKEN], (orders) => {
+        if (Array.isArray(orders)) ADMIN_DATA_CACHE.orders = orders;
+        if (ADMIN_ACTIVE_SECTION === 'orders') renderOrdersAdmin();
+        refreshOrdersBadge();
+      });
     });
   });
 }
+const CART_ORDER_STATUSES = ['ລໍຖ້າຢືນຢັນ','ກຳລັງແພັກ','ກຳລັງຈັດສົ່ງ','ຈັດສົ່ງແລ້ວ','ຍົກເລີກ'];
+
 function renderOrdersAdmin() {
   const all = buildOrdersList_();
   const filtered = ADMIN_ORDERS_TAB === 'all' ? all : all.filter(o => o.type === ADMIN_ORDERS_TAB);
   let html = '<h3><i class="fa-solid fa-cart-shopping"></i> ຄຳສັ່ງຊື້ທັງໝົດ</h3>' +
-    '<p style="font-size:11.5px;color:var(--text-soft);margin:-6px 0 14px;">ລວມ ປະມູນສຳເລັດ, ຄຳຂໍເຊົ່າ ແລະ ຄຳຂໍຈຳນຳ ໄວ້ບ່ອນດຽວ ເພື່ອຄວາມສະດວກໃນການຈັດສົ່ງ</p>' +
+    '<p style="font-size:11.5px;color:var(--text-soft);margin:-6px 0 14px;">ລວມ ສັ່ງຊື້ຈາກກະຕ່າ, ປະມູນສຳເລັດ, ຄຳຂໍເຊົ່າ ແລະ ຄຳຂໍຈຳນຳ ໄວ້ບ່ອນດຽວ</p>' +
     '<div class="order-tabbar">' +
-    ['all','auction','rent','pawn'].map(t => '<div class="otbtn' + (ADMIN_ORDERS_TAB === t ? ' active' : '') + '" onclick="setOrdersTab(\'' + t + '\')">' +
+    ['all','cart','auction','rent','pawn'].map(t => '<div class="otbtn' + (ADMIN_ORDERS_TAB === t ? ' active' : '') + '" onclick="setOrdersTab(\'' + t + '\')">' +
       (t === 'all' ? 'ທັງໝົດ' : orderTypeLabel_(t)) + ' (' + (t === 'all' ? all.length : all.filter(o => o.type === t).length) + ')</div>').join('') +
     '</div>';
   html += filtered.map(o => {
     const dateStr = o.date ? new Date(o.date).toLocaleString('lo-LA') : '';
     const statusColor = (o.status === 'ຈັດສົ່ງແລ້ວ' || o.status === 'ອະນຸມັດແລ້ວ') ? 'rgba(47,169,104,.18);color:#1E7A4C' :
-      (o.status === 'ປະຕິເສດ' ? 'rgba(192,57,43,.14);color:#C0392B' : 'rgba(212,175,55,.20);color:#7A5220');
+      (o.status === 'ຍົກເລີກ' || o.status === 'ປະຕິເສດ') ? 'rgba(192,57,43,.14);color:#C0392B' : 'rgba(212,175,55,.20);color:#7A5220';
+    let extra = '';
+    if (o.type === 'cart') {
+      const raw = o.raw || {};
+      extra = '<div class="sub" style="font-size:11.5px;margin-top:2px;">📦 ' + esc(raw.deliveryMethod||'') +
+        (raw.province ? ' | 📍 ' + esc(raw.village||'') + ', ' + esc(raw.district||'') + ', ' + esc(raw.province||'') : '') +
+        '</div>';
+      if (raw.slipImage) {
+        extra += '<div style="margin-top:8px;"><img src="'+esc(raw.slipImage)+'" style="width:90px;height:90px;object-fit:cover;border-radius:10px;cursor:pointer;" onclick="window.open(\''+esc(raw.slipImage)+'\',\'_blank\')"></div>';
+      }
+      extra += '<div style="margin-top:8px;display:flex;gap:8px;align-items:center;flex-wrap:wrap;">' +
+        '<select data-act="cartstatus" data-id="'+esc(o.id)+'" style="padding:7px 9px;border-radius:9px;border:1px solid var(--line-strong);font-size:12px;">' +
+        CART_ORDER_STATUSES.map(s=>'<option value="'+s+'" '+(s===o.status?'selected':'')+'>'+s+'</option>').join('') +
+        '</select></div>';
+    }
     return '<div class="order-item">' +
       '<span class="otype ' + o.type + '">' + orderTypeLabel_(o.type) + '</span>' +
       '<div class="name" style="font-weight:700;font-size:13.5px;">' + esc(o.title || '') + '</div>' +
       '<div class="sub" style="font-size:11.5px;color:var(--text-soft);margin-top:3px;">👤 ' + esc(o.customerName || '-') +
       (o.phone ? ' | <a href="tel:' + esc(o.phone) + '" style="color:var(--primary);font-weight:700;">' + esc(o.phone) + ' <i class="fa-solid fa-phone"></i></a>' : '') + '</div>' +
       '<div class="sub" style="font-size:11.5px;margin-top:2px;">💰 ' + fmt(o.price) + ' | 🕐 ' + esc(dateStr) + '</div>' +
+      extra +
       '<div style="display:flex;align-items:center;justify-content:space-between;margin-top:8px;">' +
       '<span class="status-tag" style="background:' + statusColor + ';">' + esc(o.status) + '</span>' +
       (o.type === 'auction' && o.status === 'ລໍຖ້າຈັດສົ່ງ' ? '<button class="btn small" data-act="shipauction" data-id="' + esc(o.id) + '">ໝາຍວ່າຈັດສົ່ງແລ້ວ</button>' : '') +
@@ -1858,6 +1893,17 @@ function renderOrdersAdmin() {
     callServer('updateAuctionStatus', [ADMIN_TOKEN, b.dataset.id, 'ຈັດສົ່ງແລ້ວ'], (r) => {
       if (r.success) { showToast('ອັບເດດແລ້ວ', 'ok'); const au = AUCTIONS.find(a => a.id === b.dataset.id); if (au) au.status = 'ຈັດສົ່ງແລ້ວ'; renderOrdersAdmin(); refreshOrdersBadge(); }
       else showToast(r.message || 'ຜິດພາດ', 'err');
+    });
+  });
+  // ★ ໃໝ່: ປ່ຽນສະຖານະຄຳສັ່ງຊື້ຈາກກະຕ່າ
+  document.querySelectorAll('[data-act="cartstatus"]').forEach(sel => sel.onchange = () => {
+    callServer('updateOrderStatus', [ADMIN_TOKEN, sel.dataset.id, sel.value], (r) => {
+      if (r.success) {
+        showToast('ອັບເດດສະຖານະແລ້ວ', 'ok');
+        const ord = ADMIN_DATA_CACHE.orders.find(o => o.id === sel.dataset.id);
+        if (ord) ord.status = sel.value;
+        renderOrdersAdmin();
+      } else showToast(r.message || 'ຜິດພາດ', 'err');
     });
   });
 }
