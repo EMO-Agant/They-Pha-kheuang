@@ -1140,6 +1140,46 @@ function fmt(n) { n = Number(n) || 0; return n.toLocaleString('lo-LA') + ' ກ�
 function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m])); }
 
 /*************************************************************
+ * ★ ໃໝ່: Google Drive Image Fallback — ລອງຫຼາຍ URL format
+ * ຖ້າແບບໜຶ່ງໂຫຼດບໍ່ໄດ້ (403/sign-in required) ຈະລອງແບບຕໍ່ໄປອັດຕະໂນມັດ
+ *************************************************************/
+function driveFileId_(url) {
+  if (!url) return null;
+  let m = url.match(/[?&]id=([a-zA-Z0-9_-]{10,})/);
+  if (m) return m[1];
+  m = url.match(/\/d\/([a-zA-Z0-9_-]{10,})/);
+  return m ? m[1] : null;
+}
+function imgCandidates_(url) {
+  const id = driveFileId_(url);
+  if (!id) return url ? [url] : [];
+  return [
+    'https://drive.google.com/thumbnail?id=' + id + '&sz=w1000',
+    'https://lh3.googleusercontent.com/d/' + id + '=w1000',
+    'https://drive.google.com/uc?export=view&id=' + id
+  ];
+}
+function imgTryNext(img) {
+  let list = []; try { list = JSON.parse(img.getAttribute('data-fb') || '[]'); } catch(e){}
+  let idx = Number(img.getAttribute('data-idx') || 0) + 1;
+  if (idx < list.length) {
+    img.setAttribute('data-idx', idx);
+    img.src = list[idx];
+  } else {
+    img.outerHTML = img.getAttribute('data-fallback-html') || '';
+  }
+}
+function imgTag(url, cls, fallbackHtml, extraAttrs) {
+  extraAttrs = extraAttrs || '';
+  const candidates = imgCandidates_(url);
+  fallbackHtml = fallbackHtml || '<div class="' + cls + '"><i class="fa-solid fa-image"></i></div>';
+  if (!candidates.length) return fallbackHtml;
+  const fbAttr = esc(JSON.stringify(candidates));
+  const fbHtmlAttr = esc(fallbackHtml);
+  return '<img class="' + cls + '" ' + extraAttrs + ' src="' + esc(candidates[0]) + '" loading="lazy" data-fb="' + fbAttr + '" data-idx="0" data-fallback-html="' + fbHtmlAttr + '" onerror="imgTryNext(this)">';
+}
+
+/*************************************************************
  * RENDER: HOME
  *************************************************************/
 function renderHomeRent() {
@@ -1219,7 +1259,7 @@ function emptyHtml(icon, text) { return '<div class="empty"><i class="fa-solid f
 function productCardHtml(p) {
   const ribbon = p.type === 'rent' ? '<span class="ribbon rent">ໃຫ້ເຊົ່າ</span>' : '<span class="ribbon pawn">ຮັບຈຳນຳ</span>';
   const price = p.cashPrice ? fmt(p.cashPrice) : (p.type === 'rent' ? fmt(p.rentPricePerDay) + ' /ວັນ' : fmt(p.pawnValue));
-  const img = p.imageUrl ? '<img class="img" src="' + esc(p.imageUrl) + '" loading="lazy" onerror="this.style.display=\'none\'">' : '<div class="img"><i class="fa-solid fa-image"></i></div>';
+  const img = imgTag(p.imageUrl, 'img');
   const qty = cartQtyOf(p.id);
   const qtyHtml = qty > 0
     ? '<div class="qty-stepper" onclick="event.stopPropagation()"><button onclick="addToCart(\''+p.id+'\',-1)">−</button><span>'+qty+'</span><button onclick="addToCart(\''+p.id+'\',1)">+</button></div>'
@@ -1241,7 +1281,9 @@ function openProductDetail(id) {
   window.__PD_IMAGES = images;
   window.__PD_PRODUCT_ID = id;
   openModal(
-    '<div class="pd-gallery-main" id="pd_main" onclick="openLightbox()"><img id="pd_main_img" src="'+esc(images[0])+'" onerror="this.style.opacity=.2"></div>' +
+    '<div class="pd-gallery-main" id="pd_main" onclick="openLightbox()">' +
+      imgTag(images[0], '', '<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:var(--secondary);font-size:40px;"><i class="fa-solid fa-image"></i></div>', 'id="pd_main_img"') +
+    '</div>' +
     (images.length>1 ? '<div class="pd-thumbs" id="pd_thumbs">'+thumbs+'</div>' : '') +
     '<h3 style="margin-top:14px;">' + esc(p.name) + '</h3>' +
     '<p class="price" style="font-size:19px;">' + price + '</p>' +
@@ -1256,7 +1298,11 @@ function openProductDetail(id) {
 }
 function pdSetMain(i){
   const images = window.__PD_IMAGES||[];
-  document.getElementById('pd_main_img').src = images[i];
+  const img = document.getElementById('pd_main_img');
+  const candidates = imgCandidates_(images[i]);
+  img.setAttribute('data-fb', JSON.stringify(candidates));
+  img.setAttribute('data-idx', '0');
+  img.src = candidates[0] || images[i];
   document.querySelectorAll('#pd_thumbs img').forEach((im,idx)=>im.classList.toggle('active', idx===i));
 }
 function renderProductDetailQty(){
@@ -1998,9 +2044,7 @@ function adminProducts() {
   ADMIN_VIEW_MODE = 'list';
   EDIT_CACHE.products = PRODUCTS;
   const rows = PRODUCTS.map((p, idx) => {
-    const img = p.imageUrl
-      ? '<img src="' + esc(p.imageUrl) + '" class="ptbl-img" onerror="this.outerHTML=\'<div class=&quot;ptbl-img ptbl-noimg&quot;><i class=&quot;fa-solid fa-image&quot;></i></div>\'">'
-      : '<div class="ptbl-img ptbl-noimg"><i class="fa-solid fa-image"></i></div>';
+    const img = imgTag(p.imageUrl, 'ptbl-img', '<div class="ptbl-img ptbl-noimg"><i class="fa-solid fa-image"></i></div>');
     const typeTag = p.type === 'rent' ? '<span class="ptbl-tag rent">ໃຫ້ເຊົ່າ</span>' : '<span class="ptbl-tag pawn">ຈຳນຳ</span>';
     const price = p.cashPrice ? fmt(p.cashPrice) : (p.type === 'rent' ? fmt(p.rentPricePerDay) + '/ວັນ' : fmt(p.pawnValue));
     const stock = (p.stock !== undefined && p.stock !== '') ? p.stock : 1;
