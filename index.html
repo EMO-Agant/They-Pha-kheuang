@@ -1071,7 +1071,7 @@ const API_URL = 'https://script.google.com/macros/s/AKfycbwmg5i5SrZVE5hlpSSm_Lnd
 
 async function gsRun(fnName, ...args){
   const controller = new AbortController();
-  const timeoutId = setTimeout(()=>controller.abort(), 20000); // ຢຸດອັດຕະໂນມັດຫຼັງ 20 ວິນາທີ
+  const timeoutId = setTimeout(()=>controller.abort(), 45000); // ຢຸດອັດຕະໂນມັດຫຼັງ 45 ວິນາທີ
   let res;
   try {
     res = await fetch(API_URL, {
@@ -1082,7 +1082,7 @@ async function gsRun(fnName, ...args){
     });
   } catch (networkErr) {
     if(networkErr.name === 'AbortError'){
-      throw new Error('ໝົດເວລາລໍຖ້າ Server (20 ວິນາທີ) — Server ອາດຈະຊ້າ ຫຼື ຂໍ້ມູນໃນ Sheet ໃຫຍ່ເກີນໄປ');
+      throw new Error('ໝົດເວລາລໍຖ້າ Server (45 ວິນາທີ) — Server ອາດຈະຊ້າ ຫຼື ຂໍ້ມູນໃນ Sheet ໃຫຍ່ເກີນໄປ');
     }
     throw new Error('ບໍ່ສາມາດເຊື່ອມຕໍ່ Server ໄດ້ (ກວດສອບອິນເຕີເນັດ ຫຼື API_URL): ' + networkErr.message);
   } finally {
